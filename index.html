@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Palabra Secreta</title>
+<meta name="theme-color" content="#0c0d10">
+<meta name="description" content="Adivina la palabra secreta en español">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Palabra">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;height:100%}
+body{margin:0;font-size:14px}
+[hidden]{display:none!important}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Una sola pantalla: título, selector de largo, tablero que se ajusta, teclado español con Ñ */
+:root{
+  --bg:#0c0d10; --surface:#2e2f33; --surface-2:#45474d; --fg:#f5f5f2; --muted:#9a9ca3;
+  --green:#2f8a5c; --amber:#f2ab2a; --amber-edge:#d98a12; --green-edge:#226b46; --absent:#1b1c1f;
+  --display:'Fredoka','Nunito',system-ui,sans-serif; --body:'Nunito',system-ui,sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none}
+.app{height:100%;display:flex;flex-direction:column;max-width:520px;margin:0 auto;box-sizing:border-box;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:8px}
+h1{font-family:var(--display);font-weight:700;font-size:1.45rem;margin:0;letter-spacing:.01em}
+h1 span{color:var(--amber)}
+.icon-btn{background:var(--surface);color:var(--fg);border:0;border-radius:10px;height:38px;min-width:38px;padding:0 12px;font:700 .85rem var(--body);cursor:pointer}
+button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.lengths{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 0;border-top:1px solid var(--surface);border-bottom:1px solid var(--surface)}
+.lengths small{color:var(--muted);font-weight:700;font-size:.78rem;margin-right:4px;text-transform:uppercase;letter-spacing:.05em}
+.len{background:var(--surface);color:var(--fg);border:0;border-radius:9px;width:40px;height:34px;font:700 1rem var(--display);cursor:pointer}
+.len[aria-pressed="true"]{background:var(--green);box-shadow:inset 0 -3px 0 var(--green-edge)}
+.board-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;padding:10px 0}
+.board{display:grid;gap:var(--gap,6px)}
+.row{display:grid;gap:var(--gap,6px)}
+.row.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.tile{background:var(--surface);border-radius:calc(var(--tile,56px) * .2);display:flex;align-items:center;justify-content:center;
+  width:var(--tile,56px);height:var(--tile,56px);font-family:var(--display);font-weight:600;font-size:calc(var(--tile,56px) * .52);
+  text-transform:uppercase;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25)}
+.tile.filled{background:var(--surface-2);animation:pop .1s}
+@keyframes pop{50%{transform:scale(1.08)}}
+.tile.correct{background:var(--green);box-shadow:inset 0 -4px 0 var(--green-edge)}
+.tile.present{background:var(--amber);box-shadow:inset 0 -4px 0 var(--amber-edge)}
+.tile.absent{background:var(--absent);color:#c9cad0}
+.tile.flip{animation:flip .45s ease both}
+@keyframes flip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+.kb{display:flex;flex-direction:column;gap:6px;padding-bottom:4px}
+.kr{display:flex;gap:5px;justify-content:center}
+.key{flex:1;max-width:44px;height:54px;border:0;border-radius:8px;background:var(--surface-2);color:var(--fg);
+  font:700 1.05rem var(--body);cursor:pointer;padding:0;touch-action:manipulation}
+.key.wide{max-width:66px;flex:1.5;font-size:.75rem}
+.key:active{filter:brightness(1.25)}
+.key.correct{background:var(--green)} .key.present{background:var(--amber)} .key.absent{background:var(--absent);color:#6d6f75}
+.toast{position:fixed;left:50%;top:calc(110px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);
+  font-weight:800;padding:10px 16px;border-radius:10px;z-index:20;max-width:calc(100% - 32px);text-align:center}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:30;padding:16px}
+.card{background:#1a1b1f;border-radius:18px;padding:22px;width:100%;max-width:360px;text-align:center;box-sizing:border-box}
+.card h2{font-family:var(--display);margin:0 0 6px;font-size:1.5rem}
+.card p{color:var(--muted);margin:6px 0;line-height:1.45}
+.answer{display:inline-flex;gap:4px;margin:10px 0;flex-wrap:wrap;justify-content:center}
+.answer b{width:34px;height:34px;border-radius:8px;background:var(--green);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:1.15rem}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:14px 0;font-variant-numeric:tabular-nums}
+.stats div{font-size:1.5rem;font-weight:800;font-family:var(--display)}
+.stats small{display:block;font-size:.65rem;color:var(--muted);font-family:var(--body);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.legend{display:flex;flex-direction:column;gap:8px;text-align:left;margin:12px 0}
+.legend span{display:flex;align-items:center;gap:10px;color:var(--fg)}
+.legend i{width:28px;height:28px;border-radius:7px;flex:none}
+.primary{background:var(--green);color:#fff;border:0;border-radius:12px;padding:13px 20px;font:800 1rem var(--body);width:100%;margin-top:8px;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.tile.flip,.tile.filled,.row.shake{animation:none}}
+@media (max-height:640px){.key{height:46px}}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header>
+    <button class="icon-btn" id="helpBtn" aria-label="Cómo jugar">?</button>
+    <h1>Palabra <span>Secreta</span></h1>
+    <button class="icon-btn" id="newBtn">Nueva</button>
+  </header>
+  <div class="lengths" id="lengths"><small>Letras</small></div>
+  <div class="board-wrap" id="wrap"><div class="board" id="board"></div></div>
+  <div class="kb" id="kb"></div>
+</div>
+<div class="toast" id="toast" hidden></div>
+<div class="overlay" id="modal" hidden><div class="card" id="modalCard"></div></div>
+
+<script>
+const POOL = (
+// 5 letras
+"abeja abrir actor agua aguja ahora almas altar amigo amiga ancho angel antes apoyo arbol arena arroz asado atlas avion ayuda " +
+"baile bajar balon banco banda barco barro bello besar bicho bolsa bomba brazo brisa broma bueno burro cabra cacao calle calor campo canal canto carne carta casco causa cazar cebra cerca cerdo cerro chica chico chile cielo cinco cinta circo claro clase clave clima cobre coche comer coral corte costa crema cuero culpa curva " +
+"dados danza datos deber dedos delta dieta disco doble dolor dulce duque durar echar elote enano enero entre error etapa exito facil falda falso fango farol fauna feliz feria fiera firma flaco fondo forma fruta fuego fugaz " +
+"gafas gallo ganso garra gente globo golpe gordo gorra gotas grado grano grasa grave grito grupo guapo guiso gusto habla hacer hielo hogar hojas hongo horno hotel huevo humor igual islas jabon jamon jarra jaula joven jugar junio junto justo " +
+"labio lagos lapiz largo latas lavar leche lento leona letra libro lider limon linea lindo listo litro llama llave lleno lobos local lucha luces lugar lunes madre magia mango manos manta mapas marea marzo mayor medio mejor menos mente mesas metal metro miedo mitad mojar molde monja monte mosca motor mover mucho mujer mundo museo " +
+"nadar naipe nariz negro nieve niños noche norte notas novia nubes nuevo oeste oliva ollas orden oreja oruga otoño padre pagar palma panal papel parar pared parte pasar pasta patio patos pausa pecho peine pelea perla perro pesca piano picar pieza pinta pinza pista plata plato playa plaza pobre poder pollo poner posar prado premio primo prisa punto " +
+"queso quien rampa ranas rasgo raton rayos reina reloj resto robar rocas rodar ronda rosas rubio rueda ruido rumbo sabio sabor sacar salsa salud sapos selva señal señor serie siete siglo silla sitio sobre socio solar soñar sopas sordo suave subir sucio sudor suelo sueño surco " +
+"tabla tacos talco tarde tarea techo tecla tejer temas tenis terco tigre tinta tirar tocar todos tomar tonto torre total trama trapo trazo trigo tropa trozo tubos tumba tunel union untar usado vacas vagon valle vapor vasos venta verde viaje viejo virus visto vivir volar votar yegua yerno yogur zorro zurdo " +
+// 6 letras
+"abrigo aceite actriz adorno agosto alegre alumno amable animal antena arriba azucar bailar balcon barato barril basura bebida bosque brillo bufalo cabeza cadena camion camino cariño cereza charco ciudad cocina conejo correo cuadro cuento cuerda cuerpo dinero doctor dragon " +
+"espada espejo estufa farola flecha futbol granja helado huerto idioma imagen jardin jirafa ladron laguna limpio llegar lluvia madera maleta mantel mañana martes mirada moneda muñeca nevera olvido paloma papaya parque payaso pelota pepino pirata puerta receta regalo rincon sandia semana sierra sombra sonido tambor tapete teatro tesoro tienda tijera tomate verano viento volcan zapato " +
+"abuelo ahorro almeja arcilla ardilla bodega bolero bombon botana campeon canica cesped cobija comida cometa cuchillo desfile dibujo duende elotes enfermo equipo escoba establo fresas fuente fuerza gelatina golosina guante hierro hombre hormiga iglesia jaguar juegos lagarto lavabo leones marino menudo molino musica nachos numero ombligo pajaro patata pierna piñata planta precio premio quince rapido salero sangre sardina saltar semilla siesta suerte tamal teclado tiempo torneo tortas tunica vaquero ventana " +
+// 7 letras
+"amistad ballena bandera botella caballo campana cancion carrera cebolla cerebro cuchara cultura domingo escuela fabrica familia galaxia gallina gaviota girasol hermano insecto juguete lechuga libreta manzana mascota mercado naranja navidad noticia oficina pasillo pescado piscina planeta platano revista rodilla tortuga trabajo tractor vestido " +
+"montaña pequeño español tiburon arbusto cartera ejemplo granizo lampara maestro palacio pantera pizarra tenedor vecinos abogado aguilas alberca antojos apetito bigotes boletos burbuja cachorro calcetin camello canasta capitan cascada colegio cometas corazon cortina cuarzo delfines deporte desierto destino dientes estrella fogata frijoles gigante guerrero hormiga invento jugador leopardo machete maquina mermelada misterio mochila nopales paisaje panadero pasteles payasos pelicula pintura rebanada refresco relojes sartenes secreto soldado tequila tornado tranvia trompo unicornio vampiro viajero " +
+// 8 letras
+"amarillo mariposa pantalla silencio sombrero invierno guitarra castillo alfombra almohada chaqueta cuaderno estrella fantasma hospital sandalia trompeta uniforme elefante pinguino cangrejo arcoiris aventura caracola cocinero deportes escalera mariscos medicina mosquito pajarito pantalon paraguas pelicula pimienta tormenta tortilla aguacate calabaza chapulin mariachi diamante bombero hamburgesa marciano limonada pastelito colibri cucaracha naturaleza " +
+"anteojos aparato banquete brujeria carnaval casamiento cerradura chimenea computadora dinosaurio domador ensalada escultor espinaca fantasia ferrocarril hechizos huracanes juguetes lavadora libreria lagartija mantequilla mecanico mexicano monstruo murcielago orquesta palomitas papalote pescador princesa profesor relampago rompecabezas sacapuntas semaforo serpiente telefono temblores terremoto tiburones tormentas vacaciones ventilador zanahoria"
+).split(/\s+/).filter(w => /^[a-zñ]+$/.test(w));
+
+const BYLEN = {};
+for (const w of new Set(POOL)){ const n = [...w].length; (BYLEN[n] = BYLEN[n] || []).push(w) }
+const LENGTHS = [5,6,7,8];
+const ROWS = 6;
+const $ = id => document.getElementById(id);
+const board = $('board'), kb = $('kb'), wrap = $('wrap');
+let COLS, answer, guesses, current, over, busy = false;
+
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d }catch(e){ return d } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)) }catch(e){} }
+};
+function norm(s){ return s.toLowerCase().replace(/ñ/g,'\u0001').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\u0001/g,'ñ') }
+
+// selector de letras
+LENGTHS.forEach(n => {
+  const b = document.createElement('button'); b.className = 'len'; b.id = 'len-' + n; b.textContent = n;
+  b.setAttribute('aria-label', n + ' letras');
+  b.onclick = () => { if (n === COLS) return; if (!over && guesses.length) toast('Palabra anterior: ' + answer.toUpperCase()); setLength(n); newGame() };
+  $('lengths').appendChild(b);
+});
+
+function buildBoard(){
+  board.innerHTML = '';
+  for (let r = 0; r < ROWS; r++){
+    const row = document.createElement('div'); row.className = 'row';
+    row.style.gridTemplateColumns = `repeat(${COLS}, var(--tile))`;
+    for (let c = 0; c < COLS; c++){ const t = document.createElement('div'); t.className = 'tile'; row.appendChild(t) }
+    board.appendChild(row);
+  }
+  sizeBoard();
+}
+function sizeBoard(){
+  const gap = COLS >= 7 ? 5 : 6;
+  const w = wrap.clientWidth, h = wrap.clientHeight - 20;
+  const size = Math.max(28, Math.floor(Math.min((w - gap*(COLS-1)) / COLS, (h - gap*(ROWS-1)) / ROWS, 66)));
+  board.style.setProperty('--tile', size + 'px');
+  board.style.setProperty('--gap', gap + 'px');
+}
+window.addEventListener('resize', sizeBoard);
+
+function setLength(n){
+  COLS = n; store.set('ps-len', n);
+  LENGTHS.forEach(x => $('len-' + x).setAttribute('aria-pressed', x === n));
+  buildBoard();
+}
+
+// teclado
+['qwertyuiop','asdfghjklñ','⏎zxcvbnm⌫'].forEach(line => {
+  const r = document.createElement('div'); r.className = 'kr';
+  [...line].forEach(ch => {
+    const b = document.createElement('button'); b.className = 'key';
+    if (ch === '⏎'){ b.textContent = 'ENVIAR'; b.classList.add('wide'); b.dataset.k = 'Enter' }
+    else if (ch === '⌫'){ b.textContent = '⌫'; b.classList.add('wide'); b.dataset.k = 'Backspace'; b.setAttribute('aria-label','Borrar') }
+    else { b.textContent = ch.toUpperCase(); b.dataset.k = ch }
+    b.id = 'key-' + b.dataset.k;
+    r.appendChild(b);
+  });
+  kb.appendChild(r);
+});
+kb.addEventListener('click', e => { const b = e.target.closest('.key'); if (b){ press(b.dataset.k); b.blur() } });
+document.addEventListener('keydown', e => {
+  if (!$('modal').hidden){ if (e.key === 'Escape') closeModal(); return }
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const k = e.key === 'Enter' || e.key === 'Backspace' ? e.key : norm(e.key);
+  if (/^[a-zñ]$/.test(k) || k === 'Enter' || k === 'Backspace'){ e.preventDefault(); press(k) }
+});
+
+function press(k){
+  if (over || busy) return;
+  if (k === 'Enter') return submit();
+  const cur = [...current];
+  if (k === 'Backspace') cur.pop(); else if (cur.length < COLS) cur.push(k);
+  current = cur.join(''); draw();
+}
+function draw(){
+  const row = board.children[guesses.length]; if (!row) return;
+  const cur = [...current];
+  [...row.children].forEach((t,i) => { t.textContent = cur[i] || ''; t.classList.toggle('filled', !!cur[i]) });
+}
+function score(guess, ans){
+  const res = Array(COLS).fill('absent'), a = [...ans], g = [...guess];
+  g.forEach((ch,i) => { if (ch === a[i]){ res[i] = 'correct'; a[i] = null } });
+  g.forEach((ch,i) => { if (res[i] !== 'correct'){ const j = a.indexOf(ch); if (j > -1){ res[i] = 'present'; a[j] = null } } });
+  return res;
+}
+function submit(){
+  const row = board.children[guesses.length];
+  if ([...current].length < COLS){ row.classList.remove('shake'); void row.offsetWidth; row.classList.add('shake'); return toast('Faltan letras') }
+  const guess = current, res = score(guess, answer), step = COLS > 6 ? 170 : 220;
+  guesses.push(guess); current = ''; busy = true;
+  [...row.children].forEach((t,i) => setTimeout(() => {
+    t.classList.add('flip');
+    setTimeout(() => { t.classList.remove('filled'); t.classList.add(res[i]) }, 200);
+  }, i * step));
+  setTimeout(() => {
+    paintKeys(guess, res); busy = false; save();
+    if (guess === answer) finish(true); else if (guesses.length === ROWS) finish(false);
+  }, COLS * step + 300);
+}
+const rank = { absent:1, present:2, correct:3 };
+function paintKeys(guess, res){
+  [...guess].forEach((ch,i) => {
+    const b = $('key-' + ch); if (!b) return;
+    if (!b.dataset.s || rank[res[i]] > rank[b.dataset.s]){ b.dataset.s = res[i]; b.classList.remove('correct','present','absent'); b.classList.add(res[i]) }
+  });
+}
+function finish(won){
+  over = true;
+  const key = 'ps-stats-' + COLS;
+  const s = store.get(key, { played:0, wins:0, streak:0, best:0 });
+  s.played++; if (won){ s.wins++; s.streak++; s.best = Math.max(s.best, s.streak) } else s.streak = 0;
+  store.set(key, s); store.set('ps-game', null);
+  const msgs = ['¡Genio!','¡Increíble!','¡Muy bien!','¡Bien hecho!','¡Lo lograste!','¡Por poco!'];
+  setTimeout(() => showModal(`
+    <h2>${won ? msgs[guesses.length-1] : 'Se acabaron los intentos'}</h2>
+    <p>${won ? `Adivinaste en ${guesses.length} de ${ROWS} intentos.` : 'La palabra secreta era:'}</p>
+    <div class="answer">${[...answer].map(c => `<b>${c.toUpperCase()}</b>`).join('')}</div>
+    <p>Estadísticas con ${COLS} letras</p>
+    <div class="stats">
+      <div>${s.played}<small>Jugadas</small></div>
+      <div>${Math.round(s.wins / s.played * 100)}%<small>Ganadas</small></div>
+      <div>${s.streak}<small>Racha</small></div>
+      <div>${s.best}<small>Mejor</small></div>
+    </div>
+    <button class="primary" id="againBtn">Jugar otra</button>`), 400);
+}
+function showModal(html){ $('modalCard').innerHTML = html; $('modal').hidden = false;
+  const a = $('againBtn'); if (a) a.onclick = () => { closeModal(); newGame() };
+  const c = $('closeBtn'); if (c) c.onclick = closeModal; }
+function closeModal(){ $('modal').hidden = true }
+$('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal() });
+let toastT;
+function toast(msg){ const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 1600) }
+function save(){ if (!over) store.set('ps-game', { len: COLS, answer, guesses }) }
+function resetVisuals(){
+  [...board.children].forEach(r => [...r.children].forEach(t => { t.textContent = ''; t.className = 'tile' }));
+  kb.querySelectorAll('.key').forEach(b => { b.classList.remove('correct','present','absent'); delete b.dataset.s });
+}
+function newGame(){
+  const list = BYLEN[COLS];
+  let next; do { next = list[Math.floor(Math.random() * list.length)] } while (next === answer && list.length > 1);
+  answer = next; guesses = []; current = ''; over = false; resetVisuals(); save();
+}
+function restore(g){
+  setLength(g.len); answer = g.answer; guesses = []; current = ''; over = false; resetVisuals();
+  g.guesses.forEach(guess => {
+    const row = board.children[guesses.length], res = score(guess, answer);
+    [...row.children].forEach((t,i) => { t.textContent = [...guess][i]; t.classList.add(res[i]) });
+    guesses.push(guess); paintKeys(guess, res);
+  });
+}
+
+$('newBtn').onclick = () => { if (!over && guesses.length) toast('Palabra anterior: ' + answer.toUpperCase()); newGame() };
+$('helpBtn').onclick = () => showModal(`
+  <h2>Cómo jugar</h2>
+  <p>Elige cuántas letras quieres (5 a 8) y adivina la palabra secreta en 6 intentos. Escribe una palabra y toca ENVIAR.</p>
+  <div class="legend">
+    <span><i style="background:var(--green)"></i>Letra correcta en su lugar</span>
+    <span><i style="background:var(--amber)"></i>Letra en la palabra, pero en otro lugar</span>
+    <span><i style="background:var(--absent);border:1px solid var(--surface-2)"></i>Letra que no está</span>
+  </div>
+  <p>Las palabras no llevan acentos. La Ñ cuenta como letra.</p>
+  <button class="primary" id="closeBtn">¡A jugar!</button>`);
+
+const saved = store.get('ps-game', null);
+if (saved && saved.answer && Array.isArray(saved.guesses) && LENGTHS.includes(saved.len)) restore(saved);
+else { setLength(LENGTHS.includes(store.get('ps-len', 5)) ? store.get('ps-len', 5) : 5); newGame() }
+if (!store.get('ps-seen2', false)){ store.set('ps-seen2', true); $('helpBtn').click() }
+</script>
+
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>
