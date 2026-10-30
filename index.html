@@ -111,6 +111,8 @@ textarea{width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);b
 .theme-purple{--bg:#150e22;--surface:#2c2240;--surface-2:#453860;--absent:#1e1630;--card:#20172f;--muted:#ab9fc4;--brand-amber:#f5b63c}
 .theme-blue{--bg:#0a1424;--surface:#1c2c44;--surface-2:#33476a;--absent:#122038;--card:#142139;--muted:#97a9c6;--brand-amber:#f5b63c}
 .toast-btn{margin-left:8px;background:var(--brand-green);color:#fff;border:0;border-radius:8px;padding:6px 12px;font:800 .85rem var(--body);cursor:pointer}
+.tile.cursor{outline:3px solid var(--fg);outline-offset:-3px;cursor:pointer}
+.row .tile{cursor:default}
 .tile.ghost{color:var(--green);box-shadow:inset 0 0 0 2px var(--green);opacity:.85}
 .themes{display:flex;gap:10px;justify-content:center;margin:6px 0 4px}
 .themes button{flex:1;border:2px solid transparent;border-radius:12px;padding:10px 4px 8px;color:var(--fg);font:800 .8rem var(--body);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px}
@@ -436,7 +438,7 @@ function norm(s){ return s.toLowerCase().replace(/ñ/g,'\u0001').normalize('NFD'
 const settings = Object.assign({ hard:false, vibrate:true, contrast:false, ghosts:true, theme:'dark' }, store.get('ps-settings', {}));
 let mode = store.get('ps-mode', 'daily');           // 'daily' | 'free'
 let COLS = LENGTHS.includes(store.get('ps-len', 5)) ? store.get('ps-len', 5) : 5;
-let game, current = '', busy = false;               // game = {answer, guesses, over, won, hint}
+let game, slots = [], cursor = 0, busy = false;               // game = {answer, guesses, over, won, hint}
 
 // ---------- palabra del día ----------
 function todayKey(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') }
@@ -501,17 +503,33 @@ kb.addEventListener('click', e => { const b = e.target.closest('.key'); if (b){ 
 document.addEventListener('keydown', e => {
   if (!$('modal').hidden){ if (e.key === 'Escape') closeModal(); return }
   if (e.ctrlKey || e.metaKey || e.altKey) return;
-  const k = e.key === 'Enter' || e.key === 'Backspace' ? e.key : norm(e.key);
-  if (/^[a-zñ]$/.test(k) || k === 'Enter' || k === 'Backspace'){ e.preventDefault(); press(k) }
+  const k = ['Enter','Backspace','ArrowLeft','ArrowRight'].includes(e.key) ? e.key : norm(e.key);
+  if (/^[a-zñ]$/.test(k) || ['Enter','Backspace','ArrowLeft','ArrowRight'].includes(e.key)){ e.preventDefault(); press(k) }
 });
 
 function press(k){
   if (game.over || busy) return;
   if (k === 'Enter') return submit();
-  const cur = [...current];
-  if (k === 'Backspace') cur.pop(); else if (cur.length < COLS) cur.push(k);
-  current = cur.join(''); draw();
+  if (k === 'ArrowLeft'){ cursor = Math.max(0, cursor - 1); return draw() }
+  if (k === 'ArrowRight'){ cursor = Math.min(COLS - 1, cursor + 1); return draw() }
+  if (k === 'Backspace'){
+    if (slots[cursor]) slots[cursor] = '';
+    else if (cursor > 0){ cursor--; slots[cursor] = '' }
+    return draw();
+  }
+  slots[cursor] = k;
+  // salta a la siguiente casilla vacía (hacia adelante y luego desde el inicio)
+  for (let step = 1; step <= COLS; step++){ const j = (cursor + step) % COLS; if (!slots[j]){ cursor = j; break } if (step === COLS) cursor = Math.min(cursor + 1, COLS - 1) }
+  draw();
 }
+const word = () => slots.join('');
+const isFull = () => slots.length === COLS && slots.every(Boolean);
+function clearSlots(){ slots = Array(COLS).fill(''); cursor = 0 }
+board.addEventListener('click', e => {
+  const t = e.target.closest('.tile'); if (!t || !game || game.over || busy) return;
+  const row = board.children[game.guesses.length]; if (!row || t.parentNode !== row) return;
+  cursor = [...row.children].indexOf(t); draw();
+});
 function ghostLetters(){
   const g = Array(COLS).fill('');
   if (!settings.ghosts || !game) return g;
@@ -521,9 +539,10 @@ function ghostLetters(){
 }
 function draw(){
   const row = board.children[game.guesses.length]; if (!row || game.over) return;
-  const cur = [...current], gh = ghostLetters();
+  const cur = slots, gh = ghostLetters();
   [...row.children].forEach((t,i) => {
     const ghost = !cur[i] && gh[i];
+    t.classList.toggle('cursor', i === cursor && !busy);
     t.textContent = cur[i] || gh[i] || '';
     t.classList.toggle('filled', !!cur[i]);
     t.classList.toggle('ghost', !!ghost);
@@ -551,20 +570,22 @@ function hardModeError(guess){
   return null;
 }
 function submit(){
-  if ([...current].length < COLS) return reject('Faltan letras');
+  if (!isFull()) return reject('Faltan letras');
+  const current = word();
   if (!DICT.has(current)){
     const w = current;
     reject(`«${w.toUpperCase()}» no está en el diccionario`);
     return actionToast(`«${w.toUpperCase()}» no está en el diccionario`, 'Agregar', () => {
       DICT.add(w);
       const list = store.get('ps-custom', []); if (!list.includes(w)){ list.push(w); store.set('ps-custom', list) }
-      toast(`«${w.toUpperCase()}» agregada`); if (current === w) submit();
+      toast(`«${w.toUpperCase()}» agregada`); if (word() === w) submit();
     });
   }
   if (settings.hard){ const err = hardModeError(current); if (err) return reject(err) }
   const row = board.children[game.guesses.length];
   const guess = current, res = score(guess, game.answer), step = COLS > 6 ? 170 : 220;
-  game.guesses.push(guess); current = ''; busy = true; save();
+  game.guesses.push(guess); clearSlots(); busy = true; save();
+  [...row.children].forEach(t => t.classList.remove('cursor'));
   [...row.children].forEach((t,i) => setTimeout(() => {
     t.classList.remove('ghost'); t.classList.add('flip');
     setTimeout(() => { t.classList.remove('filled'); t.classList.add(res[i]) }, 200);
@@ -703,6 +724,7 @@ $('helpBtn').onclick = () => showModal(`
     <span><i style="background:var(--absent);border:1px solid var(--surface-2)"></i>Letra que no está</span>
   </div>
   <p><b>Diario:</b> una palabra al día, la misma para todos. Compara tu resultado con tus amigos.<br><b>Libre:</b> todas las partidas que quieras.</p>
+  <p>Toca un cuadrito para escribir en ese lugar; puedes llenar las letras en el orden que quieras.</p>
   <p>Solo se aceptan palabras reales, sin acentos. Si una palabra real no se acepta, toca «Agregar» y quedará guardada en tu teléfono. Tienes una pista por partida.</p>
   <button class="primary" id="closeBtn">¡A jugar!</button>`);
 $('settingsBtn').onclick = () => {
@@ -744,7 +766,7 @@ function resetVisuals(){
   kb.querySelectorAll('.key').forEach(b => { b.classList.remove('correct','present','absent'); delete b.dataset.s });
 }
 function render(){
-  resetVisuals(); current = '';
+  resetVisuals(); clearSlots();
   game.guesses.forEach((guess, r) => {
     const res = score(guess, game.answer);
     [...board.children[r].children].forEach((t,i) => { t.textContent = [...guess][i]; t.classList.add(res[i]) });
