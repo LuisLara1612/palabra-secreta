@@ -79,6 +79,38 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 .primary{background:var(--green);color:#fff;border:0;border-radius:12px;padding:13px 20px;font:800 1rem var(--body);width:100%;margin-top:8px;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.tile.flip,.tile.filled,.row.shake{animation:none}}
 @media (max-height:640px){.key{height:46px}}
+
+h1{font-size:1.3rem;white-space:nowrap}
+.tools{display:flex;gap:6px}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;padding:0 9px}
+#hintBtn.used{color:var(--amber)}
+.bar{display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 0;border-top:1px solid var(--surface);border-bottom:1px solid var(--surface)}
+.lengths{display:flex;gap:5px;padding:0;border:0}
+.len{width:34px}
+.seg{display:flex;background:var(--surface);border-radius:10px;padding:3px}
+.seg button{border:0;background:none;color:var(--muted);font:800 .82rem var(--body);padding:7px 10px;border-radius:8px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface-2);color:var(--fg)}
+.hint-line{text-align:center;color:var(--muted);font-size:.85rem;padding-top:6px}
+.hint-line b{color:var(--green)}
+.sub{font-size:.8rem;margin-top:4px}
+.dist{display:flex;flex-direction:column;gap:4px;margin:8px 0 14px;font-variant-numeric:tabular-nums}
+.drow{display:flex;align-items:center;gap:8px;font-weight:800;font-size:.85rem}
+.drow span{width:12px;color:var(--muted)}
+.dbar{background:var(--surface-2);border-radius:4px;padding:3px 7px;text-align:right;min-width:22px;box-sizing:border-box}
+.dbar.now{background:var(--green)}
+.secondary{background:var(--surface);color:var(--fg);border:0;border-radius:12px;padding:12px 20px;font:800 .95rem var(--body);width:100%;margin-top:8px;cursor:pointer}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;padding:12px 0;border-bottom:1px solid var(--surface);cursor:pointer}
+.opt b{display:block}.opt small{color:var(--muted);font-size:.8rem}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.sw{flex:none;width:44px;height:26px;border-radius:13px;background:var(--surface-2);position:relative;transition:background .2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--fg);transition:transform .2s}
+.opt input:checked + .sw{background:var(--green)}
+.opt input:checked + .sw::after{transform:translateX(18px)}
+.opt input:focus-visible + .sw{outline:2px solid var(--amber);outline-offset:2px}
+textarea{width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--surface-2);border-radius:10px;padding:10px;font:600 .95rem var(--body);margin:10px 0;user-select:text}
+.contrast{--green:#e8732c;--green-edge:#b9561a;--amber:#4f9fe8;--amber-edge:#2f78bd}
+.card{max-height:calc(100vh - 32px);overflow-y:auto}
+@media (max-width:370px){.seg button{padding:7px 7px}.len{width:30px}.bar{gap:6px}h1{font-size:1.15rem}}
 </style>
 
 </head>
@@ -87,9 +119,18 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
   <header>
     <button class="icon-btn" id="helpBtn" aria-label="Cómo jugar">?</button>
     <h1>Palabra <span>Secreta</span></h1>
-    <button class="icon-btn" id="newBtn">Nueva</button>
+    <div class="tools">
+      <button class="icon-btn" id="hintBtn" aria-label="Pista"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg></button>
+      <button class="icon-btn" id="statsBtn" aria-label="Estadísticas"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg></button>
+      <button class="icon-btn" id="settingsBtn" aria-label="Ajustes"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </div>
   </header>
-  <div class="lengths" id="lengths"><small>Letras</small></div>
+  <div class="bar">
+    <div class="seg"><button id="modeDaily">Diario</button><button id="modeFree">Libre</button></div>
+    <div class="lengths" id="lengths"></div>
+    <button class="icon-btn" id="newBtn" aria-label="Nueva palabra"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></button>
+  </div>
+  <div class="hint-line" id="hintLine" hidden></div>
   <div class="board-wrap" id="wrap"><div class="board" id="board"></div></div>
   <div class="kb" id="kb"></div>
 </div>
@@ -119,27 +160,141 @@ const POOL = (
 "anteojos aparato banquete brujeria carnaval casamiento cerradura chimenea computadora dinosaurio domador ensalada escultor espinaca fantasia ferrocarril hechizos huracanes juguetes lavadora libreria lagartija mantequilla mecanico mexicano monstruo murcielago orquesta palomitas papalote pescador princesa profesor relampago rompecabezas sacapuntas semaforo serpiente telefono temblores terremoto tiburones tormentas vacaciones ventilador zanahoria"
 ).split(/\s+/).filter(w => /^[a-zñ]+$/.test(w));
 
+// ===== Diccionario para validar intentos =====
+const DICT = (() => {
+// sustantivos (se agrega plural)
+const N = `
+abanico abeja abismo abono abrazo abrigo abril abuelo acceso accion aceite aceituna acera acero acento acido acta actitud actor actriz acuerdo adorno aduana aereo afecto agenda agosto agua aguacate aguila aguja agujero ahorro aire ajedrez ajo ala alambre alarma alba albañil alberca album alcalde aldea alegria alfiler alfombra algodon alianza alimento aliento alma almacen almeja almendra almohada almuerzo alpaca altar altura alumno amanecer amante ambiente amigo amistad amor ancla andamio angel angulo anillo animal animo anis antena antojo anuncio anzuelo año apellido apetito apodo apoyo arana arbitro arbol arbusto arcilla arco arcoiris ardilla area arena arete arma armario aroma arroyo arroz arte arteria articulo artista asado asiento asunto atajo ataque atleta atole atomo atun aula aumento autor autobus auto avance ave avena avenida aventura avion aviso axila ayuda azucar azufre azul
+bache bahia baile bajada balanza balcon balde ballena balon bambu banca banco banda bandeja bandera banqueta baño barba barco barda barniz barra barranco barril barrio barro base basura bata batalla bate batido baton baul bebe bebida beca belleza beso bestia biberon biblia bicho bigote billete bistec blusa boca bocina boda bodega bolero boleto bolillo bolsa bolso bomba bombero bombon bondad borde borrador bosque bota botana bote botella boton boxeo brasa brazo brecha brillo brisa broche broma bronce brote bruja brujula bueno bufalo bufanda buho bulto burbuja burla burro busca busqueda butaca buzo buzon
+caballo cabaña cabello cabeza cabina cable cabra cacao cacahuate cachorro cactus cadena cadera cafe cafetera caida caja cajero cajon cajeta calabaza calcetin caldo calendario calidad calle calma calor cama camara camarero camaron camello camino camion camisa camiseta campana campeon campo canal canario canasta cancion candado canela cangrejo canica canoa cansancio cantante cantidad canto caña capa capilla capital capitan capitulo capricho cara caracol caracola caramelo carbon carcel cardo carga cargo caricia cariño carne carnaval carpeta carpintero carrera carreta carretera carril carro carrusel carta cartel cartera carton casa cascada cascara casco caseta casino caso castillo castor causa caverna caza cazador cebolla cebra ceja celda cemento cena ceniza centavo centro cepillo cerca cerdo cereal cerebro cereza cerillo cero cerro cerradura cesped cesta chalupa chamarra champu chango chapulin chaqueta charco charla chaleco cheque chicle chile chimenea chiste chivo chocolate chofer choque chorizo choza chuleta cielo ciencia ciervo cifra cigarro cima cine cinta cintura cinturon circo circulo ciruela cisne cita ciudad clase clave clavo cliente clima clinica club cobija cobre coche cocina cocinero coco codigo codo cofre cohete cola colchon colegio colibri colina collar colmena colmillo colonia color columna comal combate comedor comercio cometa comida comienzo compas compra concierto concha conejo conflicto congreso consejo contrato control copa copia coral corazon corbata cordero cordon coro corona correa correo corriente corte cortina cosa cosecha costa costado costilla costumbre costura crater crayon credito crema crimen cristal cruce crucero cuaderno cuadra cuadro cuarto cubeta cubo cuchara cuchillo cuello cuenca cuenta cuento cuerda cuerno cuero cuerpo cueva cuidado culebra culpa cultura cumbre cuna cuota curso curva
+dado daga dama danza daño dato debate deber decena decision dedo defecto defensa delfin delito demonio dentista deporte derecho desayuno descanso deseo desfile desierto destino detalle deuda diablo dialogo diamante diario dibujo diente dieta dinero dios direccion disco disfraz diseño disputa distancia division doctor dolor domingo dominio dragon drama ducha duda dueño dulce duende durazno
+eclipse edad edificio efecto eje ejemplo ejercito elefante elote embarazo emocion empleo empresa encanto encargo encia enero energia enfermo enemigo engaño enlace ensalada ensayo entrada envase envidia epoca equipo error escalera escalon escama escena escoba escritor escuela escudo esfuerzo espacio espada espalda espejo esperanza espina esponja esposa esquina establo estado estadio estante estatua estilo estomago estrella estufa etapa evento examen exito
+fabrica faceta factura falda falla falta fama familia fantasma farmacia faro farol fauna favor fecha feria fiebre fiesta figura fila filo fin final finca firma flan flauta flecha flor flota foco fogata fondo forma foto fracaso frase frasco frente fresa frijol frio frontera fruta fuego fuente fuerza funcion furia futbol futuro
+gabinete gafete gaita galaxia galleta gallina gallo galope gamba ganado ganso garaje garganta garra garza gasto gato gaviota gelatina gemelo genio gente gesto gigante gimnasio girasol globo gloria gobierno golfo golondrina golosina golpe goma gorila gorra gorro gota grado gramo granada granizo granja grano grasa grieta grillo gripe grito grupo gruta guante guardia guerra guerrero guia guion guisado guiso guitarra gusano gusto
+hacha hada halcon hamaca hambre harina helado helecho herida hermano heroe herencia herida herramienta hielo hierba hierro higado higo hija hijo hilo himno hipo historia hogar hoguera hoja hombre hombro hongo honor hora horario hormiga horno hospital hotel hoyo hueco huella huerto hueso huevo humo humor huracan
+idea idioma iglesia imagen iman impuesto incendio indice informe ingeniero insecto instante invento invierno isla
+jabali jabon jaguar jalea jamon jardin jarra jarabe jaula jefe jeringa jinete jirafa jitomate joya juego jueves juez jugador jugo juguete juicio julio junio jungla justicia juventud
+labio labor lado ladrillo ladron lagarto lago lagrima laguna lamina lampara lana langosta lanza lapiz largo lata latido lavabo lazo leccion leche lecho lechuga lector legumbre lengua lente lenteja leña leon leopardo letra letrero ley leyenda libertad libra libreta libro licencia lider liebre liga limon limonada limpieza linea lino linterna lista litro llama llamada llano llanta llanto llave llegada lluvia lobo local locura lodo logro loro lote lucha lugar lujo luna lunes luz
+maceta machete madera madre maestro magia maiz maleta mamifero manada mancha mandil mango manguera mani mano manta mantel manteca manzana mañana mapa maquina mar maraton marca marco marea mareo margen marido marino mariposa marisco marmol martes martillo marzo masa mascara mascota mata matematicas materia mayo mazorca medalla media medicina medico medida medio medusa mejilla melodia melon memoria mensaje mente mentira menu mercado merienda mermelada mes mesa meta metal metodo metro mezcla miedo miel miembro miercoles milagro militar milla millon mina ministro minuto mirada misa mision misterio mitad mito mochila moda modelo modo mole molino momento moneda mono monstruo montaña monte monton moño morada mosca mosquito mostaza motivo moto motor movimiento mozo mueble muela muelle muerte muestra mujer muleta multa mundo muñeca muñeco muro museo musica muslo
+nacion nada nalga naranja nariz nata nativo naturaleza nave navaja navidad neblina necesidad negocio nervio nido niebla nieto nieve niñez niño nivel noche nombre nopal norte nota noticia novela novio nube nuca nudo nuera numero nutria
+objeto obra oceano ocaso octubre oferta oficina oficio oido ojo ola oleaje olfato olivo olla olor olvido ombligo onda oportunidad opinion orden oreja organo orgullo orilla oro orquesta oruga oso ostion otoño oveja oxigeno
+pabellon paciencia padre pagina pago pais paisaje paja pajaro palabra palacio paleta palma palmera palo paloma pan panadero panal pantalla pantalon pantera pañal pañuelo papa papalote papaya papel paquete par parada paraguas pared pareja pariente parque parte partido pasado pasaje pasajero pasillo paso pasta pastel pastilla pasto pata patata patin patio pato patria patron pausa pavo payaso paz peaton pecado pecho pedazo pedido peine pelea pelicula peligro pelo pelota peluca peluche pena pensamiento pepino pera perdon perfume periodico perico perla permiso perro persona pescado pescador peso pestaña petalo petroleo pez piano picadura pico pie piedra piel pierna pieza pijama pila piloto pimienta pino pintor pintura pinza piña piñata pirata piso pista pistola pizarra placer plan plancha planeta planta plata platano plato playa playera plaza plazo pluma poder poema poeta policia pollo polvo pomada poncho porcion portal postre pozo pozole practica pradera prado precio pregunta premio prenda presa presidente primavera primo princesa principe prisa prision problema proceso profesor programa promesa propina proyecto prueba publico pueblo puente puerco puerta puerto pulga pulgar pulmon pulpo pulsera punta punto puñal puño pupitre
+queja quesadilla queso quimica
+rabia radio raiz rama ramo rana rancho rapidez rascacielos rasgo rata rato raton raya rayo razon realidad rebanada rebaño receta recibo recreo recuerdo red redaccion refresco refugio regalo regla reina reino relampago relleno reloj remedio remo renglon repollo reposo reptil res resfriado respeto respuesta resto resumen retrato reunion revista rey rezo ribera rifle rincon rio riñon riqueza risa ritmo rival roble roca rocio rodilla rollo romance rompecabezas ropa rosa rostro rubi rueda ruido ruina rumbo rumor ruta rutina
+sabado sabana sabor sacapuntas saco sal sala salario salchicha salida saliva salmon salon salsa salto salud saludo sandalia sandia sangre santo sapo sarten sastre secreto sector sed seda segundo seguro selva semaforo semana semilla senado sendero sensacion sentido señal señor señora sepulcro serie serpiente servicio sesion siesta siglo signo silbato silencio silla simbolo sirena sistema sitio soborno sobre sobrino socio sofa sol soldado soledad sombra sombrero sonido sonrisa sopa soplo sorpresa sotano suegro suela sueldo suelo sueño suerte sueter sujeto suma superficie sur susto
+tabaco tabla tablero taco tacon taladro talento taller talon tamal tamaño tambor tanque tapa tapete taquilla tarde tarea tarifa tarjeta tarro taza teatro techo tecla teclado tejado tejido tela telefono telon tema temblor temor templo tenedor tenis teoria tequila terremoto terreno tesoro testigo tiburon tiempo tienda tierra tigre tijera timbre tinta tio tipo tira titulo tiza toalla tobillo tocino tomate tono tormenta tornado tornillo toro toronja torre torta tortilla tortuga tos total trabajo tractor traje trampa tranvia trapo trato trayecto trazo tren trenza tribu trigo trineo tripa triunfo trofeo trompeta trompo tronco trono tropa trozo trueno tubo tumba tunel turista turno
+ubicacion ultimo uniforme union unidad universo uña urna usuario utensilio uva
+vaca vacio vagon vaina vajilla valle valor vampiro vapor vaquero vara varon vaso vecino vehiculo vela velero velocidad vena venado venta ventaja ventana ventilador verano verbo verdad verdura vereda verso vestido vestido viaje viajero vicio victoria vida video vidrio viejo viento viernes vinagre vino violin virus visita vista viuda vivienda volcan voluntad voto voz vuelo vuelta
+yate yegua yema yerno yeso yogur zanahoria zapato zona zorro
+abogado actividad adulto anciano artesano asistente cantante carnicero cartero cirujano ciudadano comprador conductor criado ganador habitante jardinero lechero mecanico mesero monja obrero orador panadera pastor pescadero piloto policia portero vendedor zapatero arquero
+amarillo azulejo bandido borrego cordero cuyo gatito perrito pajarito pollito conejito osito palito ratito casita bolita mesita
+`;
+// adjetivos (se agrega femenino y plural)
+const A = `
+abierto absurdo abuelo aburrido activo agrio agudo ajeno alegre alto amable amargo amarillo amigo amplio ancho anciano antiguo atento audaz avaro bajo barato bello blanco blando bobo bonito bravo breve brillante bueno burlon caliente calvo callado calmo caro casado celoso cercano chico chistoso ciego cierto claro cobarde comodo completo comun contento corto cortes cruel crudo cuadrado culpable curioso debil delgado derecho desnudo despierto dificil digno directo distinto divino dorado duro educado enano enfermo enojado enorme entero escaso estrecho estricto eterno exacto extraño facil falso famoso fatal feliz feo fiel fino firme flaco flojo fresco frio fuerte furioso general generoso genial gordo grande grave gris grueso guapo hermoso hondo honesto horrible humano humedo humilde igual inmenso inteligente intenso inutil joven junto justo largo leal lejano lento libre ligero limpio lindo liso listo llano lleno loco lujoso maduro magico malo manso mayor mediano mejor menor mentiroso mexicano mismo moderno mojado morado moreno muerto mudo negro nervioso noble normal novato nuevo obvio oculto oscuro paciente pardo pequeño perdido perezoso perfecto pesado picante plano pleno pobre poco popular posible precioso preciso primero privado profundo pronto propio publico puro querido quieto rapido raro real redondo rico rigido robusto rojo romantico roto rubio rudo salado salvaje sano santo seco segundo seguro sencillo sensible serio severo simple sincero solo sordo suave sucio sutil tacaño tardio temprano tenso terco tierno timido tipico tonto torpe total tranquilo triste ultimo unico util vacio valiente variado veloz verde verdadero viejo violento vivo zurdo trabajador hablador soñador ganador jugador cantor lector
+`;
+// verbos regulares; marca :ie :ue :i para cambio de raiz
+const V = `
+abrazar abrir acabar aceptar acercar acompañar aconsejar acordar:ue acostar:ue adivinar admirar adorar afeitar agarrar agitar agradar agregar aguantar ahorrar alcanzar alegrar alejar almorzar:ue alquilar amar andar anotar apagar aparecer apostar:ue apoyar aprender apretar:ie aprobar:ue apuntar arreglar arrojar asar asistir asustar atacar atar atender:ie atrapar aumentar avanzar avisar ayudar bailar bajar bañar barrer batir beber besar borrar brillar brincar bromear bucear burlar buscar
+caber caer calentar:ie callar calmar cambiar caminar cansar cantar cargar casar castigar cavar cazar celebrar cenar cepillar cerrar:ie charlar chocar chupar cobrar cocinar coger colgar:ue colocar comenzar:ie comer compartir comprar comprender contar:ue contestar continuar copiar correr cortar coser costar:ue crear crecer creer criar cruzar cubrir cuidar cumplir curar
+danzar deber decidir dejar depender desayunar descansar describir descubrir desear despertar:ie destruir dibujar dirigir disfrutar divertir:ie doblar doler:ue dormir:ue ducharse durar echar educar elegir:i empezar:ie empujar encantar encender:ie encontrar:ue enfermar engañar enojar enseñar ensuciar entender:ie entrar entregar enviar escapar esconder escribir escuchar esperar esquiar estudiar evitar explicar
+faltar felicitar fijar firmar flotar formar fregar:ie freir fumar funcionar ganar gastar girar golpear gozar grabar gritar guardar guiar gustar habitar hablar helar:ie heredar herir:ie hervir:ie huir imaginar importar incluir intentar invitar jalar jugar:ue juntar jurar lanzar lavar leer levantar limpiar llamar llegar llenar llevar llorar llover:ue luchar
+manchar mandar manejar mantener marcar masticar matar medir:i mejorar mentir:ie merecer meter mezclar mirar mojar molestar montar morder:ue mostrar:ue mover:ue mudar nacer nadar narrar navegar necesitar negar:ie nevar:ie notar ocultar ocupar ocurrir odiar ofrecer olvidar operar opinar ordenar organizar pagar parar parecer partir pasar pasear patinar pedir:i pegar peinar pelear pensar:ie perder:ie permitir pertenecer pesar pescar picar pintar pisar planchar plantar platicar poblar portar practicar preferir:ie preguntar preparar presentar prestar probar:ue prometer pulir quebrar:ie quedar quemar quitar
+recibir recoger recordar:ue regalar regar:ie regresar reir repetir:i rescatar resolver:ue respetar respirar responder robar rodar:ue rogar:ue romper saber sacar saltar saludar salvar secar seguir:i sembrar:ie sentar:ie sentir:ie separar servir:i sobrar soltar:ue sonar:ue soñar:ue soplar sorprender subir sudar sufrir sumar suponer tapar tardar temer terminar tirar tocar tomar toser trabajar traducir tragar tratar trepar triunfar tronar:ue usar vencer vender viajar vigilar visitar vivir volar:ue volver:ue votar
+`;
+// formas irregulares y palabras sueltas
+const X = `
+ahora antes aqui alla arriba abajo adentro afuera atras bastante cerca contra desde donde entre hacia hasta luego mucho mucha muchos muchas nunca otro otra otros otras porque quien quizas siempre sobre tambien tampoco todavia todos todas tanto tanta tarde temprano usted ustedes nosotros nosotras ellos ellas cuando cuanto cuanta mientras despues detras encima debajo apenas jamas casi solo bueno vale claro hola adios gracias perdon vamos
+uno dos tres cuatro cinco seis siete ocho nueve diez once doce trece catorce quince veinte treinta cuarenta cincuenta sesenta setenta ochenta noventa cien ciento doscientos mil millon primero tercero cuarto quinto sexto septimo octavo noveno decimo
+somos eres fuiste fueron fuimos eramos seamos sean estoy estas estan estamos estaba estuve estuvo tengo tienes tiene tienen tenemos tuve tuvo tuvieron tendre tendra tenga tengan hago haces hace hacen hacemos hice hizo hicieron hare hara haga hagan hecho dicho digo dices dice dicen decimos dije dijo dijeron dire diga digan puedo puedes puede pueden podemos pude pudo pudieron podre podra pueda puedan quiero quieres quiere quieren queremos quise quiso querre quiera vengo vienes viene vienen venimos vine vino vinieron vendre venga pongo pones pone ponen puse puso pusieron pondre ponga salgo sales sale salen saldre salga traigo traje trajo trajeron traiga caigo cayo cayeron caiga oigo oyes oye oyen oyo oyeron oiga veo ves vemos vimos vieron visto vean voy vas vamos van iba ibas ibamos iban vaya vayan doy das damos dieron demos estoy sepa sepan supe supo supieron sabes sabe saben sabemos cabe quepo conozco conoce conocen sigo sigue siguen pido pide piden digo duermo duerme duermen murio muere mueren muerto escrito abierto roto vuelto puesto cubierto juego juegas juega juegan jugamos huyo huye huyen leyo leyeron creyo creyeron rio rieron
+`;
+const set = new Set();
+const ok = w => { const n = [...w].length; if (n >= 5 && n <= 8) set.add(w) };
+const words = s => s.trim().split(/\s+/).filter(Boolean);
+const plural = w => /[aeiou]$/.test(w) ? w + 's' : /z$/.test(w) ? w.slice(0,-1) + 'ces' : /s$/.test(w) && w.length > 4 && !/(es|is|os|us)$/.test(w.slice(-2)) ? w : w + 'es';
+words(N).forEach(w => { ok(w); ok(plural(w)) });
+words(A).forEach(w => {
+  ok(w); ok(plural(w));
+  if (/o$/.test(w)){ const f = w.slice(0,-1) + 'a'; ok(f); ok(f + 's') }
+  else if (/(or|on|an|in)$/.test(w)){ ok(w + 'a'); ok(w + 'as') }
+});
+const ends = {
+  ar: 'o as a amos ais an e aste o asteis aron aba abas abamos abais aban are aras ara aremos areis aran aria arias ariamos ariais arian e es emos eis en ara aras aramos arais aran ase ases asen ando ado ada ados adas ar ad ate arse arlo arla',
+  er: 'o es e emos eis en i iste io imos isteis ieron ia ias iamos iais ian ere eras era eremos ereis eran eria erias eriamos eriais erian a as amos ais an iera ieras ieramos ierais ieran iese iesen iendo ido ida idos idas er ed erse erlo erla',
+  ir: 'o es e imos is en i iste io imos isteis ieron ia ias iamos iais ian ire iras ira iremos ireis iran iria irias iriamos iriais irian a as amos ais an iera ieras ieramos ierais ieran iese iesen iendo ido ida idos idas ir id irse irlo irla'
+};
+const stemEnds = { ar:'o as a an e es en', er:'o es e en a as an', ir:'o es e en a as an' };
+words(V).forEach(v => {
+  const [inf, ch] = v.split(':');
+  const base = inf.replace(/se$/, ''), type = base.slice(-2), stem = base.slice(0,-2);
+  if (!ends[type]) return;
+  ends[type].split(' ').forEach(e => {
+    let s = stem;
+    if (/^[ei]/.test(e) && type === 'ar'){ if (/c$/.test(s)) s = s.slice(0,-1) + 'qu'; else if (/g$/.test(s)) s = s + 'u'; else if (/z$/.test(s)) s = s.slice(0,-1) + 'c' }
+    ok(s + e);
+  });
+  if (ch){
+    const from = ch === 'ue' ? 'o' : 'e', i = stem.lastIndexOf(ch === 'ue' && /u$/.test(stem.slice(0, stem.lastIndexOf('o')+1)) ? 'o' : from);
+    const pos = stem.lastIndexOf(from) >= 0 ? stem.lastIndexOf(from) : stem.lastIndexOf('u');
+    if (pos >= 0){
+      const s2 = stem.slice(0,pos) + ch + stem.slice(pos+1);
+      stemEnds[type].split(' ').forEach(e => ok(s2 + e));
+      if (type === 'ir'){ const s3 = stem.slice(0,pos) + (ch === 'ue' ? 'u' : 'i') + stem.slice(pos+1); ['io','ieron','iendo','amos','iera','ieras','ieran'].forEach(e => ok(s3 + e)) }
+    }
+  }
+  if (/(cer|cir)$/.test(base)){ const s = stem.slice(0,-1) + 'zc'; ['o','a','as','an','amos'].forEach(e => ok(s + e)) }
+  if (/(uir)$/.test(base)){ ['yo','yes','ye','yen','ya','yan','yeron','yendo'].forEach(e => ok(stem + e)) }
+});
+words(X).forEach(ok);
+return set;
+})();
+
+POOL.forEach(w => DICT.add(w));
 const BYLEN = {};
 for (const w of new Set(POOL)){ const n = [...w].length; (BYLEN[n] = BYLEN[n] || []).push(w) }
 const LENGTHS = [5,6,7,8];
 const ROWS = 6;
 const $ = id => document.getElementById(id);
 const board = $('board'), kb = $('kb'), wrap = $('wrap');
-let COLS, answer, guesses, current, over, busy = false;
-
 const store = {
   get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d }catch(e){ return d } },
   set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)) }catch(e){} }
 };
 function norm(s){ return s.toLowerCase().replace(/ñ/g,'\u0001').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\u0001/g,'ñ') }
 
-// selector de letras
+const settings = Object.assign({ hard:false, vibrate:true, contrast:false }, store.get('ps-settings', {}));
+let mode = store.get('ps-mode', 'daily');           // 'daily' | 'free'
+let COLS = LENGTHS.includes(store.get('ps-len', 5)) ? store.get('ps-len', 5) : 5;
+let game, current = '', busy = false;               // game = {answer, guesses, over, won, hint}
+
+// ---------- palabra del día ----------
+function todayKey(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') }
+function hash(str){ let h = 2166136261; for (const c of str){ h ^= c.codePointAt(0); h = Math.imul(h, 16777619) } return h >>> 0 }
+function dailyWord(len, day){
+  const list = BYLEN[len].slice().sort();
+  const start = Date.UTC(2026, 0, 1), [y,m,d] = day.split('-').map(Number);
+  const n = Math.round((Date.UTC(y, m-1, d) - start) / 864e5);
+  // recorre la lista en un orden revuelto fijo para que no se repita pronto
+  const order = list.map((w,i) => [hash(w + '#' + len), w]).sort((a,b) => a[0] - b[0]).map(x => x[1]);
+  return order[((n % order.length) + order.length) % order.length];
+}
+const gameKey = () => mode === 'daily' ? `ps-daily-${todayKey()}-${COLS}` : `ps-free-${COLS}`;
+const statsKey = () => `ps-st-${mode}-${COLS}`;
+
+// ---------- barra de controles ----------
+const modeBtns = { daily: $('modeDaily'), free: $('modeFree') };
+Object.entries(modeBtns).forEach(([m, b]) => b.onclick = () => { if (m !== mode){ mode = m; store.set('ps-mode', m); load() } });
 LENGTHS.forEach(n => {
   const b = document.createElement('button'); b.className = 'len'; b.id = 'len-' + n; b.textContent = n;
   b.setAttribute('aria-label', n + ' letras');
-  b.onclick = () => { if (n === COLS) return; if (!over && guesses.length) toast('Palabra anterior: ' + answer.toUpperCase()); setLength(n); newGame() };
+  b.onclick = () => { if (n !== COLS){ COLS = n; store.set('ps-len', n); load() } };
   $('lengths').appendChild(b);
 });
+$('newBtn').onclick = () => {
+  if (mode === 'daily') return toast('En modo Diario hay una palabra al día. Cambia a Libre para jugar más.');
+  if (!game.over && game.guesses.length) toast('Palabra anterior: ' + game.answer.toUpperCase());
+  newFree();
+};
 
 function buildBoard(){
   board.innerHTML = '';
@@ -155,18 +310,11 @@ function sizeBoard(){
   const gap = COLS >= 7 ? 5 : 6;
   const w = wrap.clientWidth, h = wrap.clientHeight - 20;
   const size = Math.max(28, Math.floor(Math.min((w - gap*(COLS-1)) / COLS, (h - gap*(ROWS-1)) / ROWS, 66)));
-  board.style.setProperty('--tile', size + 'px');
-  board.style.setProperty('--gap', gap + 'px');
+  board.style.setProperty('--tile', size + 'px'); board.style.setProperty('--gap', gap + 'px');
 }
 window.addEventListener('resize', sizeBoard);
 
-function setLength(n){
-  COLS = n; store.set('ps-len', n);
-  LENGTHS.forEach(x => $('len-' + x).setAttribute('aria-pressed', x === n));
-  buildBoard();
-}
-
-// teclado
+// ---------- teclado ----------
 ['qwertyuiop','asdfghjklñ','⏎zxcvbnm⌫'].forEach(line => {
   const r = document.createElement('div'); r.className = 'kr';
   [...line].forEach(ch => {
@@ -174,8 +322,7 @@ function setLength(n){
     if (ch === '⏎'){ b.textContent = 'ENVIAR'; b.classList.add('wide'); b.dataset.k = 'Enter' }
     else if (ch === '⌫'){ b.textContent = '⌫'; b.classList.add('wide'); b.dataset.k = 'Backspace'; b.setAttribute('aria-label','Borrar') }
     else { b.textContent = ch.toUpperCase(); b.dataset.k = ch }
-    b.id = 'key-' + b.dataset.k;
-    r.appendChild(b);
+    b.id = 'key-' + b.dataset.k; r.appendChild(b);
   });
   kb.appendChild(r);
 });
@@ -188,14 +335,14 @@ document.addEventListener('keydown', e => {
 });
 
 function press(k){
-  if (over || busy) return;
+  if (game.over || busy) return;
   if (k === 'Enter') return submit();
   const cur = [...current];
   if (k === 'Backspace') cur.pop(); else if (cur.length < COLS) cur.push(k);
   current = cur.join(''); draw();
 }
 function draw(){
-  const row = board.children[guesses.length]; if (!row) return;
+  const row = board.children[game.guesses.length]; if (!row) return;
   const cur = [...current];
   [...row.children].forEach((t,i) => { t.textContent = cur[i] || ''; t.classList.toggle('filled', !!cur[i]) });
 }
@@ -205,18 +352,35 @@ function score(guess, ans){
   g.forEach((ch,i) => { if (res[i] !== 'correct'){ const j = a.indexOf(ch); if (j > -1){ res[i] = 'present'; a[j] = null } } });
   return res;
 }
+function buzz(p){ if (settings.vibrate && navigator.vibrate) try{ navigator.vibrate(p) }catch(e){} }
+function reject(msg){
+  const row = board.children[game.guesses.length];
+  row.classList.remove('shake'); void row.offsetWidth; row.classList.add('shake'); buzz(80); toast(msg);
+}
+function hardModeError(guess){
+  const g = [...guess];
+  for (const prev of game.guesses){
+    const res = score(prev, game.answer), p = [...prev];
+    for (let i = 0; i < COLS; i++) if (res[i] === 'correct' && g[i] !== p[i]) return `La letra ${i+1} debe ser ${p[i].toUpperCase()}`;
+    for (let i = 0; i < COLS; i++) if (res[i] === 'present' && !g.includes(p[i])) return `Debes usar la ${p[i].toUpperCase()}`;
+  }
+  if (game.hint && g[game.hint.pos] !== game.hint.letter) return `La letra ${game.hint.pos+1} debe ser ${game.hint.letter.toUpperCase()}`;
+  return null;
+}
 function submit(){
-  const row = board.children[guesses.length];
-  if ([...current].length < COLS){ row.classList.remove('shake'); void row.offsetWidth; row.classList.add('shake'); return toast('Faltan letras') }
-  const guess = current, res = score(guess, answer), step = COLS > 6 ? 170 : 220;
-  guesses.push(guess); current = ''; busy = true;
+  if ([...current].length < COLS) return reject('Faltan letras');
+  if (!DICT.has(current)) return reject('Esa palabra no está en el diccionario');
+  if (settings.hard){ const err = hardModeError(current); if (err) return reject(err) }
+  const row = board.children[game.guesses.length];
+  const guess = current, res = score(guess, game.answer), step = COLS > 6 ? 170 : 220;
+  game.guesses.push(guess); current = ''; busy = true; save();
   [...row.children].forEach((t,i) => setTimeout(() => {
     t.classList.add('flip');
     setTimeout(() => { t.classList.remove('filled'); t.classList.add(res[i]) }, 200);
   }, i * step));
   setTimeout(() => {
-    paintKeys(guess, res); busy = false; save();
-    if (guess === answer) finish(true); else if (guesses.length === ROWS) finish(false);
+    paintKeys(guess, res); busy = false;
+    if (guess === game.answer) finish(true); else if (game.guesses.length === ROWS) finish(false);
   }, COLS * step + 300);
 }
 const rank = { absent:1, present:2, correct:3 };
@@ -226,68 +390,175 @@ function paintKeys(guess, res){
     if (!b.dataset.s || rank[res[i]] > rank[b.dataset.s]){ b.dataset.s = res[i]; b.classList.remove('correct','present','absent'); b.classList.add(res[i]) }
   });
 }
+
+// ---------- fin de partida y estadísticas ----------
+function getStats(){ const s = store.get(statsKey(), null) || {}; return Object.assign({ played:0, wins:0, streak:0, best:0, dist:[0,0,0,0,0,0], last:null }, s) }
 function finish(won){
-  over = true;
-  const key = 'ps-stats-' + COLS;
-  const s = store.get(key, { played:0, wins:0, streak:0, best:0 });
-  s.played++; if (won){ s.wins++; s.streak++; s.best = Math.max(s.best, s.streak) } else s.streak = 0;
-  store.set(key, s); store.set('ps-game', null);
-  const msgs = ['¡Genio!','¡Increíble!','¡Muy bien!','¡Bien hecho!','¡Lo lograste!','¡Por poco!'];
-  setTimeout(() => showModal(`
-    <h2>${won ? msgs[guesses.length-1] : 'Se acabaron los intentos'}</h2>
-    <p>${won ? `Adivinaste en ${guesses.length} de ${ROWS} intentos.` : 'La palabra secreta era:'}</p>
-    <div class="answer">${[...answer].map(c => `<b>${c.toUpperCase()}</b>`).join('')}</div>
-    <p>Estadísticas con ${COLS} letras</p>
+  game.over = true; game.won = won; save();
+  const s = getStats();
+  s.played++;
+  if (won){
+    s.wins++; s.dist[game.guesses.length - 1]++;
+    if (mode === 'daily'){
+      const y = new Date(); y.setDate(y.getDate() - 1);
+      const yk = y.getFullYear() + '-' + String(y.getMonth()+1).padStart(2,'0') + '-' + String(y.getDate()).padStart(2,'0');
+      s.streak = s.last === yk ? s.streak + 1 : 1; s.last = todayKey();
+    } else s.streak++;
+    s.best = Math.max(s.best, s.streak); buzz([40,60,40]);
+  } else { s.streak = 0; buzz(200) }
+  store.set(statsKey(), s);
+  setTimeout(showResult, 400);
+}
+function statsHTML(){
+  const s = getStats(), max = Math.max(1, ...s.dist), last = game.over && game.won ? game.guesses.length - 1 : -1;
+  return `
     <div class="stats">
       <div>${s.played}<small>Jugadas</small></div>
-      <div>${Math.round(s.wins / s.played * 100)}%<small>Ganadas</small></div>
+      <div>${s.played ? Math.round(s.wins / s.played * 100) : 0}%<small>Ganadas</small></div>
       <div>${s.streak}<small>Racha</small></div>
       <div>${s.best}<small>Mejor</small></div>
     </div>
-    <button class="primary" id="againBtn">Jugar otra</button>`), 400);
+    <p class="sub">Intentos para ganar · ${mode === 'daily' ? 'Diario' : 'Libre'}, ${COLS} letras</p>
+    <div class="dist">${s.dist.map((n,i) => `<div class="drow"><span>${i+1}</span><div class="dbar${i === last ? ' now' : ''}" style="width:${Math.max(8, n / max * 100)}%">${n}</div></div>`).join('')}</div>`;
 }
-function showModal(html){ $('modalCard').innerHTML = html; $('modal').hidden = false;
-  const a = $('againBtn'); if (a) a.onclick = () => { closeModal(); newGame() };
-  const c = $('closeBtn'); if (c) c.onclick = closeModal; }
-function closeModal(){ $('modal').hidden = true }
-$('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal() });
-let toastT;
-function toast(msg){ const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 1600) }
-function save(){ if (!over) store.set('ps-game', { len: COLS, answer, guesses }) }
-function resetVisuals(){
-  [...board.children].forEach(r => [...r.children].forEach(t => { t.textContent = ''; t.className = 'tile' }));
-  kb.querySelectorAll('.key').forEach(b => { b.classList.remove('correct','present','absent'); delete b.dataset.s });
+const praise = ['¡Genio!','¡Increíble!','¡Muy bien!','¡Bien hecho!','¡Lo lograste!','¡Por poco!'];
+function showResult(){
+  const nextBtn = mode === 'daily'
+    ? `<p class="sub">Nueva palabra del día en <b id="countdown"></b></p><button class="secondary" id="toFree">Seguir en modo Libre</button>`
+    : `<button class="secondary" id="againBtn">Jugar otra</button>`;
+  showModal(`
+    <h2>${game.won ? praise[game.guesses.length-1] : 'Se acabaron los intentos'}</h2>
+    <p>${game.won ? `Adivinaste en ${game.guesses.length} de ${ROWS} intentos.` : 'La palabra secreta era:'}</p>
+    <div class="answer">${[...game.answer].map(c => `<b>${c.toUpperCase()}</b>`).join('')}</div>
+    ${statsHTML()}
+    <button class="primary" id="shareBtn">Compartir resultado</button>
+    ${nextBtn}`);
+  $('shareBtn').onclick = share;
+  if ($('againBtn')) $('againBtn').onclick = () => { closeModal(); newFree() };
+  if ($('toFree')) $('toFree').onclick = () => { closeModal(); mode = 'free'; store.set('ps-mode','free'); load() };
+  tickCountdown();
 }
-function newGame(){
-  const list = BYLEN[COLS];
-  let next; do { next = list[Math.floor(Math.random() * list.length)] } while (next === answer && list.length > 1);
-  answer = next; guesses = []; current = ''; over = false; resetVisuals(); save();
+let cdTimer;
+function tickCountdown(){
+  clearInterval(cdTimer);
+  const el = $('countdown'); if (!el) return;
+  const upd = () => {
+    const now = new Date(), next = new Date(now); next.setHours(24,0,0,0);
+    const s = Math.floor((next - now) / 1000);
+    el.textContent = [Math.floor(s/3600), Math.floor(s%3600/60), s%60].map(n => String(n).padStart(2,'0')).join(':');
+    if (s <= 0){ clearInterval(cdTimer); closeModal(); load() }
+  };
+  upd(); cdTimer = setInterval(upd, 1000);
 }
-function restore(g){
-  setLength(g.len); answer = g.answer; guesses = []; current = ''; over = false; resetVisuals();
-  g.guesses.forEach(guess => {
-    const row = board.children[guesses.length], res = score(guess, answer);
-    [...row.children].forEach((t,i) => { t.textContent = [...guess][i]; t.classList.add(res[i]) });
-    guesses.push(guess); paintKeys(guess, res);
-  });
+function shareText(){
+  const [g, y, b] = settings.contrast ? ['🟧','🟦','⬛'] : ['🟩','🟨','⬛'];
+  const d = new Date(), date = d.getDate() + '/' + (d.getMonth()+1);
+  const head = `Palabra Secreta ${mode === 'daily' ? date : '(libre)'} · ${COLS} letras ${game.won ? game.guesses.length : 'X'}/${ROWS}${settings.hard ? '*' : ''}${game.hint ? ' (con pista)' : ''}`;
+  const grid = game.guesses.map(w => score(w, game.answer).map(r => r === 'correct' ? g : r === 'present' ? y : b).join('')).join('\n');
+  return head + '\n\n' + grid;
+}
+function share(){
+  const text = shareText();
+  if (navigator.share && window.top === window){ navigator.share({ text }).catch(() => {}); return }
+  const fallback = () => showModal(`<h2>Copia tu resultado</h2><textarea id="shareTxt" readonly rows="8">${text}</textarea><button class="primary" id="closeBtn">Listo</button>`, () => { const t = $('shareTxt'); t.focus(); t.select() });
+  try{
+    navigator.clipboard.writeText(text).then(() => toast('Resultado copiado. Pégalo en WhatsApp.'), fallback);
+  }catch(e){ fallback() }
 }
 
-$('newBtn').onclick = () => { if (!over && guesses.length) toast('Palabra anterior: ' + answer.toUpperCase()); newGame() };
+// ---------- pista ----------
+$('hintBtn').onclick = () => {
+  if (game.over) return toast('La partida ya terminó');
+  if (game.hint) return toast(`Tu pista: la letra ${game.hint.pos+1} es ${game.hint.letter.toUpperCase()}`);
+  const a = [...game.answer], known = new Set();
+  game.guesses.forEach(w => score(w, game.answer).forEach((r,i) => { if (r === 'correct') known.add(i) }));
+  const open = a.map((_,i) => i).filter(i => !known.has(i));
+  if (!open.length) return toast('Ya tienes todas las letras');
+  const pos = open[hash(game.answer + game.guesses.length) % open.length];
+  game.hint = { pos, letter: a[pos] }; save(); showHint();
+  toast(`Pista: la letra ${pos+1} es ${a[pos].toUpperCase()}`);
+};
+function showHint(){
+  const h = $('hintLine');
+  h.hidden = !game.hint;
+  if (game.hint) h.innerHTML = `Pista: la letra <b>${game.hint.pos+1}</b> es <b>${game.hint.letter.toUpperCase()}</b>`;
+  $('hintBtn').classList.toggle('used', !!game.hint);
+}
+
+// ---------- modales ----------
+function showModal(html, after){ $('modalCard').innerHTML = html; $('modal').hidden = false;
+  const c = $('closeBtn'); if (c) c.onclick = closeModal; if (after) after(); }
+function closeModal(){ $('modal').hidden = true; clearInterval(cdTimer) }
+$('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal() });
+let toastT;
+function toast(msg){ const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2200) }
+
+$('statsBtn').onclick = () => {
+  if (game.over) return showResult();
+  showModal(`<h2>Estadísticas</h2>${statsHTML()}<button class="primary" id="closeBtn">Cerrar</button>`);
+};
 $('helpBtn').onclick = () => showModal(`
   <h2>Cómo jugar</h2>
-  <p>Elige cuántas letras quieres (5 a 8) y adivina la palabra secreta en 6 intentos. Escribe una palabra y toca ENVIAR.</p>
+  <p>Adivina la palabra secreta en 6 intentos. Elige de 5 a 8 letras.</p>
   <div class="legend">
     <span><i style="background:var(--green)"></i>Letra correcta en su lugar</span>
     <span><i style="background:var(--amber)"></i>Letra en la palabra, pero en otro lugar</span>
     <span><i style="background:var(--absent);border:1px solid var(--surface-2)"></i>Letra que no está</span>
   </div>
-  <p>Las palabras no llevan acentos. La Ñ cuenta como letra.</p>
+  <p><b>Diario:</b> una palabra al día, la misma para todos. Compara tu resultado con tus amigos.<br><b>Libre:</b> todas las partidas que quieras.</p>
+  <p>Solo se aceptan palabras reales, sin acentos. Tienes una pista por partida.</p>
   <button class="primary" id="closeBtn">¡A jugar!</button>`);
+$('settingsBtn').onclick = () => {
+  const row = (id, title, desc) => `<label class="opt" for="${id}"><span><b>${title}</b><small>${desc}</small></span><input type="checkbox" id="${id}" ${settings[id.slice(4)] ? 'checked' : ''}><i class="sw"></i></label>`;
+  showModal(`<h2>Ajustes</h2>
+    ${row('opt-hard','Modo difícil','Debes usar las letras que ya descubriste')}
+    ${row('opt-vibrate','Vibración','Al acertar, perder o escribir mal')}
+    ${row('opt-contrast','Alto contraste','Naranja y azul, para daltonismo')}
+    <button class="primary" id="closeBtn">Listo</button>`, () => {
+    ['hard','vibrate','contrast'].forEach(k => $('opt-' + k).onchange = e => {
+      if (k === 'hard' && e.target.checked && game.guesses.length && !game.over){ e.target.checked = false; return toast('Activa el modo difícil al empezar una partida') }
+      settings[k] = e.target.checked; store.set('ps-settings', settings); applySettings();
+    });
+  });
+};
+function applySettings(){ document.documentElement.classList.toggle('contrast', settings.contrast) }
 
-const saved = store.get('ps-game', null);
-if (saved && saved.answer && Array.isArray(saved.guesses) && LENGTHS.includes(saved.len)) restore(saved);
-else { setLength(LENGTHS.includes(store.get('ps-len', 5)) ? store.get('ps-len', 5) : 5); newGame() }
-if (!store.get('ps-seen2', false)){ store.set('ps-seen2', true); $('helpBtn').click() }
+// ---------- cargar partidas ----------
+function save(){ store.set(gameKey(), game) }
+function resetVisuals(){
+  [...board.children].forEach(r => [...r.children].forEach(t => { t.textContent = ''; t.className = 'tile' }));
+  kb.querySelectorAll('.key').forEach(b => { b.classList.remove('correct','present','absent'); delete b.dataset.s });
+}
+function render(){
+  resetVisuals(); current = '';
+  game.guesses.forEach((guess, r) => {
+    const res = score(guess, game.answer);
+    [...board.children[r].children].forEach((t,i) => { t.textContent = [...guess][i]; t.classList.add(res[i]) });
+    paintKeys(guess, res);
+  });
+  showHint();
+}
+function newFree(){
+  const list = BYLEN[COLS], prev = game && game.answer;
+  let next; do { next = list[Math.floor(Math.random() * list.length)] } while (next === prev && list.length > 1);
+  game = { answer: next, guesses: [], over: false, won: false, hint: null }; save(); render();
+}
+function load(){
+  modeBtns.daily.setAttribute('aria-pressed', mode === 'daily'); modeBtns.free.setAttribute('aria-pressed', mode === 'free');
+  LENGTHS.forEach(x => $('len-' + x).setAttribute('aria-pressed', x === COLS));
+  $('newBtn').hidden = mode === 'daily';
+  buildBoard();
+  const saved = store.get(gameKey(), null);
+  if (mode === 'daily'){
+    const answer = dailyWord(COLS, todayKey());
+    game = saved && saved.answer === answer ? saved : { answer, guesses: [], over: false, won: false, hint: null };
+    render(); if (game.over) setTimeout(showResult, 300);
+  } else if (saved && saved.answer && !saved.over){ game = saved; render() }
+  else { game = null; newFree() }
+}
+
+applySettings(); load();
+if (!store.get('ps-seen3', false)){ store.set('ps-seen3', true); $('helpBtn').click() }
 </script>
 
 <script>
