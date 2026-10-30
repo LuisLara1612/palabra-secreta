@@ -248,6 +248,41 @@ a.toast-btn{display:inline-block;text-decoration:none}
 .is-light .overlay{background:rgba(20,22,30,.45)}
 .is-light .card{box-shadow:0 10px 30px rgba(0,0,0,.18)}
 .square .tile,.square .key,.square .mini b,.square .xc,.square .len,.square .icon-btn{border-radius:3px!important}
+.body{flex:1;display:flex;gap:28px;min-height:0}
+.game{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+.side{display:none}
+.sbox{background:var(--card);border-radius:14px;padding:14px}
+.sbox h3{margin:0 0 10px;font:800 .74rem var(--body);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.sbox .xli{font-size:.86rem}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sgrid button{background:var(--surface);color:var(--fg);border:0;border-radius:10px;padding:10px 9px;font:700 .84rem var(--body);cursor:pointer;text-align:left}
+.today{display:flex;gap:6px}
+.today button{flex:1;min-width:0;height:48px;border:0;border-radius:10px;background:var(--surface);color:var(--fg);font:700 1.05rem var(--display);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;line-height:1}
+.today button small{font:700 .6rem var(--body);color:var(--muted)}
+.today .win{background:var(--green);color:#fff}
+.today .lose{background:#8a4a4a;color:#fff}
+.today .win small,.today .lose small{color:#fff}
+.today .cur{box-shadow:inset 0 0 0 2px var(--brand-amber)}
+.xcross{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;font-size:.88rem;font-weight:700}
+.mini-btn{width:auto!important;margin:0!important;padding:7px 12px!important;font-size:.8rem!important}
+.sstats{display:grid;grid-template-columns:repeat(4,1fr);text-align:center;font:700 1.35rem var(--display);font-variant-numeric:tabular-nums}
+.sstats small{display:block;font:800 .6rem var(--body);color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:3px}
+.keys-help{display:grid;grid-template-columns:auto 1fr;gap:7px 10px;font-size:.85rem;align-items:center}
+.keys-help kbd{background:var(--surface);color:var(--fg);border-radius:6px;padding:3px 8px;font:800 .72rem var(--body);box-shadow:inset 0 -2px 0 rgba(0,0,0,.25);justify-self:start;white-space:nowrap}
+.side .xli.cur{box-shadow:inset 0 0 0 2px var(--brand-amber)}
+@media (min-width:900px){
+  .app{max-width:1120px}
+  .game{max-width:640px}
+  .side{display:flex;flex-direction:column;gap:12px;width:320px;flex:none;overflow-y:auto;padding:8px 2px 16px}
+  h1{font-size:1.7rem}
+  .key{max-width:54px;height:58px;font-size:1.15rem}
+  .key.wide{max-width:84px}
+  .card{max-width:440px}
+  .toast{top:calc(90px + env(safe-area-inset-top,0px))}
+}
+@media (hover:hover){
+  .key:hover,.menu button:hover,.icon-btn:hover,.len:hover,.sgrid button:hover,.today button:hover,.xli:hover,.xc:hover,.secondary:hover,.primary:hover,.seg button:hover,.hchip:hover{filter:brightness(1.15)}
+}
 </style>
 
 </head>
@@ -262,6 +297,7 @@ a.toast-btn{display:inline-block;text-decoration:none}
       <button class="icon-btn" id="settingsBtn" aria-label="Ajustes"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     </div>
   </header>
+  <div class="body"><main class="game">
   <div class="bar">
     <div class="seg"><button id="modeDaily">Diario</button><button id="modeFree">Libre</button></div>
     <div class="lengths" id="lengths"></div>
@@ -273,6 +309,7 @@ a.toast-btn{display:inline-block;text-decoration:none}
   <div class="board-wrap" id="wrap"><div class="board" id="board"></div><div class="xgrid" id="xgrid" hidden></div></div>
   <div class="clue-bar" id="clueBar" hidden><button id="cbPrev" aria-label="Pista anterior">‹</button><div class="ct" id="cbText"></div><button id="cbNext" aria-label="Pista siguiente">›</button></div>
   <div class="kb" id="kb"></div>
+  </main><aside class="side" id="side" aria-label="Panel de juego"></aside></div>
 </div>
 <div class="toast" id="toast" hidden></div>
 <div class="overlay" id="modal" hidden><div class="card" id="modalCard"></div></div>
@@ -1921,7 +1958,7 @@ function sizeBoard(){
   if (mode === 'cross') return crossSize();
   const gap = COLS >= 7 ? 5 : 6;
   const w = wrap.clientWidth, h = wrap.clientHeight - 20;
-  const size = Math.max(28, Math.floor(Math.min((w - gap*(COLS-1)) / COLS, (h - gap*(ROWS-1)) / ROWS, 66)));
+  const size = Math.max(28, Math.floor(Math.min((w - gap*(COLS-1)) / COLS, (h - gap*(ROWS-1)) / ROWS, innerWidth >= 900 ? 80 : 66)));
   board.style.setProperty('--tile', size + 'px'); board.style.setProperty('--gap', gap + 'px');
 }
 window.addEventListener('resize', sizeBoard);
@@ -1982,6 +2019,7 @@ function keyInfo(ch){
 document.addEventListener('keydown', e => {
   if (!$('modal').hidden){ if (e.key === 'Escape' && !modalLocked) closeModal(); return }
   if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (mode === 'cross' && ['ArrowUp','ArrowDown','Tab',' '].includes(e.key)){ e.preventDefault(); return press(e.key === 'Tab' && e.shiftKey ? 'ShiftTab' : e.key) }
   const named = ['Enter','Backspace','ArrowLeft','ArrowRight'].includes(e.key);
   const k = named ? e.key : norm(e.key);
   if (/^[a-zñ]$/.test(k) || named){ e.preventDefault(); press(k) }
@@ -2766,7 +2804,7 @@ function duoBuild(){
 }
 function duoSize(){
   const gap = 4, mid = 14, w = (wrap.clientWidth - mid) / 2, h = wrap.clientHeight - 16;
-  const size = Math.max(16, Math.floor(Math.min((w - gap*(COLS-1)) / COLS, (h - gap*(DUO_ROWS-1)) / DUO_ROWS, 48)));
+  const size = Math.max(16, Math.floor(Math.min((w - gap*(COLS-1)) / COLS, (h - gap*(DUO_ROWS-1)) / DUO_ROWS, innerWidth >= 900 ? 62 : 48)));
   board.style.setProperty('--tile', size + 'px'); board.style.setProperty('--gap', gap + 'px');
 }
 const duoRow = (k, r) => board.children[k] && board.children[k].children[r];
@@ -3081,7 +3119,7 @@ function crossBuild(){
 }
 function crossSize(){
   const L = cross.layout, w = wrap.clientWidth, h = wrap.clientHeight - 12, gap = 3;
-  const s = Math.max(20, Math.floor(Math.min((w - gap * (L.W - 1)) / L.W, (h - gap * (L.H - 1)) / L.H, 46)));
+  const s = Math.max(20, Math.floor(Math.min((w - gap * (L.W - 1)) / L.W, (h - gap * (L.H - 1)) / L.H, innerWidth >= 900 ? 60 : 46)));
   $('xgrid').style.setProperty('--cell', s + 'px');
 }
 function crossRender(){
@@ -3116,9 +3154,18 @@ function xJump(step){
 function crossPress(k){
   if (!cross || cross.done || !$('modal').hidden) return;
   const ks = xKeys(cross.layout.words[cross.sel.w]);
-  if (k === 'Enter') return xJump(1);
-  if (k === 'ArrowRight' || k === 'ArrowLeft'){ cross.sel.k = Math.max(0, Math.min(ks.length - 1, cross.sel.k + (k === 'ArrowRight' ? 1 : -1))); return crossRender() }
   const key = ks[cross.sel.k];
+  if (k === 'Enter' || k === 'Tab') return xJump(1);
+  if (k === 'ShiftTab') return xJump(-1);
+  if (k === ' ') return xSelectCell(key);
+  const mv = { ArrowRight: [0, 1, 'a'], ArrowLeft: [0, -1, 'a'], ArrowDown: [1, 0, 'd'], ArrowUp: [-1, 0, 'd'] }[k];
+  if (mv){
+    const [r, c] = key.split(',').map(Number), nk = (r + mv[0]) + ',' + (c + mv[1]);
+    const target = cross.cells[nk] ? nk : key, cell = cross.cells[target];
+    let wi = cell.w.find(i => cross.layout.words[i].d === mv[2]); if (wi === undefined) wi = cell.w.includes(cross.sel.w) ? cross.sel.w : cell.w[0];
+    cross.sel = { w: wi, k: xKeys(cross.layout.words[wi]).indexOf(target) };
+    return crossRender();
+  }
   if (cross.bad) delete cross.bad[key];
   if (k === 'Backspace'){
     if (cross.fill[key] && !cross.rev[key]) delete cross.fill[key];
@@ -3233,6 +3280,46 @@ function openCustomTheme(){
     apply();
   });
 }
+
+// ---------- panel lateral (computadora) ----------
+const keysHelp = () => mode === 'cross'
+  ? `<div class="keys-help"><kbd>A–Z</kbd><span>Escribir (también la Ñ)</span><kbd>← → ↑ ↓</kbd><span>Moverte por el crucigrama</span><kbd>Espacio</kbd><span>Cambiar horizontal / vertical</span><kbd>Tab</kbd><span>Siguiente pista</span><kbd>Retroceso</kbd><span>Borrar</span><kbd>Esc</kbd><span>Cerrar ventanas</span></div>`
+  : `<div class="keys-help"><kbd>A–Z</kbd><span>Escribir (también la Ñ)</span><kbd>Enter</kbd><span>Enviar la palabra</span><kbd>Retroceso</kbd><span>Borrar</span><kbd>← →</kbd><span>Moverte entre casillas</span><kbd>Esc</kbd><span>Cerrar ventanas</span></div>`;
+function renderSide(){
+  const el = $('side'); if (!el || getComputedStyle(el).display === 'none') return;
+  const box = (t, h) => `<section class="sbox"><h3>${t}</h3>${h}</section>`;
+  if (mode === 'cross' && cross){
+    const L = cross.layout, idx = d => L.words.map((p, i) => p.d === d ? i : -1).filter(i => i >= 0);
+    const item = i => { const p = L.words[i]; return `<button class="xli${xWordOk(i) ? ' done' : ''}${i === cross.sel.w && !cross.done ? ' cur' : ''}" data-si="${i}"><b>${p.n}</b>${p.clue} <small>(${[...p.w].length})</small></button>` };
+    el.innerHTML = box('→ Horizontales', idx('a').map(item).join('')) + box('↓ Verticales', idx('d').map(item).join('')) + box('Atajos de teclado', keysHelp());
+    el.querySelectorAll('[data-si]').forEach(b => b.onclick = () => {
+      if (cross.done) return;
+      const i = +b.dataset.si, ks = xKeys(L.words[i]), k = ks.findIndex(x => !cross.fill[x]);
+      cross.sel = { w: i, k: k < 0 ? 0 : k }; crossRender();
+    });
+    const cur = el.querySelector('.xli.cur'); if (cur) cur.scrollIntoView({ block: 'nearest' });
+    return;
+  }
+  const today = LENGTHS.map(n => {
+    const g = store.get(`ps-daily-${todayKey()}-${n}`, null), over = g && g.over;
+    const sub = over ? (g.won ? `${g.guesses.length}/6` : '✕') : g && g.guesses && g.guesses.length ? 'a medias' : 'letras';
+    return `<button class="${over ? (g.won ? 'win' : 'lose') : ''}${mode === 'daily' && COLS === n ? ' cur' : ''}" data-td="${n}" aria-label="Palabra del día de ${n} letras">${n}<small>${sub}</small></button>`;
+  }).join('');
+  const xd = store.get('ps-cross-' + todayKey(), null), s = getStats(), m = special() ? baseMode() : mode;
+  const modes = [['🧩 Crucigrama', openCross], ['👯 Doble palabra', openDuo], ['📱 Pasa el teléfono', openPass], ['⏱️ Contrarreloj', openTime], ['🏷️ Categorías', openCats], ['🤝 Retar a un amigo', openCreateReto], ['🗓️ Historial', openHistory], ['🏅 Logros', openAch]];
+  el.innerHTML =
+    box('Palabras de hoy', `<div class="today">${today}</div><div class="xcross"><span>🧩 Crucigrama del día</span><button class="secondary mini-btn" id="sdX">${xd && xd.done ? mmss(xd.elapsed) + ' ✓' : xd ? 'Continuar' : 'Jugar'}</button></div>`) +
+    box('Más formas de jugar', `<div class="sgrid">${modes.map((x, i) => `<button data-sm="${i}">${x[0]}</button>`).join('')}</div>`) +
+    box(`Tus números · ${m === 'daily' ? 'Diario' : 'Libre'}`, `<div class="sstats"><div>${s.played}<small>Jugadas</small></div><div>${s.played ? Math.round(s.wins / s.played * 100) : 0}%<small>Ganadas</small></div><div>${s.streak}<small>Racha</small></div><div>${s.best}<small>Mejor</small></div></div>`) +
+    box('Atajos de teclado', keysHelp());
+  el.querySelectorAll('[data-td]').forEach(b => b.onclick = () => { if (blockedInTuto()) return; store.set('ps-mode', 'daily'); store.set('ps-len', +b.dataset.td); goNormal('daily') });
+  el.querySelectorAll('[data-sm]').forEach(b => b.onclick = () => { if (blockedInTuto()) return; modes[+b.dataset.sm][1]() });
+  $('sdX').onclick = () => { if (!blockedInTuto()) startCross('daily') };
+}
+{ const loadBase = load; load = (...a) => { loadBase(...a); renderSide() } }
+{ const crBase = crossRender; crossRender = () => { crBase(); renderSide() } }
+{ const finBase = finish; finish = w => { finBase(w); setTimeout(renderSide, 80) } }
+window.addEventListener('resize', renderSide);
 
 applySettings();
 if (!store.get('ps-tuto', false)) startTuto(false);
