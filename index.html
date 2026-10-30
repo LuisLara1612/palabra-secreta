@@ -23,7 +23,7 @@ body{margin:0;font-size:14px}
 /* Una sola pantalla: título, selector de largo, tablero que se ajusta, teclado español con Ñ */
 :root{
   --bg:#0c0d10; --surface:#2e2f33; --surface-2:#45474d; --fg:#f5f5f2; --muted:#9a9ca3;
-  --green:#2f8a5c; --amber:#f2ab2a; --amber-edge:#d98a12; --green-edge:#226b46; --absent:#1b1c1f;
+  --green:#2f8a5c; --amber:#f2ab2a; --brand-green:#2f8a5c; --brand-amber:#f2ab2a; --brand-edge:#226b46; --amber-edge:#d98a12; --green-edge:#226b46; --absent:#1b1c1f; --card:#1a1b1f;
   --display:'Fredoka','Nunito',system-ui,sans-serif; --body:'Nunito',system-ui,sans-serif;
   color-scheme:dark;
 }
@@ -33,13 +33,13 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidde
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px}
 header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:8px}
 h1{font-family:var(--display);font-weight:700;font-size:1.45rem;margin:0;letter-spacing:.01em}
-h1 span{color:var(--amber)}
+h1 span{color:var(--brand-amber)}
 .icon-btn{background:var(--surface);color:var(--fg);border:0;border-radius:10px;height:38px;min-width:38px;padding:0 12px;font:700 .85rem var(--body);cursor:pointer}
-button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+button:focus-visible{outline:2px solid var(--brand-amber);outline-offset:2px}
 .lengths{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 0;border-top:1px solid var(--surface);border-bottom:1px solid var(--surface)}
 .lengths small{color:var(--muted);font-weight:700;font-size:.78rem;margin-right:4px;text-transform:uppercase;letter-spacing:.05em}
 .len{background:var(--surface);color:var(--fg);border:0;border-radius:9px;width:40px;height:34px;font:700 1rem var(--display);cursor:pointer}
-.len[aria-pressed="true"]{background:var(--green);box-shadow:inset 0 -3px 0 var(--green-edge)}
+.len[aria-pressed="true"]{background:var(--brand-green);box-shadow:inset 0 -3px 0 var(--brand-edge)}
 .board-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;padding:10px 0}
 .board{display:grid;gap:var(--gap,6px)}
 .row{display:grid;gap:var(--gap,6px)}
@@ -65,7 +65,7 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 .toast{position:fixed;left:50%;top:calc(110px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);
   font-weight:800;padding:10px 16px;border-radius:10px;z-index:20;max-width:calc(100% - 32px);text-align:center}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:30;padding:16px}
-.card{background:#1a1b1f;border-radius:18px;padding:22px;width:100%;max-width:360px;text-align:center;box-sizing:border-box}
+.card{background:var(--card);border-radius:18px;padding:22px;width:100%;max-width:360px;text-align:center;box-sizing:border-box}
 .card h2{font-family:var(--display);margin:0 0 6px;font-size:1.5rem}
 .card p{color:var(--muted);margin:6px 0;line-height:1.45}
 .answer{display:inline-flex;gap:4px;margin:10px 0;flex-wrap:wrap;justify-content:center}
@@ -76,14 +76,14 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 .legend{display:flex;flex-direction:column;gap:8px;text-align:left;margin:12px 0}
 .legend span{display:flex;align-items:center;gap:10px;color:var(--fg)}
 .legend i{width:28px;height:28px;border-radius:7px;flex:none}
-.primary{background:var(--green);color:#fff;border:0;border-radius:12px;padding:13px 20px;font:800 1rem var(--body);width:100%;margin-top:8px;cursor:pointer}
+.primary{background:var(--brand-green);color:#fff;border:0;border-radius:12px;padding:13px 20px;font:800 1rem var(--body);width:100%;margin-top:8px;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.tile.flip,.tile.filled,.row.shake{animation:none}}
 @media (max-height:640px){.key{height:46px}}
 
 h1{font-size:1.3rem;white-space:nowrap}
 .tools{display:flex;gap:6px}
 .icon-btn{display:inline-flex;align-items:center;justify-content:center;padding:0 9px}
-#hintBtn.used{color:var(--amber)}
+#hintBtn.used{color:var(--brand-amber)}
 .bar{display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 0;border-top:1px solid var(--surface);border-bottom:1px solid var(--surface)}
 .lengths{display:flex;gap:5px;padding:0;border:0}
 .len{width:34px}
@@ -91,7 +91,7 @@ h1{font-size:1.3rem;white-space:nowrap}
 .seg button{border:0;background:none;color:var(--muted);font:800 .82rem var(--body);padding:7px 10px;border-radius:8px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--surface-2);color:var(--fg)}
 .hint-line{text-align:center;color:var(--muted);font-size:.85rem;padding-top:6px}
-.hint-line b{color:var(--green)}
+.hint-line b{color:var(--fg);background:var(--surface-2);padding:1px 7px;border-radius:5px}
 .sub{font-size:.8rem;margin-top:4px}
 .dist{display:flex;flex-direction:column;gap:4px;margin:8px 0 14px;font-variant-numeric:tabular-nums}
 .drow{display:flex;align-items:center;gap:8px;font-weight:800;font-size:.85rem}
@@ -104,10 +104,19 @@ h1{font-size:1.3rem;white-space:nowrap}
 .opt input{position:absolute;opacity:0;pointer-events:none}
 .sw{flex:none;width:44px;height:26px;border-radius:13px;background:var(--surface-2);position:relative;transition:background .2s}
 .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--fg);transition:transform .2s}
-.opt input:checked + .sw{background:var(--green)}
+.opt input:checked + .sw{background:var(--brand-green)}
 .opt input:checked + .sw::after{transform:translateX(18px)}
 .opt input:focus-visible + .sw{outline:2px solid var(--amber);outline-offset:2px}
 textarea{width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--surface-2);border-radius:10px;padding:10px;font:600 .95rem var(--body);margin:10px 0;user-select:text}
+.theme-purple{--bg:#150e22;--surface:#2c2240;--surface-2:#453860;--absent:#1e1630;--card:#20172f;--muted:#ab9fc4;--brand-amber:#f5b63c}
+.theme-blue{--bg:#0a1424;--surface:#1c2c44;--surface-2:#33476a;--absent:#122038;--card:#142139;--muted:#97a9c6;--brand-amber:#f5b63c}
+.toast-btn{margin-left:8px;background:var(--brand-green);color:#fff;border:0;border-radius:8px;padding:6px 12px;font:800 .85rem var(--body);cursor:pointer}
+.tile.ghost{color:var(--green);box-shadow:inset 0 0 0 2px var(--green);opacity:.85}
+.themes{display:flex;gap:10px;justify-content:center;margin:6px 0 4px}
+.themes button{flex:1;border:2px solid transparent;border-radius:12px;padding:10px 4px 8px;color:var(--fg);font:800 .8rem var(--body);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px}
+.themes button[aria-pressed="true"]{border-color:var(--brand-amber)}
+.themes i{display:flex;gap:3px}.themes i b{width:12px;height:12px;border-radius:3px}
+.opt-title{text-align:left;font-weight:800;margin:14px 0 4px}
 .contrast{--green:#e8732c;--green-edge:#b9561a;--amber:#4f9fe8;--amber-edge:#2f78bd}
 .card{max-height:calc(100vh - 32px);overflow-y:auto}
 @media (max-width:370px){.seg button{padding:7px 7px}.len{width:30px}.bar{gap:6px}h1{font-size:1.15rem}}
@@ -208,6 +217,7 @@ ahora antes aqui alla arriba abajo adentro afuera atras bastante cerca contra de
 uno dos tres cuatro cinco seis siete ocho nueve diez once doce trece catorce quince veinte treinta cuarenta cincuenta sesenta setenta ochenta noventa cien ciento doscientos mil millon primero tercero cuarto quinto sexto septimo octavo noveno decimo
 somos eres fuiste fueron fuimos eramos seamos sean estoy estas estan estamos estaba estuve estuvo tengo tienes tiene tienen tenemos tuve tuvo tuvieron tendre tendra tenga tengan hago haces hace hacen hacemos hice hizo hicieron hare hara haga hagan hecho dicho digo dices dice dicen decimos dije dijo dijeron dire diga digan puedo puedes puede pueden podemos pude pudo pudieron podre podra pueda puedan quiero quieres quiere quieren queremos quise quiso querre quiera vengo vienes viene vienen venimos vine vino vinieron vendre venga pongo pones pone ponen puse puso pusieron pondre ponga salgo sales sale salen saldre salga traigo traje trajo trajeron traiga caigo cayo cayeron caiga oigo oyes oye oyen oyo oyeron oiga veo ves vemos vimos vieron visto vean voy vas vamos van iba ibas ibamos iban vaya vayan doy das damos dieron demos estoy sepa sepan supe supo supieron sabes sabe saben sabemos cabe quepo conozco conoce conocen sigo sigue siguen pido pide piden digo duermo duerme duermen murio muere mueren muerto escrito abierto roto vuelto puesto cubierto juego juegas juega juegan jugamos huyo huye huyen leyo leyeron creyo creyeron rio rieron
 `;
+globalThis.__N0 = N; globalThis.__A0 = A; globalThis.__V0 = V;
 const set = new Set();
 const ok = w => { const n = [...w].length; if (n >= 5 && n <= 8) set.add(w) };
 const words = s => s.trim().split(/\s+/).filter(Boolean);
@@ -250,6 +260,167 @@ return set;
 })();
 
 POOL.forEach(w => DICT.add(w));
+// ===== Ampliación del diccionario =====
+(() => {
+const N = `
+abad abadia abanico abdomen abeto abogacia abono aborto abrelatas absceso abuso acacia academia acantilado acarreo acceso accesorio accidente acecho acelga acequia acertijo achaque acitron aclaracion acoso acrobata acta actuacion acto acueducto acuario acusado adan adelanto ademan adivinanza adivino admiracion adobe adquisicion aduana adversario advertencia aerolinea aeropuerto afan afiche aficion afiliado afueras agasajo agencia agente agonia agricultor aguacero aguante aguinaldo agujeta ahijado ahogo ahumado ajuar ajuste alacena alacran alambrada alameda alarido alazan albahaca albatros albergue albondiga alboroto alcance alcancia alcantarilla alcatraz alcazar alcoba alcohol aldaba alero aleta alfalfa alfarero alga algebra alhaja alias alivio aljibe allanamiento almanaque almibar almirante almizcle alondra alpinista alquiler alrededor altavoz altibajo altitud alubia alud alumbrado alzada amapola amargura amatista amazona ambar ambicion ambulancia amenaza ametralladora amiba amnistia amortiguador amparo ampolla amuleto anaquel ancestro anchoa anciana andador andarin andén anemia anexo anfibio anfitrion angustia anhelo anillo animador aniversario anochecer anomalia ansia ansiedad antecedente antepasado anteojo antifaz antiguedad antorcha antro anzuelo apagon aparador aparato aparicion apariencia apartado apego apertura apio aplauso aporte apostol apoyo aprecio aprendiz apretón apunte arado araña arbitraje arboleda archivo ardor arenal arenque argolla argumento aria arista aritmetica armadura armazon armonia aro arpa arpon arquitecto arrabal arranque arrecife arrecho arreglo arriero arrullo arsenal artefacto arteria artesania artilugio asador asalto ascensor asco aseo asfalto asilo asombro aspa aspecto aspereza aspiradora astilla astro astronauta astucia asunto atardecer ataud atencion aterrizaje atico atleta atole atraccion atraco atrio atuendo audiencia auge augurio aullido aurora ausencia autopista autoridad auxilio avalancha avaricia avellana avestruz aviador avispa axioma ayuno azabache azada azahar azote azotea
+babero babosa bacalao bacteria badajo bagazo bahia bailarin bajio balazo balde baldosa balero balneario balsa bambalina banano banquete banquillo bañera baraja baranda barandal barbacoa barbero barbilla barca barniz barometro barquillo barricada barrida barriga barullo basalto bascula bastidor baston basurero batalla bateria batidora baul bautizo bayeta bazar beata bebedero becerro bejuco bellota bendicion beneficio berenjena berrinche besugo betabel betun biblioteca bicicleta bienestar bigamia bilis billar billetera binoculares biologia bisabuelo bisagra bisonte bistec bisturi bizcocho blanco blindaje bloque bobina bocadillo bocado bocanada bochorno bofetada bohio boina bolera boleta boliche bolido boligrafo bollo bolsillo bonanza bordado borrego borrasca borrachera bosquejo bostezo botica botin botiquin boveda boxeador bozal bracero bravura brebaje breña bribon brigada brincolin brocha brocoli bronquio brujo brusquedad budin buey buhonero bujia bulevar burocracia burrito butaca
+cabalgata cabecera cabestro cabildo cable cabrito cacahuate cacerola cacique cactus cadaver cadete cafeteria caimán caiman cajita cal calamar calambre calcio calculo caldera calefaccion calendario calibre caliz callejon callo calzada calzado calzon camarilla camaleon camarote cambio camilla campamento campesino campiña camposanto canal canalla candela candelabro candil canguro canibal canoa canon cantimplora cantina canto cañada cañon caoba capataz capote capricho capsula capucha capullo caracter caramelo carabina caravana carbono carcajada cardenal carencia carguero caricatura caridad caries carnero carpa carreta carroza cartilla cartucho casaca cascabel cascajo caserio caserola casete casona caspa cataleja catalogo catarata catarro catastrofe catedral categoria caucho caudal caudillo caverna cazo cazuela cebada cedro cegador celador celebracion celeste celula cenicero censo centella centinela centeno cepa cerbatana cerco cerebro ceremonia cerrojo certamen certeza cerveza cetro chabacano chacal chalet chamaco chamarra chamba champiñon chancla chantaje chapa chapopote charola charro chasis chatarra chavo chef chicharo chicharron chicote chilaquil chillido chinche chinola chiquero chiquillo chirimoya chisme chispa chocho chompa chorro choza chubasco chueco chulo chupon cicatriz ciclista ciclo ciclon cidra cielito cien cigarra cigueña cilindro cine cineasta cinismo cinta cipres circuito circular cirio ciruelo cirugia cisterna citrico clamor clan clarin claridad clarinete claustro clavel clavija clero clic cloro coartada cobertor cobijo cobra cobro cocodrilo coctel codicia codorniz cofradia cogollo cohete cojin colada colador colcha coleccion colecta colega colera colibri coliflor colilla collado colmado colono colorante columpio comadre comandante comarca combo comedia comensal comentario cometido comezon comic comino comisaria comision comite cómoda comodin compadre compañero compas compasion competencia complejo complice compra computadora comunidad conchita concurso condado conde condena condicion condor conejera confeti confianza confin congelador conjunto conjuro conquista consola consuelo contacto contenedor contienda contorno contraseña convento conversa convoy copete copiloto coraje corcel corcho corista cornisa corola corral correa corredor corrido corsario cortejo cortesia corteza cortijo cosmos costal costurero cotidiano coyote cráneo craneo crecida credo creencia crepusculo cria criado criatura crisis cristiano criterio critica cromo cronica cronometro croqueta crucigrama crudeza cuaderno cuadrilla cuajada cuartel cuarzo cubierta cubierto cubiculo cubo cucaracha cuchillada cuenco cuerdo cuesta cuidador culata culebra culto cumpleaños cuneta cupo cupon cura curandero curiosidad cursor custodia cutis
+dalia dama damasco danzon dardo datil debilidad decada decano decena decreto dedal deidad delantal delantero delator delegado delgadez delicia demanda demora densidad dentadura deposito derrame derrota desague desastre descuento desden desdicha desenlace desfile desierto desliz desmayo desorden despacho despedida despensa desperdicio desplante destello destierro desvan desvelo desvio detective detergente diadema diagrama dialecto diametro diana diarrea dibujante dictado dictador diestro diluvio diploma diputado disciplina discipulo discordia discurso diseño disgusto disparo diversion divisa divorcio docena documento dogma dolar domador donativo doncella dosis dote dulceria duna duplicado duquesa durazno
+ebano echarpe eco ecuador edicion editor efigie egoismo ejecutivo ejido elastico eleccion electrico elegancia elevador elixir elogio embajada embajador embarque embestida emblema embudo embutido emisora empanada empate empeño empleado empujon enagua encaje encargado encendedor encierro encina encomienda encuesta endulzante enfado enigma enjambre enojo ensueño entierro entrada entraña entrenador entrevista envidia envoltura epidemia episodio equipaje equilibrio ermita ermitaño escabeche escalera escalofrio escarcha escarabajo escaparate escenario esclavo escolta escombro escondite escorpion escritorio escritura escrutinio escultura escupitajo esencia esfera esmalte esmeralda espanto esparrago especie espectro espia espiga espinaca espiral espiritu esplendor esposo espuela espuma esqueleto esqui estaca estacion estafa estampa estandarte estanque estaño estero estiercol estirpe estofado estornudo estrado estrategia estrecho estreno estrofa estuche estudiante estupor etiqueta eucalipto euforia evangelio examen excursion exilio expediente experto explorador expresion extracto
+fabula fachada faena faisan fajo falange falacia fallo fanfarria fango fantasia faraon fardo farmaceutico fase fastidio fatiga fauno faz fe febrero fecundidad felino feligres fenomeno feretro feriado fermento feroz ferreteria festin festival fibra ficha fideo fiera figurin fijador filete filial filon filosofo filtro finado finanza fiscal fisico flama flamenco flecha fleco flete floreria florero fluido foca fogon folio follaje folleto fonda fondue fontanero forastero forja formula fortaleza fortuna forro fosa fosforo fosil fracaso fragancia fragata frambuesa franela franja frazada frenesi freno fresno friolento fritura frontal frutal frutero fuelle fulano fundador funeral furgon fusil fusion
+gabardina gacela gafete gajo galan galeon galera galeria galgo galope gamuza ganadero ganancia gancho ganzua garabato garbanzo garfio gargola garrafon garrapata garrote gasolina gaveta gazpacho gemido generador genero gentio geografia geranio gerente germen gestion girasol gitano glaciar glándula glotonería gnomo gobernador goleta golfista golondrina golpeteo gondola gorrion gota gotera gozo grabado grabadora gracia grada graduacion grafito gragea gramatica granadero granate granero granito granuja grapa gravedad grifo grillete gripa grosella grua guacamole guadaña guajolote guanabana guarache guarderia guarida guayaba guepardo guerrilla gueto guijarro guinda guiño guirnalda guisante gula gurú
+habano habichuela habitacion habito hablante hacienda hada halago halito hallazgo hamaca hangar harapo hartazgo hazaña hebilla hebra hechicero hechizo hectarea hedor helada hembra henequen heno herbolario herederero heredero herejia herradura herrero hervidero hidalgo hiedra hiena higuera hilera himno hinojo hipico hipopotamo historieta hocico hogaza hojalata hojuela holgazan hollin holocausto hombrera homenaje hondonada honradez horca horizonte hormigon hornilla horquilla hortaliza hospedaje hostal hoyuelo hucha huelga huerfano huesped huida huipil humareda humedad humildad hurto
+iceberg icono idilio idolo iguana ilusion imperio impetu incienso indicio indigena individuo industria infancia infierno inflacion ingenio ingle injerto inquilino insignia instinto insulto intento intestino invasion inversion invitado isleta itinerario
+jabali jabonera jacal jaguar jalapeño jalon jaqueca jarabe jardinera jarocho jarron jauria jazmin jefatura jengibre jerarquia jerga jicama jicara jinete jornada jornalero joroba jubilado judia juglar juguera juicio jumento juncal junta juramento jurado juventud juzgado
+laberinto laboratorio labrador lacayo lagartija lagrima laguna lamento lamina lancha langosta lanzador lapida lapso largometraje larva latigo latitud laton laurel lavanda lavanderia lazarillo leal lechon lechuza legado legion legumbre lejania lema leñador leñero lesion letargo levadura libelula liberacion libertad librero licenciado licor licuadora lienzo lija lila lima limosna linaje lince linterna liquido lirio lisonja listón litera llaga llamarada llanura llavero llorona lobato locomotora locutor lodazal lombriz lomo longitud loseta lucero luciernaga lugareño lumbre luna lunar lupa luto
+macana maceta machaca machismo madeja madrastra madriguera madrina madrugada maestria magnate magnolia maguey majestad malabar malecon maleficio malestar maleza malicia mamey manantial manatí manati mancuerna mandado mandarina mandibula mandoble manglar mania maniqui manivela manjar manojo mansion manzanilla maqueta maquillaje marabunta maraca marfil margarita mariachi marimba marioneta mariquita mariscal marmita marmota marques marrano martir mascarada mastil matorral matrimonio matriz maullido mausoleo mayordomo mazapan mazmorra mecate mecedora mechon medalla medianoche medula mejillon melancolia melaza melena mellizo membrillo mendigo menestra menta mentiroso mercader mercurio mesera meseta mesias mestizo metate meteoro metralla mezcal mezquita microbio migaja milpa mimbre mimo minero miniatura minoria mirador mirasol mirlo misil misionero mobiliario mocasin mochila mofeta moho mojarra molcajete mollete momia monarca monasterio monedero monje monopolio montaje montura monumento moraleja morcilla mordida mordisco morral mortaja mostrador motel motin muchacho mudanza muestrario mulato mulita multitud muralla murcielago murmullo musgo musico mutante
+nacimiento nado naipe naranjo narciso narrador nata naufragio navegante neblina nectar negrura nene neumatico nevada nicho nieve nogal nomada nopalera noria nostalgia notario novato novillo nuez nupcias
+oasis obelisco obispo oblea obsequio obstaculo ocaso ocelote octava oculista odisea ofrenda ogro ojal ojera ojota oleo olimpiada olivar olmo ombu omelet onza opera operador oración orador orbita orca orfebre orfanato organillo orgia orquidea ortiga osadia osamenta oscuridad ostra otomano ovalo ovillo
+pabellon pacto padrastro padrino paella pagare pajar pala paladar palanca palangana palco paleta paliacate palillo palmada palmito paloma palomita pampa panal pancarta pandero pandilla panfleto panorama pantano pantufla panza papada papeleria papiro parabrisas paracaidas parador paraiso paramo parcela pardo parroquia partera partitura pasamanos pasaporte pasatiempo pasion pastizal pastora patilla patineta patrulla pavor pazguato pebete pecera pedal pedestal pedrada pegamento pelaje pelicano pellejo peluquero penacho pendiente pendulo penumbra peñasco peon peonza pepita percha perchero perdiz peregrino perejil pereza perfil pergamino pericia perilla periodista perrera perseo persiana pesadilla pesebre pestillo petaca petate petirrojo pezuña pianista picaflor picaporte picnic pichon pilar pildora pileta pilon pimiento pincel pinguino pinole pinzon pistache pistacho pitahaya pitillo pizca placa plaga planicie plantio plasma plataforma platillo plebe pliego plomero plomo plumero poblado pocion podadora podio podium polea polilla polvora polvorón pomelo pompa ponche popote porche porfiado porra porron portazo portero portico posada postal postigo potrero potro pozuelo pradera precipicio pregon prendedor presagio presidio presion prestamo primate prisma probeta prodigio profeta prologo pronostico propuesta prosa provecho provincia proyectil pua pudin puesto pulgada pulpa pulque pulso puma punal puntapie puntero pupila pureza purpura
+quebrada quehacer quejido quemadura queso quetzal quimera quincena quinta quiosco quirofano quiste
+rabano racimo radar radiador rafaga raido rajadura ramaje ramillete rana rancio rapaz rapto raqueta rascador rasguño rastrillo rastro raton rebozo recamara recipiente recluta recompensa recorrido recuadro recurso redil redoma reflejo refran regadera regazo regidor regimen regimiento region registro regreso reguero rehen relato relicario relieve relincho reloj remanso remate remolino remolque renacuajo rencor rendija renta reparto repisa reptil requesón requeson resaca rescate reserva residuo resina resorte respaldo retablo retazo retoño retorno retrete retroceso revuelo rezago ribete riel rienda rifa rimel rinoceronte riña riñonera risco rizo robot roca rodaja rodeo roedor rombo romero rompeolas ronquido roseta rosal rosario rosca rosquilla rotulo rubor ruedo rufian ruiseñor ruleta rumba rupia
+sabana sabueso sacerdote saco sacrificio saeta safari sagitario saguaro sainete salamandra salero saleroso salitre salmo salmuera salpicadura saltamontes salterio salvavidas sanatorio sandalia sandwich sanguijuela santuario sapo saque saqueo sarampion sarape sargento sarna satelite satiro sauce saxofon secadora sequia sereno serrucho servilleta sesenta seto silla sillon silueta simio sindicato sinfonia sirviente sobrecama sobretodo socavon sofoco soga solapa solar solera soltero solucion sombrilla somnifero sonaja sonajero sonata sonda soneto sopapo soplete sorbete sorbo sordera sortija sosiego sotana subasta suceso sudadera sudario suegra suela sueter sufragio sultan sumidero suplicio surtidor suspiro sustento
+tabique tablilla tablon taburete tacita tajada tajo talacha talisman tallarin tallo talud tamarindo tamboril tamiz tanda tango tapadera tapanco tapir tapiz taquero taquilla tarantula tardanza tarima tarta tartamudo tatuaje taxi taxista tazon teja tejedor tejon telar telaraña telefonista telescopio televisor temporal tenaza tendedero tendero tenedor tenor tentacion tentempie terciopelo termita termo termometro ternero ternura terraza terron tertulia tetera textil tianguis tibio tiburon tieso tifon tijereta tilde timon tinaco tinaja tintero tiovivo tiradero tirano tirantes tiritas titere tizon tlacoyo tocadiscos tocador toldo tomillo tonel topo toque torbellino torcaza toronja torrente torreon torreja tortillera tortolito tostada tostador totopo toxina trabalenguas trago traicion trajin trampolin trance trapecio traspie trastero trasto travesia travesura trebol trecho tregua tren trigal trilogia trinchera trino tripulante tristeza triton trocito trofeo trombon trompa tronera tropiezo trovador trozo trucha truco trufa tuberia tucan tulipan tumulto tunel turbante turbina turron tutor
+ubre ujier ultraje umbral unguento ungüento uniforme urraca usanza utopia
+vaciado vagabundo vainilla vajilla valija valla vals vanidad vapor vaquera varita vasija vasallo vaticinio vecindario vega vejiga velada velador velorio vendaval vendedora veneno ventarron ventisca ventrículo verdugo vergel vericueto verja verruga vertedero vesicula veterano vianda vibora vicario vigilante villano vinagrera viñedo violeta violonchelo virrey visera visillo vitral vitrina viudez vivero vocablo vocal volante voltereta volteo vomito vuelto
+xilofono yacimiento yaguar yerba yesca yeti yodo yoyo yugo yunque zafiro zaguan zambullida zancada zancudo zanja zarandeo zarpazo zarza zepelin zocalo zodiaco zopilote zumbido zurron
+mama papa tata nena nene bebe niña abuela tia tio prima suegra cuñado cuñada yerno nuera padrino madrina compadre comadre esposa novia vecina amiga hermana hija nieta sobrina
+`;
+const A = `
+abatido abrupto absoluto abstracto abundante acabado aceptable acertado acido acogedor adecuado adicto adinerado admirable adorable adulto afable afilado agil agitado agotado agradable agresivo ajado ajustado alargado alerta alocado alterado altivo amado amarillento ambiguo amenazante ameno amistoso amoroso ancestral angosto angustiado animado anonimo ansioso anterior antipatico anual apacible apagado aparente apasionado apenado apetitoso apropiado apuesto apurado arduo arenoso armado arrogante arrugado asado asombroso aspero astuto asustado atareado atento atractivo atrevido audaz aventurero avergonzado azulado
+bajito banal barbudo barrigon basico bendito benigno bestial bizarro blanquito bondadoso borracho borroso bravio bromista brusco brutal burlesco burlon
+cabezon cachondo caduco cafe calido callejero calmado calvo cambiante canoso cansado capaz carente cariñoso carnoso casero castaño catolico cauto celebre celeste central chaparro chato chillon chismoso chiquito chueco chulo ciclico cientifico cierto civil clasico clave coherente colorado comestible comico compacto complejo comprensible concreto confiado confuso conocido constante contrario corriente cortante costoso creativo creible creyente crispado critico crujiente cuidadoso culto cursi
+decente decidido decisivo delicado delicioso delirante demente dental denso deportivo deprimido derecho desastroso descalzo descuidado deseoso desierto despacio despejado desigual desleal desnudo despistado desvelado diestro difunto digital diminuto discreto disponible distraido diverso divertido doble docil domestico dominante dormido dramatico dulcito
+eficaz elegante elevado eminente encantado energico enfadado enfermizo engreido enojon entusiasta epico equivocado erguido erroneo escondido escurridizo esencial espacial especial espeso esplendido espontaneo esquivo estable estatal estelar esteril estrafalario estupendo estupido etereo evidente exagerado excelente exitoso exotico experto exquisito externo extremo
+fabuloso familiar fantastico favorito felino femenino feroz fertil festivo ficticio fijo filoso final financiero fisico flexible floreado fluido fogoso formal fragil franco frecuente frenetico frondoso frontal fugaz funesto futuro
+galante gallardo gastado gentil genuino gigante glorioso goloso gracioso grandote gratis gratuito griton gruñon guerrero
+habil hambriento hartado harto helado herido heroico hipocrita historico hogareño honrado horrendo hostil hueco huerfano humilde huraño
+ideal idiota ilegal ilustre imparcial impar impecable impuro incapaz incierto increible indigno infame infantil infinito informal ingenuo injusto inmenso inmortal inocente inquieto insolito intacto interno intimo inverso invisible irreal
+jocoso jovial jugoso juvenil
+laboral lacio lamentable lateral lento letal leve liberal lider ligero limitado liquido literal llamativo llorón loable local lozano lucido luminoso lunar
+macabro machista macizo maduro magistral magnifico majestuoso malcriado malvado maniatico manual maravilloso marchito marino masivo maternal mayusculo mediocre medroso mental minimo miope mitico modesto molesto monotono monstruoso mortal mudable mugroso mundial municipal musical mutuo
+nacional natural naval necio negativo neutro nocturno nominal notable novedoso nublado nulo numeroso
+obediente obligado obscuro obstinado occidental ocioso odioso ofendido oficial oloroso optimo opuesto oriental original oscurito
+pacifico pajizo palido pancho parado paralelo pardo parlanchin pasado pasivo patetico peculiar peligroso peludo penoso perfumado perpetuo persistente personal pesimista picaro piadoso pintado placentero plateado pobrecito podrido polar politico poroso positivo potente practico precario precoz predilecto presente presumido primitivo principal prodigo profundo prohibido prospero provincial prudente puntual
+quebrado quejumbroso querido quieto
+radiante rancio rarito rasposo razonable rebelde reciente recto redondito regional regular relativo religioso remoto rendido repentino reseco resistente respetado retorcido revuelto ridiculo riguroso risueño rizado rocoso rosado rugoso rural
+sabroso sagaz sagrado salvaje sangriento satisfecho secreto sediento sedoso semejante sensato sentado sereno sexual silvestre similar siniestro sobrio social soleado solemne solido solitario sombrio sonriente soñoliento sospechoso sublime sucio sudoroso sumiso superior supremo
+tallado tardado tatuado tecnico temeroso tenaz tibio tieso tirano toxico tragon tranquilo travieso tremendo tribal trillado tropical turbio
+ufano ultimo unido universal urbano urgente usado usual util
+vacio vago valioso vanidoso variable vecino velludo veraniego verbal vertical viajero vibrante vicioso viril virtual visible visual vital vivaz voluble voraz vulgar
+zafio zalamero zonzo
+`;
+const V = `
+abandonar abanicar abastecer abatir abolir abonar abordar abortar abrochar absorber abundar abusar acariciar acarrear acceder acelerar acentuar acertar:ie aclarar acoger acomodar acortar acosar acostumbrar acudir acumular acusar adaptar adelantar adelgazar adherir:ie adjuntar administrar adoptar adornar adquirir:ie advertir:ie afectar afilar afinar afirmar aflojar afrontar agachar agobiar agotar agradecer agrandar agrupar aguardar ahogar ahorcar ahuyentar ajustar alabar alargar alborotar alertar aliar alimentar aliviar almacenar alterar alumbrar alzar amanecer amarrar amasar amenazar amontonar ampliar amueblar analizar anclar animar anochecer anticipar anular anunciar apaciguar aparcar apartar apenar aplastar aplaudir aplazar aplicar apoderar aportar apreciar apresurar aprisionar aprovechar apurar arañar arar arder argumentar armar arrancar arrastrar arrebatar arrestar arriesgar arrimar arrodillar arropar arrugar arrullar asaltar ascender:ie asear asegurar asentir:ie asfixiar asignar asociar asomar asombrar aspirar asumir atardecer atascar aterrizar atestiguar atorar atracar atraer atrasar atravesar:ie atreverse atropellar aturdir aullar autorizar avergonzar avivar ayunar
+balancear balbucear barajar batallar bautizar bendecir bloquear bordar borronear bostezar botar brindar bromear bullir burbujear
+cabalgar cachar calcular calificar calmar calzar canjear cansar capturar caracterizar carecer casarse causar cautivar cazar ceder cegar:ie censurar centrar cercar certificar chantajear chapotear checar chiflar chillar chismear chispear chocar chorrear circular citar clasificar clavar cobijar cocer:ue codiciar coincidir cojear colaborar coleccionar colar:ue colorear combatir combinar comentar comer competir:i completar complicar componer comportar comprobar:ue comunicar concentrar conceder concluir condenar conducir conectar confesar:ie confiar confirmar confundir congelar conocer conquistar consagrar conseguir:i conservar considerar consistir consolar:ue constar construir consultar consumir contagiar contaminar contemplar contener convencer conversar convertir:ie convivir cooperar coordinar copiar coquetear corregir:i corresponder cosechar criticar crujir cuestionar culpar cultivar
+dañar debatir debutar decorar dedicar defender:ie definir deformar delatar delirar demandar demorar demostrar:ue denunciar derramar derretir:i derribar derrotar desafiar desaparecer desarmar desatar descargar descolgar:ue desconfiar descontar:ue descuidar desembarcar desempeñar desenvolver:ue deshacer deslizar desmayar desnudar desobedecer despedir:i despegar desperdiciar desplazar destacar destapar destinar desvelar desviar detallar detectar detener determinar devolver:ue devorar diagnosticar dictar difundir digerir:ie diluir disculpar discutir diseñar disfrazar disimular disminuir disparar disponer distinguir distribuir divagar dividir divorciar doblegar dominar donar dotar dudar
+economizar edificar editar efectuar ejecutar ejercer elaborar elevar eliminar elogiar embarcar emborrachar emigrar emitir emocionar empacar empapar emplear enamorar encajar encaminar encargar encerrar:ie enchufar encoger encuadernar enderezar endulzar enfatizar enfocar enfrentar enfriar engordar enlazar enloquecer enredar enriquecer ensayar ensuciar enterar enterrar:ie entrenar entretener entrevistar entristecer envejecer envolver:ue equipar equivocar escalar escarbar escoger esculpir escupir esforzar:ue espantar especificar esquivar estacionar estallar estimar estirar estorbar estrenar estropear evaluar evaporar evolucionar exagerar examinar excavar exclamar excluir exhibir exigir existir expandir experimentar exportar expresar expulsar extender:ie extinguir extrañar
+fabricar fallar fallecer fastidiar favorecer festejar fiar figurar filmar filtrar financiar fingir fluir fomentar forjar formular forrar fortalecer forzar:ue fracasar fregar:ie frenar frotar fruncir fundar fundir fusionar
+galopar garantizar gatear generar germinar gestionar gimotear gobernar:ie golpear gotear graduar granizar gruñir guiñar guisar
+habituar halagar hallar heredar hinchar hojear honrar hornear hospedar hundir hurgar
+identificar ignorar iluminar ilustrar imitar impedir:i implicar imponer importar impresionar imprimir improvisar impulsar inaugurar incendiar inclinar incorporar indicar inflar influir informar ingresar iniciar inscribir insistir inspirar instalar insultar integrar intercambiar interesar interpretar interrumpir intervenir introducir inundar invadir inventar invertir:ie investigar irritar
+jadear jalar jubilar juzgar
+labrar ladrar lamentar lamer latir legalizar levitar liberar licuar ligar limitar lisiar litigar lograr lustrar
+machacar madrugar maldecir malgastar maltratar manifestar:ie manipular maquillar maravillar marchar marear masajear mecer medicar meditar memorizar mencionar menear mendigar merendar:ie mimar minimizar modificar moler:ue motivar multiplicar murmurar
+narrar negociar nombrar nublar numerar nutrir
+obedecer objetar obligar observar obsesionar obstruir obtener ofender oler:ue omitir ondear optar orar orientar originar orinar oscilar oscurecer otorgar oxidar
+padecer palpar parpadear participar patear pavimentar pecar pedalear pellizcar penetrar percibir perdonar perfeccionar perforar perjudicar permanecer perseguir:i persuadir pertenecer pestañear picotear pilotear pinchar pisotear planear planificar plasmar podar poseer posponer potenciar precisar predecir preocupar prescindir presenciar presionar presumir pretender prevenir procurar producir progresar prohibir proponer proteger protestar proveer provocar publicar pulsar puntuar purificar
+quejar quemar
+racionar rajar rallar rapar rascar rasgar rasurar razonar reaccionar realizar rebajar rebotar rechazar reclamar recomendar:ie reconocer recortar recostar:ue recuperar redactar reducir reemplazar reflejar reflexionar reformar refrescar regañar regatear registrar rehacer relajar relatar rellenar remar rematar remediar remendar:ie remover:ue rendir:i renovar:ue renunciar reparar repartir repasar reponer reportar representar reprobar:ue requerir:ie resbalar rescatar reservar resfriar residir resistir respaldar restar resultar resumir retar retirar retrasar reunir revelar reventar:ie revisar revivir revolver:ue rezar rociar rodear roncar rondar rozar rugir
+saborear sacudir salpicar salvar sanar satisfacer secuestrar sellar señalar sepultar silbar simular sobrevivir socorrer solicitar sollozar soltar:ue someter sonreir soportar sospechar sostener suavizar subrayar suceder sugerir:ie sujetar superar suplicar suprimir surgir suspender suspirar sustituir susurrar
+tachar tallar tantear tararear tartamudear tatuar tejer telefonear temblar:ie tender:ie tentar:ie teñir:i tirotear titubear tolerar torcer:ue tostar:ue trabar trasladar trazar trepar trotar tumbar
+ubicar ulular unir untar urgir utilizar
+vaciar vacilar vacunar vagar valer valorar variar velar vendar vengar ventilar verificar verter:ie vestir:i vibrar violar visualizar vocear voltear vomitar
+zambullir zarpar zumbar zurcir
+tener poner hacer decir venir salir traer caer valer satisfacer componer exponer suponer detener obtener mantener prevenir
+`;
+const X = `
+soy eres es somos sois son era eras eramos eran fui fuiste fue fuimos fueron sere seras sera seremos seran seria serias seriamos serian sea seas seamos sean fuera fueras fueramos fueran fuese siendo sido
+estoy estas esta estamos estan estaba estabas estabamos estaban estuve estuviste estuvo estuvimos estuvieron estare estaras estara estaremos estaran estaria estarias estarian este estes estemos esten estuviera estuvieras estuvieran estando estado
+he has ha hemos han habia habias habiamos habian hube hubo hubieron habra habras habremos habran habria habrias habrian haya hayas hayamos hayan hubiera hubieras hubieran habiendo
+voy vas va vamos van iba ibas ibamos iban ire iras ira iremos iran iria irias iriamos irian vaya vayas vayamos vayan yendo ido
+doy das da damos dan di diste dio dimos dieron dare daras dara daremos daran daria darian de des demos den diera dieras dieran dando dado
+veo ves ve vemos ven vi viste vio vimos vieron vere veras vera veremos veran veria verian vea veas veamos vean viera vieras vieran viendo visto veia veias veiamos veian
+oigo oyes oye oimos oyen oi oiste oyo oyeron oire oiria oiga oigas oigamos oigan oyera oyendo oido
+mio mia mios mias tuyo tuya tuyos tuyas suyo suya suyos suyas nuestro nuestra nuestros nuestras vuestro vuestra este esta estos estas ese esa esos esas aquel aquella aquellos aquellas cual cuales alguno alguna algunos algunas ninguno ninguna cada varios varias ambos ambas demas mismos mismas cuyo cuya algo nadie alguien quienes acaso ademas adonde aparte asimismo aun encima enfrente incluso lejos menos mucho nomas ojala pronto quizas recien segun sino solamente tambien temprano todavia viceversa
+sonrio sonries sonrie sonrien sonrei sonreia rio ries rie rien reimos reia reian riendo reido
+`;
+const IRR_PRET = 'tuv estuv anduv hic pud pus sup quis vin dij traj conduj produj traduj introduj reduj hub cup satisfic propus supus compus expus detuv obtuv mantuv contuv retuv previn intervin rehic deshic predij bendij maldij';
+const IRR_FUT = 'tendr pondr saldr vendr podr sabr habr dir har querr cabr valdr detendr obtendr mantendr contendr supondr compondr propondr expondr prevendr deshar rehar satisfar predir';
+const YO_G = 'teng pong salg veng traig dig hag caig valg deteng obteng manteng conteng supong compong propong expong preveng deshag satisfag atraig distraig';
+const set = DICT;
+const ok = w => { const n = [...w].length; if (n >= 5 && n <= 8) set.add(w) };
+const strip = w => w.toLowerCase().replace(/ñ/g,'\u0001').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\u0001/g,'ñ');
+const words = s => s.trim().split(/\s+/).map(strip).filter(w => /^[a-zñ]+$/.test(w));
+const plural = w => /[aeiou]$/.test(w) ? w + 's' : /z$/.test(w) ? w.slice(0,-1) + 'ces' : /[sx]$/.test(w) && /[aeiou][sx]$/.test(w) && w.length > 4 ? w : w + 'es';
+const dimin = w => {
+  if (/[oa]$/.test(w)){
+    let st = w.slice(0,-1);
+    if (/c$/.test(st)) st = st.slice(0,-1) + 'qu'; else if (/g$/.test(st)) st = st + 'u'; else if (/z$/.test(st)) st = st.slice(0,-1) + 'c';
+    ['ito','ita','itos','itas'].forEach(e => ok(st + e));
+  } else if (/e$/.test(w)) ['cito','cita','citos'].forEach(e => ok(w + e));
+  else if (/[nr]$/.test(w)) ['cito','cita','citos'].forEach(e => ok(w + e));
+};
+const allNouns = (typeof __N0 !== 'undefined' ? __N0 + ' ' : '') + N;
+words(allNouns).forEach(w => {
+  ok(w); ok(plural(w)); dimin(w);
+  if (/o$/.test(w)){ ok(w.slice(0,-1) + 'a'); ok(w.slice(0,-1) + 'as') }
+  if (/(or|on|in|an)$/.test(w)){ ok(w + 'a'); ok(w + 'as') }
+});
+words((typeof __A0 !== 'undefined' ? __A0 + ' ' : '') + A).forEach(w => {
+  ok(w); ok(plural(w)); dimin(w);
+  if (/o$/.test(w)){ const f = w.slice(0,-1) + 'a'; ok(f); ok(f + 's'); ok(w.slice(0,-1) + 'isimo'); ok(w.slice(0,-1) + 'isima') }
+  else if (/(or|on|an|in)$/.test(w)){ ok(w + 'a'); ok(w + 'as') }
+  ok((/o$/.test(w) ? w.slice(0,-1) + 'a' : w) + 'mente');
+});
+const ends = {
+  ar: 'o as a amos ais an e aste o asteis aron aba abas abamos abais aban are aras ara aremos areis aran aria arias ariamos ariais arian e es emos eis en ara aras aramos arais aran ase ases asemos asen ando ado ada ados adas ar ad ate alo ala alos alas arse arlo arla arlos arlas arte arme arnos ame anos ate',
+  er: 'o es e emos eis en i iste io imos isteis ieron ia ias iamos iais ian ere eras era eremos ereis eran eria erias eriamos eriais erian a as amos ais an iera ieras ieramos ierais ieran iese ieses iesen iendo ido ida idos idas er ed erse erlo erla erlos erlas erte erme ernos elo ela ete',
+  ir: 'o es e imos is en i iste io imos isteis ieron ia ias iamos iais ian ire iras ira iremos ireis iran iria irias iriamos iriais irian a as amos ais an iera ieras ieramos ierais ieran iese ieses iesen iendo ido ida idos idas ir id irse irlo irla irlos irlas irte irme irnos elo ela ete'
+};
+const stemEnds = { ar:'o as a an e es en', er:'o es e en a as an', ir:'o es e en a as an' };
+const allVerbs = (typeof __V0 !== 'undefined' ? __V0 + ' ' : '') + V;
+allVerbs.trim().split(/\s+/).forEach(v => {
+  const [inf, ch] = v.split(':');
+  if (!/^[a-zñ]+$/.test(inf)) return;
+  const base = inf.replace(/se$/, ''), type = base.slice(-2), stem = base.slice(0,-2);
+  if (!ends[type]) return;
+  ends[type].split(' ').forEach(e => {
+    let s = stem;
+    if (/^[ei]/.test(e) && type === 'ar'){ if (/c$/.test(s)) s = s.slice(0,-1) + 'qu'; else if (/g$/.test(s)) s = s + 'u'; else if (/z$/.test(s)) s = s.slice(0,-1) + 'c' }
+    if (/^[oa]/.test(e) && type !== 'ar'){ if (/g$/.test(s) && /ger|gir/.test(base)) s = s.slice(0,-1) + 'j'; else if (/gu$/.test(s)) s = s.slice(0,-1); else if (/[^aeiou]c$/.test(s)) s = s.slice(0,-1) + 'z' }
+    ok(s + e);
+  });
+  if (ch){
+    const from = ch === 'ue' ? 'o' : 'e';
+    let pos = stem.lastIndexOf(from); if (pos < 0 && ch === 'ue') pos = stem.lastIndexOf('u');
+    if (pos >= 0){
+      const s2 = stem.slice(0,pos) + ch + stem.slice(pos+1);
+      stemEnds[type].split(' ').forEach(e => {
+        let s = s2;
+        if (/^[ei]/.test(e) && type === 'ar'){ if (/c$/.test(s)) s = s.slice(0,-1) + 'qu'; else if (/g$/.test(s)) s = s + 'u'; else if (/z$/.test(s)) s = s.slice(0,-1) + 'c' }
+        if (/^[oa]/.test(e) && type !== 'ar'){ if (/gu$/.test(s)) s = s.slice(0,-1); else if (/g$/.test(s)) s = s.slice(0,-1) + 'j' }
+        ok(s + e);
+      });
+      if (type !== 'ar'){ const s3 = stem.slice(0,pos) + (ch === 'ue' ? 'u' : 'i') + stem.slice(pos+1); ['io','ieron','iendo','amos','iera','ieras','ieran','ais'].forEach(e => ok(s3 + e)) }
+    }
+  }
+  if (/(cer|cir)$/.test(base) && /[aeiou]c$/.test(stem)){ const s = stem.slice(0,-1) + 'zc'; ['o','a','as','an','amos'].forEach(e => ok(s + e)) }
+  if (/ducir$/.test(base)){ const s = stem.slice(0,-1) + 'j'; ['e','iste','o','imos','eron','era','eras','eran'].forEach(e => ok(s + e)) }
+  if (/uir$/.test(base)){ ['yo','yes','ye','yen','ya','yas','yan','yamos','yeron','yendo','yera'].forEach(e => ok(stem + e)) }
+  if (/(eer|aer|oer)$/.test(base)){ ['yo','yeron','yendo','yera','yeras','yeran'].forEach(e => ok(stem + e)) }
+});
+IRR_PRET.split(' ').forEach(s => ['e','iste','o','imos','isteis','ieron','eron','iera','ieras','ieramos','ieran','iese'].forEach(e => {
+  if (/j$/.test(s) && /^ie/.test(e)) return; ok(s + e) }));
+['hiz','satisfiz'].forEach(s => ok(s + 'o'));
+IRR_FUT.split(' ').forEach(s => ['e','as','a','emos','eis','an','ia','ias','iamos','iais','ian'].forEach(e => ok(s + e)));
+YO_G.split(' ').forEach(s => ['o','a','as','amos','ais','an'].forEach(e => ok(s + e)));
+words(X).forEach(ok);
+try{ (JSON.parse(localStorage.getItem('ps-custom') || '[]') || []).forEach(w => set.add(w)) }catch(e){}
+})();
+
 const BYLEN = {};
 for (const w of new Set(POOL)){ const n = [...w].length; (BYLEN[n] = BYLEN[n] || []).push(w) }
 const LENGTHS = [5,6,7,8];
@@ -262,7 +433,7 @@ const store = {
 };
 function norm(s){ return s.toLowerCase().replace(/ñ/g,'\u0001').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\u0001/g,'ñ') }
 
-const settings = Object.assign({ hard:false, vibrate:true, contrast:false }, store.get('ps-settings', {}));
+const settings = Object.assign({ hard:false, vibrate:true, contrast:false, ghosts:true, theme:'dark' }, store.get('ps-settings', {}));
 let mode = store.get('ps-mode', 'daily');           // 'daily' | 'free'
 let COLS = LENGTHS.includes(store.get('ps-len', 5)) ? store.get('ps-len', 5) : 5;
 let game, current = '', busy = false;               // game = {answer, guesses, over, won, hint}
@@ -341,10 +512,22 @@ function press(k){
   if (k === 'Backspace') cur.pop(); else if (cur.length < COLS) cur.push(k);
   current = cur.join(''); draw();
 }
+function ghostLetters(){
+  const g = Array(COLS).fill('');
+  if (!settings.ghosts || !game) return g;
+  game.guesses.forEach(w => score(w, game.answer).forEach((r,i) => { if (r === 'correct') g[i] = [...w][i] }));
+  if (game.hint) g[game.hint.pos] = game.hint.letter;
+  return g;
+}
 function draw(){
-  const row = board.children[game.guesses.length]; if (!row) return;
-  const cur = [...current];
-  [...row.children].forEach((t,i) => { t.textContent = cur[i] || ''; t.classList.toggle('filled', !!cur[i]) });
+  const row = board.children[game.guesses.length]; if (!row || game.over) return;
+  const cur = [...current], gh = ghostLetters();
+  [...row.children].forEach((t,i) => {
+    const ghost = !cur[i] && gh[i];
+    t.textContent = cur[i] || gh[i] || '';
+    t.classList.toggle('filled', !!cur[i]);
+    t.classList.toggle('ghost', !!ghost);
+  });
 }
 function score(guess, ans){
   const res = Array(COLS).fill('absent'), a = [...ans], g = [...guess];
@@ -369,17 +552,25 @@ function hardModeError(guess){
 }
 function submit(){
   if ([...current].length < COLS) return reject('Faltan letras');
-  if (!DICT.has(current)) return reject('Esa palabra no está en el diccionario');
+  if (!DICT.has(current)){
+    const w = current;
+    reject(`«${w.toUpperCase()}» no está en el diccionario`);
+    return actionToast(`«${w.toUpperCase()}» no está en el diccionario`, 'Agregar', () => {
+      DICT.add(w);
+      const list = store.get('ps-custom', []); if (!list.includes(w)){ list.push(w); store.set('ps-custom', list) }
+      toast(`«${w.toUpperCase()}» agregada`); if (current === w) submit();
+    });
+  }
   if (settings.hard){ const err = hardModeError(current); if (err) return reject(err) }
   const row = board.children[game.guesses.length];
   const guess = current, res = score(guess, game.answer), step = COLS > 6 ? 170 : 220;
   game.guesses.push(guess); current = ''; busy = true; save();
   [...row.children].forEach((t,i) => setTimeout(() => {
-    t.classList.add('flip');
+    t.classList.remove('ghost'); t.classList.add('flip');
     setTimeout(() => { t.classList.remove('filled'); t.classList.add(res[i]) }, 200);
   }, i * step));
   setTimeout(() => {
-    paintKeys(guess, res); busy = false;
+    paintKeys(guess, res); busy = false; draw();
     if (guess === game.answer) finish(true); else if (game.guesses.length === ROWS) finish(false);
   }, COLS * step + 300);
 }
@@ -475,7 +666,7 @@ $('hintBtn').onclick = () => {
   const open = a.map((_,i) => i).filter(i => !known.has(i));
   if (!open.length) return toast('Ya tienes todas las letras');
   const pos = open[hash(game.answer + game.guesses.length) % open.length];
-  game.hint = { pos, letter: a[pos] }; save(); showHint();
+  game.hint = { pos, letter: a[pos] }; save(); showHint(); draw();
   toast(`Pista: la letra ${pos+1} es ${a[pos].toUpperCase()}`);
 };
 function showHint(){
@@ -491,6 +682,12 @@ function showModal(html, after){ $('modalCard').innerHTML = html; $('modal').hid
 function closeModal(){ $('modal').hidden = true; clearInterval(cdTimer) }
 $('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal() });
 let toastT;
+function actionToast(msg, label, fn){
+  const t = $('toast'); t.innerHTML = ''; t.append(msg + ' ');
+  const b = document.createElement('button'); b.className = 'toast-btn'; b.textContent = label;
+  b.onclick = () => { t.hidden = true; fn() }; t.appendChild(b);
+  t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 5000);
+}
 function toast(msg){ const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2200) }
 
 $('statsBtn').onclick = () => {
@@ -506,22 +703,39 @@ $('helpBtn').onclick = () => showModal(`
     <span><i style="background:var(--absent);border:1px solid var(--surface-2)"></i>Letra que no está</span>
   </div>
   <p><b>Diario:</b> una palabra al día, la misma para todos. Compara tu resultado con tus amigos.<br><b>Libre:</b> todas las partidas que quieras.</p>
-  <p>Solo se aceptan palabras reales, sin acentos. Tienes una pista por partida.</p>
+  <p>Solo se aceptan palabras reales, sin acentos. Si una palabra real no se acepta, toca «Agregar» y quedará guardada en tu teléfono. Tienes una pista por partida.</p>
   <button class="primary" id="closeBtn">¡A jugar!</button>`);
 $('settingsBtn').onclick = () => {
   const row = (id, title, desc) => `<label class="opt" for="${id}"><span><b>${title}</b><small>${desc}</small></span><input type="checkbox" id="${id}" ${settings[id.slice(4)] ? 'checked' : ''}><i class="sw"></i></label>`;
   showModal(`<h2>Ajustes</h2>
     ${row('opt-hard','Modo difícil','Debes usar las letras que ya descubriste')}
     ${row('opt-vibrate','Vibración','Al acertar, perder o escribir mal')}
-    ${row('opt-contrast','Alto contraste','Naranja y azul, para daltonismo')}
+    ${row('opt-ghosts','Letras descubiertas','Muestra en la fila las letras que ya tienes')}
+    ${row('opt-contrast','Alto contraste','Naranja = en su lugar, azul = en otro lugar')}
+    <div class="opt-title">Tema</div>
+    <div class="themes">${[['dark','Oscuro','#0c0d10','#2e2f33','#45474d'],['purple','Morado','#150e22','#2c2240','#453860'],['blue','Azul','#0a1424','#1c2c44','#33476a']].map(([k,n,a,b,c]) =>
+      `<button data-theme-opt="${k}" aria-pressed="${settings.theme === k}" style="background:${b}"><i><b style="background:${a}"></b><b style="background:${c}"></b><b style="background:#2f8a5c"></b><b style="background:#f2ab2a"></b></i>${n}</button>`).join('')}</div>
+    ${store.get('ps-custom', []).length ? `<div class="opt-title">Palabras que agregaste</div><p class="sub" style="text-align:left">${store.get('ps-custom', []).map(w => w.toUpperCase()).join(', ')}</p><button class="secondary" id="clearCustom">Borrar palabras agregadas</button>` : ''}
     <button class="primary" id="closeBtn">Listo</button>`, () => {
-    ['hard','vibrate','contrast'].forEach(k => $('opt-' + k).onchange = e => {
+    const cc = $('clearCustom'); if (cc) cc.onclick = () => { store.get('ps-custom', []).forEach(w => DICT.delete(w)); store.set('ps-custom', []); POOL.forEach(w => DICT.add(w)); toast('Palabras agregadas borradas'); closeModal() };
+    document.querySelectorAll('[data-theme-opt]').forEach(b => b.onclick = () => {
+      settings.theme = b.dataset.themeOpt; store.set('ps-settings', settings); applySettings();
+      document.querySelectorAll('[data-theme-opt]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    });
+    ['hard','vibrate','contrast','ghosts'].forEach(k => $('opt-' + k).onchange = e => {
       if (k === 'hard' && e.target.checked && game.guesses.length && !game.over){ e.target.checked = false; return toast('Activa el modo difícil al empezar una partida') }
-      settings[k] = e.target.checked; store.set('ps-settings', settings); applySettings();
+      settings[k] = e.target.checked; store.set('ps-settings', settings); applySettings(); draw();
     });
   });
 };
-function applySettings(){ document.documentElement.classList.toggle('contrast', settings.contrast) }
+function applySettings(){
+  const r = document.documentElement;
+  r.classList.toggle('contrast', settings.contrast);
+  r.classList.toggle('theme-purple', settings.theme === 'purple');
+  r.classList.toggle('theme-blue', settings.theme === 'blue');
+  const m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.content = { dark:'#0c0d10', purple:'#150e22', blue:'#0a1424' }[settings.theme] || '#0c0d10';
+}
 
 // ---------- cargar partidas ----------
 function save(){ store.set(gameKey(), game) }
@@ -536,7 +750,7 @@ function render(){
     [...board.children[r].children].forEach((t,i) => { t.textContent = [...guess][i]; t.classList.add(res[i]) });
     paintKeys(guess, res);
   });
-  showHint();
+  showHint(); draw();
 }
 function newFree(){
   const list = BYLEN[COLS], prev = game && game.answer;
