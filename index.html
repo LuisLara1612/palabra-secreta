@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>Palabra Secreta</title>
+<script>
+// Contador de jugadores (GoatCounter). Escribe aquí tu código, por ejemplo 'palabrasecreta'. Vacío = desactivado.
+const GOATCOUNTER = '';
+if (GOATCOUNTER){ const s = document.createElement('script'); s.async = true; s.dataset.goatcounter = 'https://' + GOATCOUNTER + '.goatcounter.com/count'; s.src = 'https://gc.zgo.at/count.js'; document.head.appendChild(s) }
+</script>
 <meta name="theme-color" content="#0c0d10">
 <meta name="description" content="Adivina la palabra secreta en español">
 <link rel="manifest" href="manifest.webmanifest">
@@ -23,7 +28,7 @@ body{margin:0;font-size:14px}
 /* Una sola pantalla: título, selector de largo, tablero que se ajusta, teclado español con Ñ */
 :root{
   --bg:#0c0d10; --surface:#2e2f33; --surface-2:#45474d; --fg:#f5f5f2; --muted:#9a9ca3;
-  --green:#2f8a5c; --amber:#f2ab2a; --brand-green:#2f8a5c; --brand-amber:#f2ab2a; --brand-edge:#226b46; --amber-edge:#d98a12; --green-edge:#226b46; --absent:#1b1c1f; --card:#1a1b1f;
+  --green:#2f8a5c; --amber:#f2ab2a; --brand-green:#2f8a5c; --brand-amber:#f2ab2a; --brand-edge:#226b46; --amber-edge:#d98a12; --green-edge:#226b46; --absent:#1b1c1f; --card:#1a1b1f; --absent-fg:#c9cad0; --key-absent-fg:#6d6f75;
   --display:'Fredoka','Nunito',system-ui,sans-serif; --body:'Nunito',system-ui,sans-serif;
   color-scheme:dark;
 }
@@ -52,7 +57,7 @@ button:focus-visible{outline:2px solid var(--brand-amber);outline-offset:2px}
 @keyframes pop{50%{transform:scale(1.08)}}
 .tile.correct{background:var(--green);box-shadow:inset 0 -4px 0 var(--green-edge)}
 .tile.present{background:var(--amber);box-shadow:inset 0 -4px 0 var(--amber-edge)}
-.tile.absent{background:var(--absent);color:#c9cad0}
+.tile.absent{background:var(--absent);color:var(--absent-fg)}
 .tile.flip{animation:flip .45s ease both}
 @keyframes flip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
 .kb{display:flex;flex-direction:column;gap:6px;padding-bottom:4px}
@@ -61,7 +66,7 @@ button:focus-visible{outline:2px solid var(--brand-amber);outline-offset:2px}
   font:700 1.05rem var(--body);cursor:pointer;padding:0;touch-action:manipulation}
 .key.wide{max-width:66px;flex:1.5;font-size:.75rem}
 .key:active{filter:brightness(1.25)}
-.key.correct{background:var(--green)} .key.present{background:var(--amber)} .key.absent{background:var(--absent);color:#6d6f75}
+.key.correct{background:var(--green)} .key.present{background:var(--amber)} .key.absent{background:var(--absent);color:var(--key-absent-fg)}
 .toast{position:fixed;left:50%;top:calc(110px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);
   font-weight:800;padding:10px 16px;border-radius:10px;z-index:20;max-width:calc(100% - 32px);text-align:center}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:30;padding:16px}
@@ -116,7 +121,7 @@ body.in-tuto .bar{opacity:.4}
 .tag{display:inline-block;font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--brand-amber)}
 .mini{display:flex;gap:4px;justify-content:center;margin:10px 0 2px}
 .mini b{width:34px;height:34px;border-radius:7px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:1.1rem}
-.mini b.correct{background:var(--green)}.mini b.present{background:var(--amber)}.mini b.absent{background:var(--absent);color:#c9cad0}
+.mini b.correct{background:var(--green)}.mini b.present{background:var(--amber)}.mini b.absent{background:var(--absent);color:var(--absent-fg)}
 .dots{display:flex;gap:6px;justify-content:center;margin:14px 0 4px}
 .dots i{width:7px;height:7px;border-radius:50%;background:var(--surface-2)}.dots i.on{background:var(--brand-amber)}
 .btnrow{display:flex;gap:8px}.btnrow>*{flex:1}
@@ -161,6 +166,46 @@ textarea{width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);b
 .contrast{--green:#e8732c;--green-edge:#b9561a;--amber:#4f9fe8;--amber-edge:#2f78bd}
 .card{max-height:calc(100vh - 32px);overflow-y:auto}
 @media (max-width:370px){.seg button{padding:7px 7px}.len{width:30px}.bar{gap:6px}h1{font-size:1.15rem}}
+.len{width:31px}
+.board.duo{display:flex;gap:14px;align-items:flex-start}
+.board.duo .grid{display:grid;gap:var(--gap)}
+.board.duo .grid.solved{opacity:.55}
+.key.absent{opacity:.5}
+a.toast-btn{display:inline-block;text-decoration:none}
+.btnlink{display:block;text-align:center;text-decoration:none;box-sizing:border-box}
+.field.small{font-size:1.05rem;letter-spacing:.02em;text-transform:none;margin:6px 0}
+.pick-len.row5{grid-template-columns:repeat(5,1fr)}
+.pick-len.row5 button{padding:10px 2px}
+.pick-len button[aria-pressed="true"]{background:var(--brand-green);color:#fff}
+.pres{display:flex;flex-direction:column;align-items:flex-start;gap:2px;background:var(--surface);border-radius:12px;padding:10px 12px;margin:6px 0;text-align:left}
+.pres.win{box-shadow:inset 0 0 0 2px var(--brand-green)}
+.pres span{font-weight:800}.pres small{color:var(--muted)}
+.score2{font-weight:800;margin:12px 0;font-size:1.05rem}
+.score2 b{font-family:var(--display);font-size:1.4rem;color:var(--brand-amber)}
+.hist{display:flex;flex-direction:column;gap:5px;margin:6px 0 10px}
+.hrow,.hhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hrow>span,.hhead>span{font-size:.82rem;color:var(--muted);font-weight:700;text-align:left;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hrow>div,.hhead>div{display:flex;gap:4px;flex:none}
+.hhead i{width:30px;text-align:center;font-style:normal;font-size:.72rem;color:var(--muted);font-weight:800}
+.hchip{width:30px;height:28px;border:0;border-radius:7px;background:var(--surface);color:var(--muted);font:800 .8rem var(--body);cursor:pointer;padding:0}
+.hchip.win{background:var(--green);color:#fff}
+.hchip.lose{background:#8a4a4a;color:#fff}
+.hchip.prog{background:var(--amber);color:#fff}
+.shot{width:100%;border-radius:12px;margin:8px 0;-webkit-user-select:auto;user-select:auto;-webkit-touch-callout:default}
+.hint-line i{color:var(--fg)}
+.theme-light{--bg:#f2f3f6;--surface:#e1e3e9;--surface-2:#c5c9d2;--fg:#17181c;--muted:#5b5f69;--card:#ffffff;--absent:#8b8f99;--absent-fg:#ffffff;--key-absent-fg:#eef0f4;--brand-amber:#c98100;color-scheme:light}
+.theme-light .tile.correct,.theme-light .tile.present,.theme-light .key.correct,.theme-light .key.present,.theme-light .mini b.correct,.theme-light .mini b.present,.theme-light .answer b,.theme-light .hint-line b{color:#fff}
+.theme-light .hint-line b{background:var(--brand-green)}
+.theme-light .overlay{background:rgba(20,22,30,.45)}
+.theme-light .card{box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.big .card p,.big .legend span,.big .menu button,.big .opt b,.big .def p{font-size:1.1rem}
+.big .card small,.big .sub,.big .opt small{font-size:.95rem}
+.big .card h2{font-size:1.8rem}
+.big .key{font-size:1.3rem}
+.big .key.wide{font-size:.85rem}
+.big .hint-line,.big .reto-line,.big .coach,.big .toast{font-size:1.05rem}
+@media (max-width:370px){.len{width:29px}}
+
 </style>
 
 </head>
@@ -262,7 +307,7 @@ somos eres fuiste fueron fuimos eramos seamos sean estoy estas estan estamos est
 `;
 globalThis.__N0 = N; globalThis.__A0 = A; globalThis.__V0 = V;
 const set = new Set();
-const ok = w => { const n = [...w].length; if (n >= 5 && n <= 8) set.add(w) };
+const ok = w => { const n = [...w].length; if (n >= 4 && n <= 8) set.add(w) };
 const words = s => s.trim().split(/\s+/).filter(Boolean);
 const plural = w => /[aeiou]$/.test(w) ? w + 's' : /z$/.test(w) ? w.slice(0,-1) + 'ces' : /s$/.test(w) && w.length > 4 && !/(es|is|os|us)$/.test(w.slice(-2)) ? w : w + 'es';
 words(N).forEach(w => { ok(w); ok(plural(w)) });
@@ -394,7 +439,7 @@ const IRR_PRET = 'tuv estuv anduv hic pud pus sup quis vin dij traj conduj produ
 const IRR_FUT = 'tendr pondr saldr vendr podr sabr habr dir har querr cabr valdr detendr obtendr mantendr contendr supondr compondr propondr expondr prevendr deshar rehar satisfar predir';
 const YO_G = 'teng pong salg veng traig dig hag caig valg deteng obteng manteng conteng supong compong propong expong preveng deshag satisfag atraig distraig';
 const set = DICT;
-const ok = w => { const n = [...w].length; if (n >= 5 && n <= 8) set.add(w) };
+const ok = w => { const n = [...w].length; if (n >= 4 && n <= 8) set.add(w) };
 const strip = w => w.toLowerCase().replace(/ñ/g,'\u0001').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\u0001/g,'ñ');
 const words = s => s.trim().split(/\s+/).map(strip).filter(w => /^[a-zñ]+$/.test(w));
 const plural = w => /[aeiou]$/.test(w) ? w + 's' : /z$/.test(w) ? w.slice(0,-1) + 'ces' : /[sx]$/.test(w) && /[aeiou][sx]$/.test(w) && w.length > 4 ? w : w + 'es';
@@ -466,9 +511,13 @@ try{ (JSON.parse(localStorage.getItem('ps-custom') || '[]') || []).forEach(w => 
 
 const BYLEN = {};
 for (const w of new Set(POOL)){ const n = [...w].length; (BYLEN[n] = BYLEN[n] || []).push(w) }
-const LENGTHS = [5,6,7,8];
+const LENGTHS = [4,5,6,7,8];
 const ROWS = 6;
-const NEWS_VER = 2;
+const DUO_ROWS = 7;
+const NEWS_VER = 3;
+const CUTOVER = '2026-11-01';
+// Número de WhatsApp para recibir reportes (con lada, sin + ni espacios). Vacío = el jugador elige el contacto.
+const REPORT_WA = '';
 const $ = id => document.getElementById(id);
 const board = $('board'), kb = $('kb'), wrap = $('wrap');
 const store = {
@@ -477,7 +526,7 @@ const store = {
 };
 function norm(s){ return s.toLowerCase().replace(/ñ/g,'\u0001').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\u0001/g,'ñ') }
 // ===== Palabras de respuesta: palabra|categoría|significado =====
-const CATS = { a:'Animales', c:'Comida', h:'Casa y objetos', n:'Naturaleza', b:'Cuerpo y salud', l:'Lugares', p:'Personas' };
+const CATS = { a:'Animales', c:'Comida', h:'Casa y objetos', n:'Naturaleza', b:'Cuerpo y salud', l:'Lugares', p:'Personas', m:'Mexicanismos', e:'Ideas y sentimientos', d:'Juegos y diversión', t:'Transporte y tecnología' };
 const ANS_RAW = `
 perro|a|Animal doméstico, conocido como el mejor amigo del ser humano.
 tigre|a|Felino grande de pelaje naranja con rayas negras.
@@ -485,7 +534,7 @@ cebra|a|Animal africano parecido al caballo, con rayas blancas y negras.
 burro|a|Animal de carga parecido al caballo, con orejas largas.
 mosca|a|Insecto volador muy común que zumba.
 pulpo|a|Animal marino con ocho tentáculos.
-raton|a|Roedor pequeño de cola larga.
+ratón|a|Roedor pequeño de cola larga.
 zorro|a|Animal astuto de hocico puntiagudo y cola esponjosa.
 cabra|a|Animal de granja con cuernos que da leche.
 oveja|a|Animal de granja cubierto de lana.
@@ -497,7 +546,7 @@ elote|c|Mazorca de maíz tierno.
 leche|c|Líquido blanco que producen las vacas y otros mamíferos.
 salsa|c|Mezcla para acompañar comidas, muchas veces picante.
 fresa|c|Fruta roja y pequeña con semillas por fuera.
-limon|c|Fruta ácida, muy usada en México con casi todo.
+limón|c|Fruta ácida, muy usada en México con casi todo.
 huevo|c|Lo ponen las gallinas; se come frito, cocido o revuelto.
 silla|h|Mueble con respaldo para sentarse.
 plato|h|Recipiente donde se sirve la comida.
@@ -505,7 +554,7 @@ llave|h|Objeto de metal para abrir y cerrar cerraduras.
 horno|h|Aparato que cocina con calor encerrado.
 reloj|h|Instrumento que marca la hora.
 libro|h|Conjunto de hojas impresas y encuadernadas para leer.
-lapiz|h|Instrumento con grafito para escribir o dibujar.
+lápiz|h|Instrumento con grafito para escribir o dibujar.
 bolsa|h|Recipiente flexible para llevar cosas.
 cielo|n|Espacio azul que vemos sobre nosotros.
 nieve|n|Agua congelada que cae en copos blancos.
@@ -534,19 +583,19 @@ reina|p|Mujer que gobierna un reino, o esposa del rey.
 joven|p|Persona de poca edad.
 conejo|a|Animal de orejas largas que se mueve saltando.
 jirafa|a|El animal más alto, de cuello muy largo.
-pajaro|a|Animal con plumas, pico y alas.
-aguila|a|Ave rapaz; aparece en la bandera de México.
+pájaro|a|Animal con plumas, pico y alas.
+águila|a|Ave rapaz; aparece en la bandera de México.
 jaguar|a|Felino americano de piel amarilla con manchas negras.
 iguana|a|Reptil verde parecido a una lagartija grande.
-delfin|a|Mamífero marino muy inteligente y juguetón.
+delfín|a|Mamífero marino muy inteligente y juguetón.
 gusano|a|Animal pequeño y alargado sin patas.
 tomate|c|Fruto rojo usado en salsas y ensaladas.
 papaya|c|Fruta tropical anaranjada y dulce.
 helado|c|Postre dulce y congelado.
 pepino|c|Verdura alargada y verde, muy fresca.
 frijol|c|Semilla que se come cocida; base de la cocina mexicana.
-azucar|c|Sustancia dulce que se usa para endulzar.
-sandia|c|Fruta grande, verde por fuera y roja por dentro.
+azúcar|c|Sustancia dulce que se usa para endulzar.
+sandía|c|Fruta grande, verde por fuera y roja por dentro.
 pastel|c|Postre horneado para celebraciones.
 cereza|c|Fruta pequeña, roja y redonda, con hueso.
 espejo|h|Superficie que refleja la imagen.
@@ -555,10 +604,10 @@ puerta|h|Abertura con hoja que sirve para entrar y salir.
 tijera|h|Herramienta de dos hojas para cortar.
 maleta|h|Valija para llevar ropa cuando viajas.
 cobija|h|Manta para taparse y no tener frío.
-jardin|h|Terreno donde se cultivan plantas y flores.
+jardín|h|Terreno donde se cultivan plantas y flores.
 lluvia|n|Agua que cae de las nubes.
 bosque|n|Lugar con muchos árboles.
-volcan|n|Montaña que puede expulsar lava y ceniza.
+volcán|n|Montaña que puede expulsar lava y ceniza.
 laguna|n|Depósito natural de agua, más pequeño que un lago.
 tierra|n|Nuestro planeta; también el suelo que pisamos.
 viento|n|Aire en movimiento.
@@ -589,19 +638,19 @@ hormiga|a|Insecto pequeño que vive en colonias muy organizadas.
 gallina|a|Ave de granja que pone huevos.
 canguro|a|Animal australiano que salta y lleva a su cría en una bolsa.
 lagarto|a|Reptil de cuerpo alargado, cola larga y cuatro patas.
-tiburon|a|Pez grande del mar con muchos dientes afilados.
+tiburón|a|Pez grande del mar con muchos dientes afilados.
 cebolla|c|Verdura de capas que hace llorar al cortarla.
 galleta|c|Pan pequeño, dulce o salado, horneado y crujiente.
 naranja|c|Fruta cítrica redonda y jugosa; también un color.
 manzana|c|Fruta redonda, roja, verde o amarilla, crujiente.
-platano|c|Fruta alargada de cáscara amarilla.
+plátano|c|Fruta alargada de cáscara amarilla.
 lechuga|c|Verdura de hojas verdes para ensaladas.
 pescado|c|Pez preparado como alimento.
 cuchara|h|Utensilio con cabeza redonda para tomar líquidos.
 ventana|h|Abertura en la pared para que entren luz y aire.
 botella|h|Recipiente de cuello angosto para líquidos.
 tenedor|h|Utensilio con dientes para pinchar la comida.
-lampara|h|Aparato que da luz.
+lámpara|h|Aparato que da luz.
 juguete|h|Objeto que sirve para jugar.
 cortina|h|Tela que cubre una ventana.
 montaña|n|Gran elevación natural del terreno.
@@ -613,7 +662,7 @@ rodilla|b|Articulación en medio de la pierna.
 espalda|b|Parte trasera del cuerpo, de los hombros a la cintura.
 ombligo|b|Cicatriz redonda en medio del vientre.
 cerebro|b|Órgano dentro de la cabeza que controla el cuerpo.
-corazon|b|Órgano que bombea la sangre por todo el cuerpo.
+corazón|b|Órgano que bombea la sangre por todo el cuerpo.
 tobillo|b|Articulación que une el pie con la pierna.
 pestaña|b|Pelo que crece en el borde de los párpados.
 escuela|l|Lugar donde se enseña y se aprende.
@@ -630,12 +679,12 @@ soldado|p|Persona que sirve en el ejército.
 vaquero|p|Persona que cuida ganado a caballo.
 mariposa|a|Insecto de alas grandes y coloridas.
 elefante|a|El animal terrestre más grande, con trompa larga.
-pinguino|a|Ave que no vuela, nada en el mar y vive en el frío.
+pingüino|a|Ave que no vuela, nada en el mar y vive en el frío.
 cangrejo|a|Animal marino con caparazón y dos pinzas.
 mosquito|a|Insecto pequeño que pica para chupar sangre.
 leopardo|a|Felino de piel amarilla con manchas negras.
 avestruz|a|El ave más grande; corre muy rápido pero no vuela.
-camaleon|a|Reptil que cambia de color.
+camaleón|a|Reptil que cambia de color.
 tortilla|c|Pan redondo y delgado de maíz o harina.
 aguacate|c|Fruto verde y cremoso con el que se hace guacamole.
 calabaza|c|Fruto grande y anaranjado, típico de otoño.
@@ -652,42 +701,1077 @@ lavadora|h|Aparato para lavar ropa.
 escalera|h|Serie de escalones para subir o bajar.
 estrella|n|Astro que brilla con luz propia en el cielo.
 desierto|n|Lugar muy seco con poca lluvia y poca vida.
-arcoiris|n|Arco de colores que aparece en el cielo tras la lluvia.
+arcoíris|n|Arco de colores que aparece en el cielo tras la lluvia.
 tormenta|n|Lluvia fuerte con viento, rayos y truenos.
 invierno|n|La estación más fría del año.
 garganta|b|Parte interna del cuello por donde pasan comida y aire.
-estomago|b|Órgano donde se digiere la comida.
+estómago|b|Órgano donde se digiere la comida.
 costilla|b|Cada uno de los huesos curvos del pecho.
 medicina|b|Sustancia que sirve para curar; también la ciencia de curar.
 hospital|l|Lugar donde se atiende a los enfermos.
 farmacia|l|Tienda donde se venden medicinas.
 edificio|l|Construcción grande con varios pisos.
-semaforo|l|Luces que dirigen el tránsito en las calles.
+semáforo|l|Luces que dirigen el tránsito en las calles.
 profesor|p|Persona que enseña una materia.
 princesa|p|Hija de un rey o de una reina.
 cocinero|p|Persona que prepara la comida.
 pescador|p|Persona que pesca.
-mecanico|p|Persona que repara máquinas y coches.
+mecánico|p|Persona que repara máquinas y coches.
+gato|a|Felino doméstico que maúlla y caza ratones.
+vaca|a|Animal de granja que da leche.
+pato|a|Ave acuática de pico ancho.
+lobo|a|Animal salvaje parecido a un perro grande que aúlla.
+rana|a|Anfibio que salta y croa.
+foca|a|Mamífero marino de zonas frías.
+toro|a|Macho de la vaca, con cuernos.
+mono|a|Primate ágil que trepa los árboles.
+puma|a|Felino americano de pelaje café claro.
+loro|a|Ave de colores que puede imitar palabras.
+pavo|a|Ave grande de granja; en México también se le dice guajolote.
+sapo|a|Anfibio parecido a la rana, de piel rugosa.
+alce|a|Ciervo muy grande de astas anchas.
+búho|a|Ave nocturna de ojos grandes.
+mula|a|Animal de carga, cruza de burro y yegua.
+orca|a|Mamífero marino blanco y negro, pariente del delfín.
+gallo|a|Macho de la gallina; canta al amanecer.
+cerdo|a|Animal de granja de hocico chato; también se le dice puerco.
+pollo|a|Cría de la gallina.
+ganso|a|Ave acuática grande de cuello largo.
+cisne|a|Ave acuática elegante de cuello largo y curvo.
+yegua|a|Hembra del caballo.
+panda|a|Oso blanco y negro de China que come bambú.
+koala|a|Animal australiano que vive en los árboles y come eucalipto.
+llama|a|Animal de los Andes de cuello largo y lana suave.
+garza|a|Ave de patas y cuello largos que vive cerca del agua.
+hiena|a|Animal africano cuyo sonido parece una risa.
+lince|a|Felino salvaje de orejas con mechones.
+erizo|a|Animal pequeño cubierto de púas.
+tapir|a|Mamífero de la selva con una pequeña trompa.
+potro|a|Caballo joven.
+chivo|a|Cría de la cabra.
+abeja|a|Insecto que hace miel.
+araña|a|Animal de ocho patas que teje telarañas.
+pulga|a|Insecto diminuto que salta y pica a los animales.
+morsa|a|Mamífero marino con grandes colmillos.
+tucán|a|Ave de la selva con un pico enorme y colorido.
+bagre|a|Pez de río con bigotes.
+cobra|a|Serpiente venenosa que levanta la cabeza.
+oruga|a|Larva de la mariposa, parecida a un gusano.
+gorila|a|El mono más grande y fuerte.
+búfalo|a|Animal grande y fuerte parecido al toro.
+ciervo|a|Animal del bosque con astas; también se le dice venado.
+alpaca|a|Animal de los Andes parecido a la llama, de lana fina.
+jabalí|a|Cerdo salvaje con colmillos.
+liebre|a|Animal parecido al conejo, de orejas y patas más largas.
+nutria|a|Mamífero que nada en los ríos y come peces.
+perico|a|Ave verde y parlanchina, pariente del loro.
+cuervo|a|Ave negra y muy inteligente.
+grillo|a|Insecto que canta de noche frotando sus alas.
+víbora|a|Serpiente, sobre todo la venenosa.
+coyote|a|Animal salvaje de América parecido a un perro flaco.
+halcón|a|Ave de presa muy veloz.
+paloma|a|Ave común en las plazas; símbolo de la paz.
+venado|a|Animal del bosque con astas.
+medusa|a|Animal marino gelatinoso que puede picar.
+almeja|a|Molusco con concha de dos partes.
+manatí|a|Mamífero marino grande y tranquilo que come plantas.
+pantera|a|Felino grande, a veces de pelaje negro.
+mapache|a|Animal con antifaz negro y cola rayada.
+borrego|a|Cría de la oveja; en México se usa para la oveja en general.
+cordero|a|Cría de la oveja.
+becerro|a|Cría de la vaca.
+ajolote|a|Anfibio mexicano que puede regenerar partes de su cuerpo.
+caracol|a|Molusco que lleva su concha en espiral a cuestas.
+lombriz|a|Gusano de tierra que ayuda a las plantas.
+cigarra|a|Insecto que hace un canto fuerte en verano.
+colibrí|a|Ave muy pequeña que aletea rapidísimo.
+hámster|a|Roedor pequeño que se tiene como mascota.
+gaviota|a|Ave blanca y gris que vive cerca del mar.
+bisonte|a|Animal grande y peludo parecido al toro.
+polilla|a|Insecto nocturno parecido a una mariposa.
+cotorra|a|Ave parecida al loro; también una persona que habla mucho.
+gorrión|a|Pájaro pequeño y café muy común.
+canario|a|Pájaro amarillo que canta muy bonito.
+alacrán|a|Animal con pinzas y una cola con aguijón venenoso.
+anguila|a|Pez largo y delgado parecido a una serpiente.
+lechuza|a|Ave nocturna de cara blanca en forma de corazón.
+ocelote|a|Felino americano de piel con manchas.
+quetzal|a|Ave de plumas verdes brillantes, sagrada para los mayas.
+carnero|a|Macho de la oveja, con cuernos enroscados.
+pelícano|a|Ave marina con una bolsa en el pico para atrapar peces.
+ciempiés|a|Animal alargado con muchísimas patas.
+cachorro|a|Cría de un perro u otro mamífero.
+potrillo|a|Caballo muy joven.
+zopilote|a|Ave negra que come animales muertos.
+jilguero|a|Pájaro pequeño de colores que canta bonito.
+libélula|a|Insecto de cuerpo largo y cuatro alas transparentes.
+abejorro|a|Abeja grande y peluda que zumba fuerte.
+flamenco|a|Ave rosada de patas largas que se para en una sola.
+zorrillo|a|Animal blanco y negro que lanza un olor muy fuerte.
+codorniz|a|Ave pequeña de campo con huevos manchados.
+papagayo|a|Ave tropical grande y colorida que imita sonidos.
+ruiseñor|a|Pájaro famoso por su canto hermoso.
+pera|c|Fruta verde o amarilla, más ancha abajo.
+piña|c|Fruta tropical con corona de hojas, dulce y jugosa.
+coco|c|Fruto de la palmera con agua y pulpa blanca.
+kiwi|c|Fruta café y peluda por fuera, verde por dentro.
+taco|c|Tortilla doblada con relleno; el platillo mexicano por excelencia.
+mole|c|Salsa espesa mexicana de chiles, especias y chocolate.
+atún|c|Pez grande de mar; se come mucho enlatado.
+miel|c|Sustancia dulce que hacen las abejas.
+sopa|c|Comida líquida y caliente.
+café|c|Bebida oscura hecha con granos tostados.
+maíz|c|Planta de mazorcas; base de la tortilla.
+jugo|c|Líquido que se saca de las frutas.
+flan|c|Postre de huevo y leche con caramelo.
+nuez|c|Fruto seco de cáscara dura.
+haba|c|Semilla grande y verde que se come cocida.
+lima|c|Fruta cítrica parecida al limón, de sabor suave.
+dona|c|Pan dulce frito en forma de anillo.
+sope|c|Tortilla gruesa con bordes, cubierta de frijoles y salsa.
+papa|c|Tubérculo que se come frito, cocido o en puré.
+apio|c|Verdura de tallos verdes y crujientes.
+torta|c|Pan relleno; el sándwich mexicano.
+tamal|c|Masa de maíz con relleno, cocida al vapor en hoja.
+pizza|c|Masa redonda horneada con salsa de tomate y queso.
+carne|c|Parte de los animales que se come.
+crema|c|Parte espesa de la leche.
+jamón|c|Carne de cerdo curada que se come en rebanadas.
+atole|c|Bebida caliente y espesa de maíz.
+menta|c|Hierba de sabor fresco.
+melón|c|Fruta grande y dulce de pulpa naranja o verde.
+guiso|c|Comida cocinada con salsa.
+caldo|c|Sopa que se hace al hervir carne o verduras.
+dulce|c|Golosina; también el sabor del azúcar.
+nopal|c|Planta con pencas espinosas que se comen asadas.
+chile|c|Fruto picante; esencial en la comida mexicana.
+fideo|c|Pasta delgada y larga para sopa.
+cacao|c|Semilla con la que se hace el chocolate.
+trigo|c|Cereal con el que se hacen la harina y el pan.
+avena|c|Cereal que se come en hojuelas con leche.
+ejote|c|Vaina verde y tierna del frijol.
+yogur|c|Leche fermentada, espesa y un poco ácida.
+salmón|c|Pez de carne rosada muy sabrosa.
+pozole|c|Caldo mexicano de maíz cacahuazintle con carne.
+birria|c|Guiso picante de carne, típico de Jalisco.
+tocino|c|Tiras de carne de cerdo que se fríen.
+churro|c|Masa frita alargada con azúcar y canela.
+chicle|c|Goma de mascar.
+canela|c|Corteza de sabor dulce y aromático.
+harina|c|Polvo de trigo u otro grano para hacer pan.
+aceite|c|Líquido graso que se usa para freír.
+postre|c|Platillo dulce que se come al final.
+concha|c|Pan dulce mexicano con costra de azúcar en forma de caracol.
+paleta|c|Dulce o helado con palito.
+jícama|c|Raíz blanca y crujiente que se come con limón y chile.
+rábano|c|Raíz roja y picosita que se come cruda.
+camote|c|Tubérculo dulce que se come cocido o asado.
+bistec|c|Rebanada delgada de carne de res.
+cereal|c|Grano como el trigo o el maíz; también lo que se desayuna con leche.
+cocada|c|Dulce hecho de coco rallado.
+menudo|c|Caldo mexicano de panza de res con chile.
+lasaña|c|Pasta en capas con carne, salsa y queso, horneada.
+brócoli|c|Verdura verde en forma de arbolito.
+lenteja|c|Semilla pequeña y redonda que se come en sopa.
+gordita|c|Tortilla gruesa de maíz rellena.
+tostada|c|Tortilla frita y crujiente con ingredientes encima.
+burrito|c|Tortilla de harina enrollada con relleno.
+bolillo|c|Pan blanco de corteza dura, típico de México.
+tequila|c|Bebida mexicana hecha del agave azul.
+durazno|c|Fruta de piel aterciopelada y hueso grande.
+ciruela|c|Fruta pequeña y jugosa, morada o roja.
+guayaba|c|Fruta tropical aromática de pulpa rosa o blanca.
+toronja|c|Fruta cítrica grande y un poco amarga.
+chayote|c|Fruto verde con espinitas que se come cocido.
+betabel|c|Raíz morada y dulce; en otros países, remolacha.
+esquite|c|Granos de elote cocidos, servidos en vaso.
+camarón|c|Animal marino pequeño que se come cocido o en coctel.
+pechuga|c|Carne del pecho del pollo.
+chorizo|c|Embutido de cerdo con chile y especias.
+sardina|c|Pez pequeño que se vende en lata.
+vinagre|c|Líquido ácido que se usa para aderezar.
+mostaza|c|Salsa amarilla de sabor fuerte.
+orégano|c|Hierba aromática para sazonar.
+perejil|c|Hierba verde de hojas pequeñas para cocinar.
+mazapán|c|Dulce de cacahuate molido que se desmorona.
+buñuelo|c|Tortilla frita y crujiente con azúcar o miel.
+pambazo|c|Pan bañado en salsa roja y relleno de papa con chorizo.
+tlayuda|c|Tortilla grande y crujiente de Oaxaca con frijoles y quesillo.
+chalupa|c|Tortilla pequeña y gruesa con salsa y carne.
+mollete|c|Bolillo con frijoles y queso gratinado.
+chícharo|c|Semilla verde y redonda que viene en vaina.
+garbanzo|c|Semilla redonda y dura que se come cocida.
+horchata|c|Bebida dulce de arroz con canela.
+refresco|c|Bebida dulce con gas.
+caramelo|c|Dulce hecho de azúcar derretida.
+gelatina|c|Postre que tiembla, de sabores.
+pimiento|c|Fruto de colores, grande y no picante.
+langosta|c|Animal marino grande con antenas, muy apreciado como comida.
+mejillón|c|Molusco de concha negra.
+desayuno|c|La primera comida del día.
+almuerzo|c|Comida de media mañana o de mediodía.
+merienda|c|Comida ligera de la tarde.
+sándwich|c|Pan de caja con relleno.
+arándano|c|Fruta pequeña, azul o roja.
+jengibre|c|Raíz de sabor picante y fresco.
+cilantro|c|Hierba verde de olor fuerte, básica en la salsa.
+albahaca|c|Hierba aromática de hojas verdes.
+pistache|c|Semilla verde de cáscara dura que se come como botana.
+polvorón|c|Galleta suave que se deshace en la boca.
+barbacoa|c|Carne cocida lentamente en un hoyo bajo tierra.
+carnitas|c|Carne de cerdo cocida en manteca; platillo de Michoacán.
+mesa|h|Mueble con tablero y patas para comer o trabajar.
+cama|h|Mueble para dormir.
+taza|h|Recipiente pequeño con asa para beber café o té.
+vaso|h|Recipiente para beber.
+sofá|h|Asiento largo y acolchado para varias personas.
+olla|h|Recipiente hondo para cocinar.
+foco|h|Bombilla que da luz eléctrica.
+tina|h|Bañera; recipiente grande para bañarse.
+caja|h|Recipiente con tapa para guardar cosas.
+pala|h|Herramienta para cavar o mover tierra.
+lata|h|Envase de metal para alimentos o bebidas.
+ropa|h|Prendas de vestir.
+bota|h|Calzado que cubre el pie y parte de la pierna.
+vela|h|Cilindro de cera con mecha que da luz.
+hilo|h|Hebra delgada para coser.
+goma|h|Borrador; también un material elástico.
+piso|h|Suelo de una casa; también cada nivel de un edificio.
+cuna|h|Camita con barandales para bebés.
+baúl|h|Caja grande con tapa para guardar cosas.
+sala|h|Cuarto de la casa para recibir visitas y convivir.
+baño|h|Cuarto para asearse; también el acto de bañarse.
+cajón|h|Caja que se desliza dentro de un mueble.
+tazón|h|Recipiente hondo para cereal o sopa.
+jarra|h|Recipiente con asa para servir líquidos.
+cofre|h|Caja fuerte para guardar tesoros.
+carta|h|Mensaje escrito que se manda a alguien.
+papel|h|Hoja delgada para escribir o envolver.
+disco|h|Objeto plano y redondo; también un álbum de música.
+globo|h|Bolsa de hule que se infla con aire.
+pluma|h|Bolígrafo; también lo que cubre a las aves.
+regla|h|Instrumento para medir y trazar líneas rectas.
+clavo|h|Pieza de metal puntiaguda que se martilla.
+cinta|h|Tira delgada de tela o plástico, a veces adhesiva.
+jabón|h|Producto para lavar que hace espuma.
+peine|h|Objeto con dientes para arreglar el cabello.
+techo|h|Parte de arriba que cubre una casa.
+pared|h|Muro que forma los cuartos de una casa.
+patio|h|Espacio abierto dentro o detrás de una casa.
+barda|h|Muro que rodea un terreno.
+manta|h|Tela gruesa para cubrirse.
+arete|h|Joya que se pone en la oreja.
+gorra|h|Prenda para la cabeza con visera.
+falda|h|Prenda que cuelga de la cintura.
+blusa|h|Prenda de vestir de mujer para el torso.
+botón|h|Pieza para abrochar la ropa; también una tecla.
+aguja|h|Barra delgada y puntiaguda para coser.
+cojín|h|Almohada para sentarse o recargarse.
+buzón|h|Caja donde se dejan las cartas.
+sillón|h|Silla grande y cómoda con brazos.
+sartén|h|Recipiente plano con mango para freír.
+estufa|h|Aparato de cocina con quemadores.
+nevera|h|Refrigerador; conserva fríos los alimentos.
+mueble|h|Objeto como una mesa, silla o cama que amuebla una casa.
+toalla|h|Tela para secarse.
+camisa|h|Prenda con botones y cuello.
+suéter|h|Prenda tejida para el frío.
+abrigo|h|Prenda gruesa para protegerse del frío.
+zapato|h|Calzado que cubre el pie.
+anillo|h|Aro que se pone en el dedo.
+collar|h|Adorno que se pone alrededor del cuello.
+escoba|h|Utensilio para barrer.
+cubeta|h|Recipiente con asa para cargar agua.
+tapete|h|Alfombra pequeña.
+sábana|h|Tela que cubre el colchón.
+regalo|h|Lo que se da a alguien para festejarlo.
+muñeca|h|Juguete con forma de persona; también la articulación de la mano.
+cuadro|h|Pintura o foto enmarcada.
+maceta|h|Recipiente con tierra para plantas.
+tetera|h|Recipiente para preparar té.
+agenda|h|Libreta para anotar fechas y pendientes.
+moneda|h|Pieza de metal que sirve como dinero.
+repisa|h|Tabla en la pared para poner cosas.
+ropero|h|Mueble para guardar la ropa.
+timbre|h|Botón que suena para avisar que alguien llegó.
+azotea|h|Techo plano de una casa donde se puede estar.
+sótano|h|Cuarto bajo el nivel del suelo.
+tinaco|h|Depósito de agua en la azotea.
+lavabo|h|Lavamanos del baño.
+pijama|h|Ropa para dormir.
+guante|h|Prenda que cubre la mano.
+champú|h|Jabón líquido para el cabello.
+mantel|h|Tela que cubre la mesa.
+jarrón|h|Vasija decorativa para flores.
+crayón|h|Barrita de cera de colores para dibujar.
+hamaca|h|Red colgante para descansar.
+florero|h|Recipiente para poner flores.
+cazuela|h|Recipiente de barro para cocinar.
+plancha|h|Aparato para quitarle las arrugas a la ropa.
+libreta|h|Cuaderno pequeño.
+carpeta|h|Folder para guardar hojas.
+mochila|h|Bolsa que se carga en la espalda.
+cartera|h|Bolsita para guardar dinero y tarjetas.
+billete|h|Papel que vale dinero.
+llavero|h|Aro para juntar las llaves.
+candado|h|Cerradura portátil con gancho.
+cerillo|h|Palito que enciende fuego al frotarlo.
+estante|h|Mueble con repisas para guardar cosas.
+pasillo|h|Corredor largo y angosto.
+comedor|h|Cuarto o mesa donde se come.
+cochera|h|Lugar de la casa para guardar el coche.
+playera|h|Camiseta de manga corta.
+vestido|h|Prenda de una pieza que cubre el cuerpo.
+corbata|h|Tira de tela que se anuda al cuello de la camisa.
+chaleco|h|Prenda sin mangas que va sobre la camisa.
+pañuelo|h|Pedazo de tela para limpiarse la nariz.
+bufanda|h|Prenda larga para abrigar el cuello.
+cepillo|h|Utensilio con cerdas para peinar o limpiar.
+perfume|h|Líquido de olor agradable.
+colchón|h|Parte acolchada de la cama.
+pulsera|h|Joya que se pone en la muñeca.
+diadema|h|Arco para sujetar el cabello.
+pantalón|h|Prenda que cubre cada pierna por separado.
+calcetín|h|Prenda que cubre el pie, debajo del zapato.
+sandalia|h|Zapato abierto para el calor.
+cuchillo|h|Utensilio con hoja afilada para cortar.
+martillo|h|Herramienta para clavar clavos.
+tornillo|h|Pieza de metal con rosca para unir cosas.
+linterna|h|Lámpara de mano con pilas.
+recámara|h|Cuarto para dormir.
+regadera|h|Ducha; también el recipiente para regar plantas.
+tapadera|h|Tapa de una olla o recipiente.
+borrador|h|Goma para borrar.
+cobertor|h|Cobija gruesa.
+chaqueta|h|Prenda de abrigo corta.
+lapicero|h|Bolígrafo; pluma de tinta.
+pizarrón|h|Superficie para escribir con gis o plumón.
+lavadero|h|Lugar con piedra para lavar ropa a mano.
+secadora|h|Aparato para secar la ropa o el cabello.
+batidora|h|Aparato para batir alimentos.
+cafetera|h|Aparato para preparar café.
+tostador|h|Aparato para tostar pan.
+cucharón|h|Cuchara grande para servir sopa.
+medallón|h|Joya colgante grande.
+basurero|h|Bote para la basura.
+manguera|h|Tubo flexible para el agua.
+mecedora|h|Silla que se mece.
+taburete|h|Asiento sin respaldo.
+nube|n|Masa de vapor de agua que flota en el cielo.
+lago|n|Gran cantidad de agua rodeada de tierra.
+roca|n|Piedra grande y dura.
+luna|n|Satélite que gira alrededor de la Tierra.
+lodo|n|Tierra mezclada con agua.
+rayo|n|Descarga eléctrica que cae del cielo en una tormenta.
+flor|n|Parte colorida de las plantas.
+hoja|n|Parte verde y plana de las plantas.
+rosa|n|Flor con espinas y pétalos suaves.
+pino|n|Árbol siempre verde de hojas como agujas.
+isla|n|Tierra rodeada de agua por todas partes.
+cima|n|Parte más alta de una montaña.
+alba|n|Primera luz del día.
+rubí|n|Piedra preciosa de color rojo.
+duna|n|Montaña de arena formada por el viento.
+brisa|n|Viento suave y fresco.
+valle|n|Terreno bajo entre montañas.
+campo|n|Terreno fuera de la ciudad, con cultivos o pasto.
+cerro|n|Montaña pequeña.
+costa|n|Tierra junto al mar.
+prado|n|Terreno con pasto.
+bahía|n|Entrada del mar en la costa, protegida del oleaje.
+tallo|n|Parte de la planta que sostiene hojas y flores.
+pasto|n|Hierba que cubre el suelo.
+árbol|n|Planta grande con tronco y ramas.
+palma|n|Palmera; también el interior de la mano.
+roble|n|Árbol grande de madera muy dura.
+cedro|n|Árbol grande de madera olorosa.
+ceiba|n|Árbol gigante, sagrado para los mayas.
+barro|n|Lodo; también la tierra con que se hacen ollas.
+polvo|n|Partículas finas de tierra.
+marea|n|Subida y bajada del nivel del mar.
+noche|n|Tiempo sin luz del sol.
+tarde|n|Parte del día entre el mediodía y la noche.
+otoño|n|Estación en que caen las hojas.
+clima|n|Condiciones del tiempo en un lugar.
+calor|n|Temperatura alta.
+astro|n|Cuerpo del espacio, como una estrella o un planeta.
+rocío|n|Gotitas de agua que aparecen en la mañana sobre las plantas.
+hongo|n|Ser vivo como el champiñón; crece en lugares húmedos.
+coral|n|Animal marino que forma arrecifes de colores.
+perla|n|Bolita brillante que se forma dentro de una ostra.
+plata|n|Metal precioso de color gris brillante.
+cobre|n|Metal rojizo que conduce la electricidad.
+oasis|n|Lugar con agua y plantas en medio del desierto.
+lirio|n|Flor elegante, blanca o de colores.
+bambú|n|Planta alta de tallo hueco y muy resistente.
+musgo|n|Plantita verde que crece en lugares húmedos.
+sismo|n|Movimiento de la tierra; temblor.
+cañón|n|Valle profundo entre montañas; también un arma.
+niebla|n|Nube baja que no deja ver lejos.
+trueno|n|Ruido fuerte que sigue al rayo.
+hierba|n|Planta pequeña de tallo tierno.
+ceniza|n|Polvo gris que queda después de quemar algo.
+arroyo|n|Río pequeño.
+océano|n|Enorme extensión de agua salada.
+aurora|n|Luz del cielo antes de salir el sol.
+verano|n|La estación más calurosa del año.
+cometa|n|Astro con cola brillante; también un juguete que vuela.
+sombra|n|Zona oscura que se forma cuando algo tapa la luz.
+hierro|n|Metal duro y fuerte.
+cráter|n|Hoyo en la cima de un volcán o en la Luna.
+colina|n|Elevación de tierra pequeña.
+cactus|n|Planta del desierto con espinas.
+clavel|n|Flor de pétalos rizados.
+jazmín|n|Flor blanca muy perfumada.
+tronco|n|Parte gruesa del árbol.
+trébol|n|Planta de tres hojas; la de cuatro da suerte.
+ciclón|n|Tormenta con vientos que giran.
+sequía|n|Tiempo largo sin lluvia.
+nevada|n|Caída de nieve.
+meseta|n|Terreno alto y plano.
+sabino|n|Árbol grande que crece junto a los ríos.
+maguey|n|Planta de pencas grandes; de él se saca el pulque.
+zafiro|n|Piedra preciosa azul.
+cuarzo|n|Mineral transparente y brillante.
+mármol|n|Piedra fina y pulida.
+carbón|n|Material negro que se usa para hacer fuego.
+lucero|n|Estrella brillante.
+cenote|n|Pozo natural de agua dulce, típico de Yucatán.
+semilla|n|Parte de la planta de la que nace otra planta.
+glaciar|n|Gran masa de hielo que se mueve lentamente.
+pradera|n|Terreno grande y plano con pasto.
+pantano|n|Terreno inundado y lodoso.
+manglar|n|Bosque que crece en el agua salada de la costa.
+helecho|n|Planta verde de hojas grandes en forma de pluma.
+tulipán|n|Flor en forma de copa.
+violeta|n|Flor pequeña y morada; también un color.
+corteza|n|Capa exterior del tronco de un árbol.
+bellota|n|Fruto del roble.
+neblina|n|Niebla ligera.
+eclipse|n|Cuando la Luna tapa al Sol, o la Tierra a la Luna.
+galaxia|n|Conjunto enorme de estrellas, como la Vía Láctea.
+temblor|n|Movimiento de la tierra; sismo.
+huracán|n|Tormenta muy fuerte con vientos que giran.
+tornado|n|Remolino de viento muy violento.
+meteoro|n|Luz que cruza el cielo cuando una roca entra a la atmósfera.
+amapola|n|Flor roja silvestre.
+azucena|n|Flor blanca y perfumada.
+paisaje|n|Vista de un lugar natural.
+biznaga|n|Cactus redondo de México.
+palmera|n|Árbol alto de las playas con hojas grandes arriba.
+arbusto|n|Planta más baja que un árbol, con muchas ramas.
+granito|n|Piedra muy dura con puntitos.
+arrecife|n|Formación de coral bajo el mar.
+nebulosa|n|Nube de gas y polvo en el espacio.
+amanecer|n|Momento en que sale el sol.
+mediodía|n|Las doce del día.
+magnolia|n|Árbol de flores grandes y blancas.
+gardenia|n|Flor blanca muy perfumada.
+orquídea|n|Flor exótica de formas curiosas.
+universo|n|Todo lo que existe: estrellas, planetas y galaxias.
+barranca|n|Hondonada profunda en la tierra.
+aguacero|n|Lluvia fuerte y repentina.
+ventisca|n|Tormenta de viento y nieve.
+llovizna|n|Lluvia muy ligera.
+planicie|n|Terreno grande y plano.
+huizache|n|Árbol espinoso de flores amarillas, común en México.
+mezquite|n|Árbol del desierto mexicano de madera dura.
+diamante|n|La piedra preciosa más dura y brillante.
+amatista|n|Piedra preciosa morada.
+petróleo|n|Líquido negro del subsuelo del que se saca la gasolina.
+mano|b|Parte del cuerpo al final del brazo, con cinco dedos.
+boca|b|Abertura de la cara para comer y hablar.
+dedo|b|Cada una de las partes alargadas de la mano o el pie.
+pelo|b|Hilos que crecen en la cabeza y el cuerpo.
+codo|b|Articulación en medio del brazo.
+piel|b|Capa que cubre todo el cuerpo.
+ceja|b|Pelo arriba de los ojos.
+cara|b|Parte delantera de la cabeza.
+nuca|b|Parte de atrás del cuello.
+hipo|b|Ruido involuntario que sale de la garganta una y otra vez.
+riñón|b|Órgano que limpia la sangre y produce la orina.
+hueso|b|Pieza dura del esqueleto.
+muela|b|Diente grande del fondo de la boca.
+encía|b|Carne que rodea los dientes.
+barba|b|Pelo que crece en la barbilla y las mejillas.
+muslo|b|Parte de la pierna entre la cadera y la rodilla.
+talón|b|Parte de atrás del pie.
+axila|b|Hueco debajo del brazo.
+panza|b|Barriga; vientre.
+gripe|b|Enfermedad con fiebre, tos y mocos.
+dieta|b|Lo que una persona come normalmente.
+sudor|b|Líquido que sale de la piel con el calor.
+mareo|b|Sensación de que todo da vueltas.
+venda|b|Tira de tela para cubrir heridas.
+pulmón|b|Órgano con el que respiramos.
+hígado|b|Órgano grande que ayuda a digerir.
+sangre|b|Líquido rojo que corre por las venas.
+cráneo|b|Hueso que protege el cerebro.
+lengua|b|Músculo de la boca para saborear y hablar; también un idioma.
+bigote|b|Pelo que crece arriba del labio.
+frente|b|Parte de la cara arriba de los ojos.
+cadera|b|Parte del cuerpo donde empiezan las piernas.
+fiebre|b|Temperatura alta del cuerpo por una enfermedad.
+jarabe|b|Medicina líquida y dulce.
+vacuna|b|Medicina que protege contra una enfermedad.
+pupila|b|Círculo negro en el centro del ojo.
+nervio|b|Fibra que lleva señales entre el cerebro y el cuerpo.
+herida|b|Lastimadura en la piel.
+curita|b|Venda pequeña con pegamento.
+pomada|b|Crema medicinal que se unta.
+pulgar|b|El dedo más grueso de la mano.
+índice|b|Dedo junto al pulgar; con él señalamos.
+mentón|b|Barbilla; parte de abajo de la cara.
+pómulo|b|Hueso de la mejilla.
+receta|b|Papel del médico con las medicinas que debes tomar; también instrucciones de cocina.
+muleta|b|Bastón para apoyarse al caminar si tienes una pierna lastimada.
+náusea|b|Ganas de vomitar.
+músculo|b|Parte del cuerpo que permite moverse.
+mejilla|b|Cada lado de la cara, debajo de los ojos.
+párpado|b|Piel que cubre el ojo al cerrarlo.
+cintura|b|Parte más angosta del tronco, arriba de la cadera.
+vientre|b|Parte del cuerpo donde está el estómago.
+columna|b|Conjunto de huesos de la espalda.
+arteria|b|Vaso que lleva la sangre del corazón al cuerpo.
+alergia|b|Reacción del cuerpo a algo como el polen o el polvo.
+jeringa|b|Instrumento con aguja para inyectar.
+higiene|b|Limpieza para cuidar la salud.
+meñique|b|El dedo más pequeño de la mano.
+bostezo|b|Abrir mucho la boca por sueño o aburrimiento.
+moretón|b|Mancha morada en la piel por un golpe.
+chichón|b|Bulto en la cabeza por un golpe.
+vendaje|b|Vendas que cubren una herida.
+camilla|b|Cama portátil para llevar enfermos.
+jaqueca|b|Dolor de cabeza fuerte.
+pastilla|b|Medicina pequeña y sólida que se traga.
+vértebra|b|Cada hueso de la columna.
+barbilla|b|Parte de abajo de la cara.
+vitamina|b|Sustancia de los alimentos necesaria para la salud.
+descanso|b|Pausa para recuperar fuerzas.
+cicatriz|b|Marca que queda en la piel tras una herida.
+consulta|b|Visita al médico para que te revise.
+botiquín|b|Cajita con lo necesario para primeros auxilios.
+insomnio|b|Dificultad para dormir.
+proteína|b|Nutriente de la carne, el huevo y los frijoles que forma los músculos.
+cine|l|Lugar donde se proyectan películas.
+aula|l|Salón de clases.
+país|l|Territorio con su propio gobierno, como México.
+pozo|l|Hoyo profundo para sacar agua.
+faro|l|Torre con luz que guía a los barcos.
+muro|l|Pared gruesa.
+aldea|l|Pueblo muy pequeño.
+cueva|l|Hueco grande en una montaña o bajo tierra.
+torre|l|Construcción alta y angosta.
+feria|l|Fiesta con juegos mecánicos y puestos.
+circo|l|Espectáculo con payasos, acróbatas y malabaristas.
+salón|l|Cuarto grande; también el aula de clases.
+mundo|l|La Tierra y todo lo que hay en ella.
+granja|l|Terreno con animales y cultivos.
+rancho|l|Terreno en el campo con casa y animales.
+pueblo|l|Población pequeña.
+barrio|l|Cada zona de una ciudad.
+cárcel|l|Lugar donde encierran a los presos.
+puerto|l|Lugar de la costa donde llegan los barcos.
+garaje|l|Lugar para guardar coches.
+templo|l|Edificio para rezar.
+zócalo|l|Plaza principal de una ciudad mexicana.
+bodega|l|Lugar para guardar mercancía.
+kiosco|l|Construcción techada en medio de la plaza.
+región|l|Parte de un territorio.
+camino|l|Vía por donde se va de un lugar a otro.
+cabaña|l|Casita de madera en el campo.
+balcón|l|Espacio abierto que sale de una ventana, con barandal.
+muelle|l|Construcción en la orilla para que atraquen los barcos.
+aduana|l|Oficina de la frontera que revisa lo que entra a un país.
+posada|l|Lugar sencillo para hospedarse; también una fiesta navideña mexicana.
+capital|l|Ciudad principal de un país o estado.
+colonia|l|En México, cada barrio de una ciudad.
+esquina|l|Lugar donde se juntan dos calles.
+avenida|l|Calle ancha.
+sendero|l|Camino angosto en el campo.
+colegio|l|Escuela.
+palacio|l|Casa grande y lujosa de reyes o gobernantes.
+acuario|l|Lugar donde se exhiben peces y animales marinos.
+fábrica|l|Lugar donde se hacen productos con máquinas.
+capilla|l|Iglesia pequeña.
+cantina|l|Bar tradicional mexicano.
+alberca|l|Piscina.
+terraza|l|Espacio abierto en lo alto de una casa.
+malecón|l|Paseo junto al mar.
+cuartel|l|Edificio donde viven los soldados.
+panteón|l|Cementerio.
+mirador|l|Lugar alto con buena vista.
+alameda|l|Paseo con árboles, como la Alameda Central.
+castillo|l|Fortaleza con torres y murallas.
+pirámide|l|Construcción de caras triangulares, como las de Teotihuacán.
+frontera|l|Línea que separa dos países.
+gimnasio|l|Lugar para hacer ejercicio.
+glorieta|l|Plaza redonda donde se juntan calles.
+librería|l|Tienda donde se venden libros.
+taquería|l|Lugar donde venden tacos.
+frutería|l|Tienda de frutas.
+hacienda|l|Finca grande del campo con casa principal.
+embajada|l|Oficina de un país dentro de otro país.
+callejón|l|Calle angosta.
+convento|l|Casa donde viven monjas o frailes.
+catedral|l|Iglesia principal de una ciudad.
+estación|l|Lugar donde para el tren o el autobús; también cada parte del año.
+vivienda|l|Lugar donde vive alguien.
+terminal|l|Estación donde empiezan o terminan los autobuses.
+albergue|l|Lugar para dar refugio.
+plazuela|l|Plaza pequeña.
+vecindad|l|Casa con muchas viviendas alrededor de un patio.
+mamá|p|Forma cariñosa de llamar a la madre.
+nene|p|Niño pequeño.
+niño|p|Persona de pocos años.
+bebé|p|Niño recién nacido o muy pequeño.
+jefe|p|Persona que dirige a otros en el trabajo.
+hada|p|Ser mágico de los cuentos, con alas y varita.
+dama|p|Mujer elegante; también un juego de mesa.
+mago|p|Persona que hace trucos de magia.
+chef|p|Jefe de cocina.
+juez|p|Persona que decide en un juicio.
+primo|p|Hijo de tu tío o tía.
+nieto|p|Hijo de tu hijo o hija.
+novio|p|Persona con quien tienes una relación de pareja.
+poeta|p|Persona que escribe poesía.
+autor|p|Persona que crea una obra.
+líder|p|Persona que guía a un grupo.
+monja|p|Religiosa que vive en un convento.
+héroe|p|Persona valiente que hace algo admirable.
+dueño|p|Persona a quien le pertenece algo.
+socio|p|Persona que comparte un negocio con otra.
+señor|p|Hombre adulto.
+bruja|p|Mujer con poderes mágicos en los cuentos.
+enano|p|Personaje pequeño de los cuentos.
+ángel|p|Ser espiritual con alas.
+espía|p|Persona que obtiene información en secreto.
+abuela|p|Madre de tu papá o de tu mamá.
+suegra|p|Madre de tu esposo o esposa.
+chofer|p|Persona que maneja un vehículo.
+piloto|p|Persona que maneja un avión o un coche de carreras.
+pintor|p|Persona que pinta.
+atleta|p|Persona que practica deporte.
+obrero|p|Persona que trabaja con las manos en una fábrica u obra.
+músico|p|Persona que toca o compone música.
+ladrón|p|Persona que roba.
+gemelo|p|Hermano que nació en el mismo parto.
+esposa|p|Mujer casada, respecto a su pareja.
+marido|p|Hombre casado, respecto a su pareja.
+cuñado|p|Hermano de tu pareja, o esposo de tu hermana.
+señora|p|Mujer adulta.
+duende|p|Ser pequeño y travieso de los cuentos.
+sirena|p|Ser con cuerpo de mujer y cola de pez; también la alarma de una ambulancia.
+mesero|p|Persona que sirve en un restaurante.
+cajero|p|Persona que cobra en una caja.
+sastre|p|Persona que hace trajes.
+jinete|p|Persona que monta a caballo.
+pastor|p|Persona que cuida ovejas.
+minero|p|Persona que trabaja en una mina.
+patrón|p|Jefe; dueño de un negocio.
+sobrino|p|Hijo de tu hermano o hermana.
+padrino|p|Hombre que acompaña a alguien en su bautizo o boda.
+madrina|p|Mujer que acompaña a alguien en su bautizo o boda.
+ahijado|p|Persona respecto a sus padrinos.
+gigante|p|Persona o ser enorme.
+vampiro|p|Ser de las leyendas que bebe sangre.
+cliente|p|Persona que compra en un negocio.
+plomero|p|Persona que arregla tuberías.
+albañil|p|Persona que construye casas.
+barbero|p|Persona que corta el pelo y la barba.
+nadador|p|Persona que nada.
+policía|p|Persona que cuida el orden y la seguridad.
+turista|p|Persona que viaja para conocer.
+huésped|p|Persona que se hospeda en casa ajena o en un hotel.
+alcalde|p|Persona que gobierna un municipio.
+viajero|p|Persona que viaja.
+guardia|p|Persona que vigila.
+monarca|p|Rey o reina; también una mariposa naranja que llega a México.
+vikingo|p|Guerrero navegante del norte de Europa.
+capitán|p|Persona que manda un barco o un equipo.
+taquero|p|Persona que prepara tacos.
+heroína|p|Mujer valiente que hace algo admirable.
+villano|p|El malo de la historia.
+gerente|p|Persona que dirige una empresa.
+locutor|p|Persona que habla en la radio o la tele.
+paciente|p|Persona que recibe atención médica.
+cantante|p|Persona que canta.
+dentista|p|Médico de los dientes.
+bailarín|p|Persona que baila.
+escritor|p|Persona que escribe libros.
+director|p|Persona que dirige.
+aprendiz|p|Persona que aprende un oficio.
+pasajero|p|Persona que viaja en un vehículo sin manejarlo.
+príncipe|p|Hijo de un rey.
+guerrero|p|Persona que pelea en la guerra.
+marinero|p|Persona que trabaja en un barco.
+sargento|p|Grado militar.
+vendedor|p|Persona que vende.
+panadero|p|Persona que hace pan.
+granjero|p|Persona que trabaja en una granja.
+boxeador|p|Persona que practica box.
+fantasma|p|Espíritu de un muerto que se aparece.
+monstruo|p|Ser feo y aterrador.
+pariente|p|Familiar.
+invitado|p|Persona a la que invitan.
+ciclista|p|Persona que anda en bicicleta.
+tesorero|p|Persona que cuida el dinero de un grupo.
+zapatero|p|Persona que hace o arregla zapatos.
+empleado|p|Persona que trabaja para otra.
+inventor|p|Persona que crea inventos.
+lana|m|En México, dinero. También el pelo de la oveja.
+neta|m|La verdad. «¿Neta?» es «¿en serio?».
+onda|m|Asunto o ambiente. «¿Qué onda?» es «¿qué tal?».
+mero|m|Exacto o mismo: «el mero día».
+jale|m|Trabajo o empleo.
+rola|m|Canción.
+chido|m|Bonito, padre, genial.
+cuate|m|Amigo.
+chela|m|Cerveza.
+chavo|m|Muchacho, joven.
+morra|m|Muchacha.
+chafa|m|De mala calidad.
+gacho|m|Feo o mala onda.
+cruda|m|Malestar al día siguiente de tomar alcohol.
+órale|m|Expresión de ánimo, asombro o acuerdo.
+aguas|m|¡Cuidado! Se grita para advertir un peligro.
+mande|m|Forma amable de responder cuando te hablan.
+rajón|m|Persona que se echa para atrás.
+güero|m|Persona rubia o de piel clara.
+comal|m|Plato de barro o metal para calentar tortillas.
+chamba|m|Trabajo.
+carnal|m|Hermano o amigo muy cercano.
+popote|m|Tubito para sorber bebidas.
+camión|m|En México, autobús de pasajeros.
+chesco|m|Refresco.
+mitote|m|Alboroto o chisme.
+chango|m|Mono.
+mecate|m|Cuerda o soga.
+huipil|m|Blusa bordada tradicional indígena.
+petate|m|Tapete tejido de palma para dormir.
+metate|m|Piedra para moler maíz.
+rebozo|m|Chal largo tradicional mexicano.
+sarape|m|Manta de lana de colores.
+pulque|m|Bebida fermentada del maguey.
+relajo|m|Desorden y diversión.
+lonche|m|Comida que se lleva para comer fuera de casa.
+zacate|m|Pasto; también la fibra para tallar trastes.
+chisme|m|Rumor sobre la vida de otros.
+chamaco|m|Niño o muchacho.
+metiche|m|Persona que se mete en lo que no le importa.
+ahorita|m|En un momento... o quién sabe cuándo.
+aventón|m|Llevar a alguien en tu coche; también un empujón.
+jorongo|m|Poncho de lana.
+fodongo|m|Desarreglado o flojo.
+tlacoyo|m|Antojito de masa ovalado relleno de frijol o haba.
+comadre|m|Madrina de tu hijo o una amiga muy cercana.
+jaripeo|m|Espectáculo de montar toros y caballos.
+corrido|m|Canción popular que cuenta una historia.
+chambear|m|Trabajar.
+cotorreo|m|Plática divertida.
+huarache|m|Sandalia de cuero; también un antojito alargado.
+chilango|m|Persona de la Ciudad de México.
+banqueta|m|Acera; donde caminan los peatones.
+chamarra|m|Chaqueta.
+tianguis|m|Mercado ambulante.
+papalote|m|Cometa; juguete que vuela con el viento.
+chapulín|m|Saltamontes; en Oaxaca se comen.
+jitomate|m|Tomate rojo.
+tecolote|m|Búho.
+gandalla|m|Abusivo, que se aprovecha de otros.
+chismoso|m|Persona a la que le gusta el chisme.
+apapacho|m|Abrazo cariñoso.
+pachanga|m|Fiesta.
+compadre|m|Padrino de tu hijo o un amigo muy cercano.
+agüitado|m|Triste, desanimado.
+mariachi|m|Grupo musical mexicano con trajes de charro.
+huapango|m|Música y baile de la Huasteca.
+amor|e|Sentimiento de cariño profundo.
+odio|e|Sentimiento contrario al amor.
+risa|e|Lo que hacemos cuando algo nos da gracia.
+idea|e|Pensamiento o plan que se te ocurre.
+fama|e|Ser conocido por mucha gente.
+vida|e|Tiempo desde que se nace hasta que se muere.
+gozo|e|Alegría intensa.
+pena|e|Tristeza; en México también vergüenza.
+duda|e|Falta de seguridad sobre algo.
+miedo|e|Sensación de peligro.
+enojo|e|Molestia fuerte.
+celos|e|Miedo a perder el cariño de alguien.
+susto|e|Miedo repentino.
+calma|e|Tranquilidad.
+culpa|e|Sentir que hiciste algo mal.
+gusto|e|Placer; también el sentido del sabor.
+deseo|e|Ganas de algo.
+ánimo|e|Energía y ganas de hacer algo.
+honor|e|Dignidad y buena fama.
+valor|e|Valentía; también lo que algo vale.
+sueño|e|Lo que imaginas al dormir; también las ganas de dormir.
+magia|e|Arte de hacer cosas que parecen imposibles.
+ritmo|e|Repetición ordenada de sonidos o movimientos.
+temor|e|Miedo.
+humor|e|Estado de ánimo; también la gracia.
+broma|e|Algo que se dice o hace para reír.
+dolor|e|Sensación de sufrimiento.
+dicha|e|Felicidad.
+verdad|e|Lo que es cierto.
+suerte|e|Lo que pasa por casualidad, bueno o malo.
+cariño|e|Afecto y ternura.
+gloria|e|Fama por algo grande.
+olvido|e|Dejar de recordar.
+perdón|e|Disculpar a alguien.
+bondad|e|Ser bueno con los demás.
+pasión|e|Sentimiento muy intenso.
+placer|e|Sensación agradable.
+enfado|e|Enojo.
+afecto|e|Cariño.
+coraje|e|Valentía; en México también enojo.
+rencor|e|Enojo que se guarda.
+pánico|e|Miedo muy intenso.
+terror|e|Miedo extremo.
+anhelo|e|Deseo fuerte.
+pereza|e|Falta de ganas de hacer algo.
+maldad|e|Hacer daño a propósito.
+alivio|e|Calma después de una preocupación.
+orgullo|e|Satisfacción por algo propio.
+alegría|e|Sentimiento de felicidad.
+ternura|e|Cariño suave.
+asombro|e|Gran sorpresa.
+lealtad|e|Ser fiel.
+respeto|e|Tratar bien y valorar a los demás.
+amistad|e|Cariño entre amigos.
+belleza|e|Lo que hace hermosa a una cosa.
+talento|e|Capacidad para hacer algo bien.
+destino|e|Lo que tiene que pasar; también el lugar a donde vas.
+fortuna|e|Suerte; también mucho dinero.
+riqueza|e|Abundancia de bienes.
+promesa|e|Compromiso de hacer algo.
+secreto|e|Lo que se guarda sin contar.
+emoción|e|Sentimiento intenso.
+ilusión|e|Esperanza de algo; también una imagen falsa.
+mentira|e|Lo que se dice sabiendo que no es cierto.
+envidia|e|Querer lo que otro tiene.
+dulzura|e|Suavidad y ternura.
+timidez|e|Vergüenza para hablar o actuar con otros.
+nobleza|e|Bondad y honradez.
+calidez|e|Amabilidad y cercanía.
+valentía|e|Enfrentar el miedo.
+humildad|e|No presumir.
+sorpresa|e|Lo que no esperabas.
+consuelo|e|Lo que alivia una pena.
+silencio|e|Ausencia de ruido.
+justicia|e|Dar a cada quien lo que le corresponde.
+libertad|e|Poder decidir y actuar sin estar preso.
+recuerdo|e|Algo que guardas en la memoria.
+misterio|e|Algo que no se puede explicar.
+aventura|e|Experiencia emocionante y arriesgada.
+tristeza|e|Sentimiento de pena.
+simpatía|e|Agrado que provoca una persona.
+gratitud|e|Agradecimiento.
+cortesía|e|Buenos modales.
+fantasía|e|Imaginación.
+picardía|e|Astucia traviesa.
+voluntad|e|Ganas y fuerza para hacer algo.
+esfuerzo|e|Trabajo para lograr algo.
+angustia|e|Preocupación muy fuerte.
+dignidad|e|Respeto que merece toda persona.
+igualdad|e|Que todos tengan los mismos derechos.
+golf|d|Deporte de meter una pelota en hoyos con un palo.
+dado|d|Cubo con puntos del 1 al 6 para juegos de mesa.
+meta|d|Lugar donde termina una carrera; también un objetivo.
+liga|d|Grupo de equipos que compiten entre sí.
+yoyo|d|Juguete que sube y baja con un cordón.
+remo|d|Deporte de impulsar una lancha con palas.
+tenis|d|Deporte con raquetas y una pelota sobre una red.
+boxeo|d|Deporte de golpes con guantes.
+balón|d|Pelota grande para jugar.
+juego|d|Actividad para divertirse.
+naipe|d|Cada carta de la baraja.
+lucha|d|Pelea; en México también la lucha libre.
+salto|d|Brinco.
+baile|d|Moverse al ritmo de la música.
+danza|d|Baile.
+piano|d|Instrumento musical de teclas.
+poema|d|Texto escrito en verso.
+verso|d|Cada línea de un poema.
+penal|d|Tiro directo a la portería por una falta en el área.
+bingo|d|Juego de cartones con números que se cantan.
+rodeo|d|Espectáculo de vaqueros con toros y caballos.
+dardo|d|Flecha pequeña que se lanza a un tablero.
+porra|d|Grupo que anima a un equipo; también sus gritos.
+pelota|d|Bola para jugar.
+cancha|d|Terreno para jugar un deporte.
+equipo|d|Grupo de jugadores.
+karate|d|Arte marcial de golpes y patadas.
+trompo|d|Juguete que gira sobre una punta.
+canica|d|Bolita de vidrio para jugar.
+piñata|d|Figura con dulces que se rompe a palos en las fiestas.
+fiesta|d|Reunión para celebrar.
+récord|d|La mejor marca lograda.
+trofeo|d|Copa que se da al ganador.
+premio|d|Lo que se gana.
+torneo|d|Competencia con varios participantes.
+fútbol|d|Deporte en el que se mete un balón con el pie en la portería.
+tambor|d|Instrumento de percusión.
+flauta|d|Instrumento de viento con agujeros.
+violín|d|Instrumento de cuerdas que se toca con arco.
+maraca|d|Instrumento que suena al agitarlo.
+música|d|Arte de combinar sonidos.
+dibujo|d|Imagen hecha a mano.
+cuento|d|Historia corta.
+novela|d|Libro con una historia larga.
+chiste|d|Historia corta para hacer reír.
+billar|d|Juego de mesa con bolas y tacos.
+empate|d|Cuando nadie gana.
+golazo|d|Gol muy bonito.
+dominó|d|Juego de fichas con puntos.
+poesía|d|Arte de escribir en verso.
+baraja|d|Conjunto de cartas para jugar.
+títere|d|Muñeco que se mueve con hilos o con la mano.
+ajedrez|d|Juego de estrategia con reyes, reinas y peones.
+boliche|d|Juego de derribar pinos con una bola.
+carrera|d|Competencia de velocidad.
+partido|d|Juego entre dos equipos.
+jugador|d|Persona que juega.
+árbitro|d|Persona que hace cumplir las reglas del juego.
+portero|d|Jugador que defiende la portería.
+medalla|d|Premio de metal que se cuelga al cuello.
+béisbol|d|Deporte con bate, pelota y cuatro bases.
+lotería|d|Juego mexicano de cartas con imágenes.
+canción|d|Música con letra.
+pintura|d|Arte de pintar; también el líquido de color.
+rayuela|d|Avión; juego de saltar en cuadros pintados en el piso.
+ganador|d|Quien gana.
+básquet|d|Deporte de meter un balón en una canasta.
+comedia|d|Obra para hacer reír.
+revista|d|Publicación con artículos y fotos.
+malabar|d|Truco de lanzar y atrapar objetos.
+karaoke|d|Cantar con la música de fondo.
+campeón|d|Ganador de una competencia.
+deporte|d|Actividad física con reglas.
+maratón|d|Carrera de más de 42 kilómetros.
+esgrima|d|Deporte de espadas.
+frontón|d|Juego de pelota contra una pared.
+raqueta|d|Instrumento para golpear la pelota en el tenis.
+triunfo|d|Victoria.
+derrota|d|Perder.
+voleibol|d|Deporte de pasar un balón por encima de una red con las manos.
+natación|d|Deporte de nadar.
+ciclismo|d|Deporte de la bicicleta.
+patineta|d|Tabla con ruedas.
+columpio|d|Asiento colgante para mecerse.
+guitarra|d|Instrumento de seis cuerdas.
+trompeta|d|Instrumento de viento de metal.
+película|d|Historia filmada.
+acertijo|d|Adivinanza para pensar.
+concurso|d|Competencia con premios.
+gimnasia|d|Deporte de ejercicios de fuerza y flexibilidad.
+acordeón|d|Instrumento con fuelle y teclas.
+orquesta|d|Grupo grande de músicos.
+acróbata|d|Persona que hace piruetas.
+carrusel|d|Juego de caballitos que dan vueltas.
+escalada|d|Deporte de subir paredes o montañas.
+portería|d|Donde se mete el gol.
+uniforme|d|Ropa igual de un equipo.
+marcador|d|Tablero con los puntos; también un plumón.
+auto|t|Coche, automóvil.
+tren|t|Vehículo largo que corre sobre rieles.
+moto|t|Vehículo de dos ruedas con motor.
+taxi|t|Coche que lleva pasajeros a cambio de dinero.
+nave|t|Barco; también un vehículo espacial.
+bici|t|Forma corta de decir bicicleta.
+yate|t|Barco de lujo.
+grúa|t|Máquina para levantar o remolcar cosas pesadas.
+mapa|t|Dibujo que representa un territorio.
+ruta|t|Camino para ir de un lugar a otro.
+foto|t|Imagen tomada con una cámara.
+imán|t|Objeto que atrae el metal.
+pila|t|Batería pequeña.
+barco|t|Vehículo que navega en el agua.
+avión|t|Vehículo que vuela con alas.
+metro|t|Tren subterráneo; también una medida de longitud.
+carro|t|En México, coche.
+canoa|t|Bote angosto que se mueve con remos.
+patín|t|Zapato con ruedas o cuchilla.
+motor|t|Máquina que hace mover un vehículo.
+rueda|t|Pieza redonda que gira.
+freno|t|Lo que detiene un vehículo.
+señal|t|Aviso o marca.
+viaje|t|Ir de un lugar a otro.
+radio|t|Aparato para oír estaciones.
+cable|t|Cordón que conduce electricidad.
+robot|t|Máquina que hace tareas sola.
+video|t|Grabación de imágenes en movimiento.
+andén|t|Plataforma donde se espera el tren.
+túnel|t|Paso bajo la tierra.
+vagón|t|Cada carro del tren.
+ancla|t|Pieza pesada que fija un barco.
+lancha|t|Bote pequeño con motor.
+cohete|t|Nave que viaja al espacio.
+llanta|t|Rueda de hule de un vehículo.
+boleto|t|Papel para entrar o viajar.
+correo|t|Servicio de cartas; también el correo electrónico.
+cámara|t|Aparato para tomar fotos o videos.
+bocina|t|Aparato por donde sale el sonido.
+velero|t|Barco con velas.
+pasaje|t|Boleto de viaje.
+parada|t|Lugar donde para el camión.
+antena|t|Aparato que recibe señales.
+tranvía|t|Tren eléctrico que va por la calle.
+autobús|t|Vehículo grande de pasajeros.
+tractor|t|Vehículo para trabajar el campo.
+volante|t|Rueda para manejar un coche.
+batería|t|Pila grande; también un conjunto de tambores.
+celular|t|Teléfono móvil.
+mensaje|t|Información que se envía.
+teclado|t|Conjunto de teclas.
+tableta|t|Computadora plana con pantalla táctil.
+control|t|Aparato para manejar a distancia.
+carreta|t|Carro jalado por animales.
+brújula|t|Instrumento que señala el norte.
+tráiler|t|Camión muy grande de carga.
+cajuela|t|Maletero del coche.
+enchufe|t|Conector eléctrico.
+monitor|t|Pantalla de computadora.
+consola|t|Aparato para videojuegos.
+altavoz|t|Bocina.
+aparato|t|Máquina o dispositivo.
+máquina|t|Aparato que hace un trabajo.
+llamada|t|Comunicación por teléfono.
+pantalla|t|Superficie donde se ven imágenes.
+teléfono|t|Aparato para hablar a distancia.
+internet|t|Red que conecta computadoras de todo el mundo.
+audífono|t|Aparato para escuchar sin que otros oigan.
+satélite|t|Objeto que gira alrededor de un planeta.
+gasolina|t|Combustible de los coches.
+avioneta|t|Avión pequeño.
+patrulla|t|Coche de la policía.
+vehículo|t|Medio de transporte.
+cinturón|t|Cinta de seguridad del coche; también la de los pantalones.
+cargador|t|Aparato para cargar baterías.
+elevador|t|Ascensor.
+programa|t|Software; también un show de televisión.
+bicitaxi|t|Bicicleta adaptada para llevar pasajeros.
 `;
-const ANS = ANS_RAW.trim().split('\n').map(l => { const [w,c,d] = l.split('|'); return { w: norm(w), c, d } });
-const ANSMAP = new Map(ANS.map(a => [a.w, a]));
+const ANS = [], ANSMAP = new Map();
+ANS_RAW.trim().split('\n').forEach(l => { const [s, c, d] = l.split('|'); const w = norm(s); if (ANSMAP.has(w)) return; const a = { w, s, c, d }; ANS.push(a); ANSMAP.set(w, a) });
 ANS.forEach(a => DICT.add(a.w));
 const ANS_BY = {}; ANS.forEach(a => { const n = [...a.w].length; (ANS_BY[n] = ANS_BY[n] || []).push(a.w) });
+// palabras del día anteriores al cambio de lista (para no cambiar los días ya jugados)
+const OLD_DAILY = {"5": ["perro", "tigre", "cebra", "burro", "mosca", "pulpo", "raton", "zorro", "cabra", "oveja", "mango", "queso", "arroz", "pasta", "elote", "leche", "salsa", "fresa", "limon", "huevo", "silla", "plato", "llave", "horno", "reloj", "libro", "lapiz", "bolsa", "cielo", "nieve", "playa", "selva", "arena", "monte", "fuego", "hielo", "brazo", "nariz", "oreja", "labio", "pecho", "salud", "calle", "plaza", "banco", "museo", "hotel", "madre", "padre", "amigo", "actor", "reina", "joven"], "6": ["conejo", "jirafa", "pajaro", "aguila", "jaguar", "iguana", "delfin", "gusano", "tomate", "papaya", "helado", "pepino", "frijol", "azucar", "sandia", "pastel", "cereza", "espejo", "cocina", "puerta", "tijera", "maleta", "cobija", "jardin", "lluvia", "bosque", "volcan", "laguna", "tierra", "viento", "piedra", "planta", "cabeza", "diente", "pierna", "hombro", "cuello", "parque", "ciudad", "tienda", "puente", "teatro", "doctor", "payaso", "pirata", "abuelo", "vecino", "alumno"], "7": ["caballo", "tortuga", "ballena", "camello", "ardilla", "hormiga", "gallina", "canguro", "lagarto", "tiburon", "cebolla", "galleta", "naranja", "manzana", "platano", "lechuga", "pescado", "cuchara", "ventana", "botella", "tenedor", "lampara", "juguete", "cortina", "montaña", "planeta", "girasol", "cascada", "granizo", "rodilla", "espalda", "ombligo", "cerebro", "corazon", "tobillo", "pestaña", "escuela", "mercado", "oficina", "iglesia", "estadio", "hermano", "maestro", "abogado", "bombero", "cartero", "soldado", "vaquero"], "8": ["mariposa", "elefante", "pinguino", "cangrejo", "mosquito", "leopardo", "avestruz", "camaleon", "tortilla", "aguacate", "calabaza", "limonada", "ensalada", "espinaca", "pimienta", "almohada", "alfombra", "cuaderno", "sombrero", "paraguas", "lavadora", "escalera", "estrella", "desierto", "arcoiris", "tormenta", "invierno", "garganta", "estomago", "costilla", "medicina", "hospital", "farmacia", "edificio", "semaforo", "profesor", "princesa", "cocinero", "pescador", "mecanico"]};
+const showWord = w => (ANSMAP.get(w) || {}).s || w;
 
-const settings = Object.assign({ hard:false, vibrate:true, contrast:false, ghosts:true, theme:'dark', randomLen:false, sound:false }, store.get('ps-settings', {}));
+
+const settings = Object.assign({ hard:false, vibrate:true, contrast:false, ghosts:true, theme:'dark', randomLen:false, sound:false, big:false }, store.get('ps-settings', {}));
 const baseMode = () => store.get('ps-mode', 'daily') === 'free' ? 'free' : 'daily';
 let mode = baseMode();                 // daily | free | reto | cat | time | tuto
-let reto = null, cat = null, timeRun = null, tuto = null;
+let reto = null, cat = null, timeRun = null, tuto = null, passRun = null, archDay = null;
 let COLS = LENGTHS.includes(store.get('ps-len', 5)) ? store.get('ps-len', 5) : 5;
-let game, slots = [], cursor = 0, busy = false;
+let game, slots = [], cursor = 0, busy = false, quietLoad = false;
 const special = () => !['daily','free'].includes(mode);
 
 // ---------- listas de palabras ----------
-function freeList(n){
-  const set = new Set(ANS_BY[n] || []);
-  (BYLEN[n] || []).forEach(w => { if (!/s$/.test(w)) set.add(w) });
-  return [...set];
-}
+function freeList(n){ return (ANS_BY[n] || []).slice() }
 function pick(list, prev){ let w; do { w = list[Math.floor(Math.random() * list.length)] } while (w === prev && list.length > 1); return w }
 
 // ---------- palabra del día ----------
@@ -695,13 +1779,13 @@ function dayKey(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padSta
 function todayKey(){ return dayKey(new Date()) }
 function hash(str){ let h = 2166136261; for (const c of str){ h ^= c.codePointAt(0); h = Math.imul(h, 16777619) } return h >>> 0 }
 function dailyWord(len, day){
-  const list = ANS_BY[len].slice().sort();
+  const list = ((day < CUTOVER && OLD_DAILY[len]) || ANS_BY[len]).slice().sort();
   const [y,m,d] = day.split('-').map(Number);
   const n = Math.round((Date.UTC(y, m-1, d) - Date.UTC(2026, 0, 1)) / 864e5);
   const order = list.map(w => [hash(w + '#' + len), w]).sort((a,b) => a[0] - b[0]).map(x => x[1]);
   return order[((n % order.length) + order.length) % order.length];
 }
-const gameKey = () => mode === 'reto' ? `ps-reto-${reto.code}` : mode === 'daily' ? `ps-daily-${todayKey()}-${COLS}` : mode === 'free' ? `ps-free-${COLS}` : null;
+const gameKey = () => mode === 'reto' ? `ps-reto-${reto.code}` : mode === 'daily' ? `ps-daily-${todayKey()}-${COLS}` : mode === 'arch' ? `ps-daily-${archDay}-${COLS}` : mode === 'free' ? `ps-free-${COLS}` : null;
 const statsKey = () => `ps-st2-${special() ? baseMode() : mode}`;
 
 // ---------- códigos de reto ----------
@@ -712,7 +1796,7 @@ function encodeReto(w){
 }
 function decodeReto(code){
   code = (code || '').toLowerCase().replace(/^.*reto-/, '').replace(/[^0-9a-z]/g, '');
-  const L = code.length - 1; if (L < 5 || L > 8) return null;
+  const L = code.length - 1; if (L < 4 || L > 8) return null;
   const ix = [...code.slice(0, L)].map((c,i) => { const v = CODE.indexOf(c); return v < 0 ? -1 : ((v - 7*i - 3*L - 5) % 27 + 270) % 27 });
   if (ix.includes(-1)) return null;
   if (CODE[(ix.reduce((a,b,i) => a + b*(i+1), 0) + L) % 27] !== code[L]) return null;
@@ -722,10 +1806,10 @@ function decodeReto(code){
 // ---------- cambiar de modo ----------
 function stopTimer(){ if (timeRun){ clearInterval(timeRun.timer); timeRun = null } }
 function goNormal(m){
-  stopTimer(); reto = null; cat = null; tuto = null;
+  stopTimer(); reto = null; cat = null; tuto = null; passRun = null; archDay = null;
   mode = m || baseMode(); COLS = LENGTHS.includes(store.get('ps-len', 5)) ? store.get('ps-len', 5) : 5;
   try{ if (/^#reto-/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search) }catch(e){}
-  load();
+  quietLoad = true; load(); quietLoad = false;
 }
 function startReto(r){ stopTimer(); cat = null; reto = r; mode = 'reto'; COLS = [...r.word].length; closeModal(); load(); toast(`¡Reto cargado! Adivina la palabra de ${COLS} letras`) }
 function startCat(key){ stopTimer(); reto = null; cat = { key, prev: null }; mode = 'cat'; closeModal(); newCatWord() }
@@ -753,6 +1837,7 @@ LENGTHS.forEach(n => {
   b.setAttribute('aria-label', n + ' letras');
   b.onclick = () => {
     if (blockedInTuto()) return;
+    if (mode === 'arch'){ COLS = n; return load() }
     if (special()){ store.set('ps-len', n); return goNormal() }
     if (n !== COLS){ COLS = n; store.set('ps-len', n); load() }
   };
@@ -765,14 +1850,17 @@ $('newBtn').onclick = () => {
   newFree();
 };
 function markDaily(){
+  const day = mode === 'arch' ? archDay : mode === 'daily' ? todayKey() : null;
   LENGTHS.forEach(n => {
-    const b = $('len-' + n), g = mode === 'daily' ? store.get(`ps-daily-${todayKey()}-${n}`, null) : null;
+    const b = $('len-' + n), g = day ? store.get(`ps-daily-${day}-${n}`, null) : null;
     b.classList.toggle('done-win', !!(g && g.over && g.won));
     b.classList.toggle('done-lose', !!(g && g.over && !g.won));
   });
 }
 
 function buildBoard(){
+  board.classList.remove('duo');
+  if (mode === 'duo'){ duoBuild(); return sizeBoard() }
   board.innerHTML = '';
   for (let r = 0; r < ROWS; r++){
     const row = document.createElement('div'); row.className = 'row';
@@ -783,6 +1871,7 @@ function buildBoard(){
   sizeBoard();
 }
 function sizeBoard(){
+  if (mode === 'duo') return duoSize();
   const gap = COLS >= 7 ? 5 : 6;
   const w = wrap.clientWidth, h = wrap.clientHeight - 20;
   const size = Math.max(28, Math.floor(Math.min((w - gap*(COLS-1)) / COLS, (h - gap*(ROWS-1)) / ROWS, 66)));
@@ -807,7 +1896,7 @@ function sfx(kind){
 }
 
 // ---------- teclado ----------
-['qwertyuiop','asdfghjklñ','⏎zxcvbnm⌫'].forEach(line => {
+['qwertyuiop','asdfghjklñ','⌫zxcvbnm⏎'].forEach(line => {
   const r = document.createElement('div'); r.className = 'kr';
   [...line].forEach(ch => {
     const b = document.createElement('button'); b.className = 'key';
@@ -818,7 +1907,31 @@ function sfx(kind){
   });
   kb.appendChild(r);
 });
-kb.addEventListener('click', e => { const b = e.target.closest('.key'); if (b){ press(b.dataset.k); b.blur() } });
+let lpTimer = null, lpFired = false;
+kb.addEventListener('pointerdown', e => {
+  const b = e.target.closest('.key'); lpFired = false; clearTimeout(lpTimer);
+  if (!b || b.dataset.k.length > 1) return;
+  lpTimer = setTimeout(() => { lpFired = true; keyInfo(b.dataset.k); buzz(20) }, 450);
+});
+['pointerup','pointerleave','pointercancel'].forEach(ev => kb.addEventListener(ev, () => clearTimeout(lpTimer)));
+kb.addEventListener('contextmenu', e => e.preventDefault());
+kb.addEventListener('click', e => { const b = e.target.closest('.key'); if (!b) return; if (lpFired){ lpFired = false; return } press(b.dataset.k); b.blur() });
+function keyInfo(ch){
+  if (!game) return;
+  const L = ch.toUpperCase();
+  if (mode === 'duo') return toast('Esta ayuda funciona en los modos de un solo tablero');
+  const yes = new Set(), no = new Set(); let used = false, inWord = false;
+  game.guesses.forEach(w => score(w, game.answer).forEach((r,i) => {
+    if ([...w][i] !== ch) return; used = true;
+    if (r === 'correct'){ yes.add(i+1); inWord = true } else { no.add(i+1); if (r === 'present') inWord = true }
+  }));
+  if (!used) return toast(`Aún no has probado la ${L}`);
+  if (!inWord) return toast(`La ${L} no está en la palabra`);
+  const parts = [], no2 = [...no].filter(x => !yes.has(x)).sort((a,b) => a-b);
+  if (yes.size) parts.push(`va en la posición ${[...yes].sort((a,b) => a-b).join(' y ')}`);
+  if (no2.length) parts.push(`no va en ${no2.length === 1 ? 'la posición' : 'las posiciones'} ${no2.join(', ')}`);
+  toast(`La ${L} ${parts.join(' y ')}`);
+}
 document.addEventListener('keydown', e => {
   if (!$('modal').hidden){ if (e.key === 'Escape' && !modalLocked) closeModal(); return }
   if (e.ctrlKey || e.metaKey || e.altKey) return;
@@ -847,17 +1960,20 @@ const isFull = () => slots.length === COLS && slots.every(Boolean);
 function clearSlots(){ slots = Array(COLS).fill(''); cursor = 0 }
 board.addEventListener('click', e => {
   const t = e.target.closest('.tile'); if (!t || !game || game.over || busy) return;
-  const row = board.children[game.guesses.length]; if (!row || t.parentNode !== row) return;
-  cursor = [...row.children].indexOf(t); draw();
+  const rowEl = t.parentNode, idx = [...rowEl.parentNode.children].indexOf(rowEl);
+  if (idx !== game.guesses.length) return;
+  if (mode === 'duo' && duoDone([...board.children].indexOf(rowEl.parentNode))) return;
+  cursor = [...rowEl.children].indexOf(t); draw();
 });
 function ghostLetters(){
   const g = Array(COLS).fill('');
   if (!settings.ghosts || !game) return g;
   game.guesses.forEach(w => score(w, game.answer).forEach((r,i) => { if (r === 'correct') g[i] = [...w][i] }));
-  if (game.hint) g[game.hint.pos] = game.hint.letter;
+  if (game.hint && game.hint.letter) g[game.hint.pos] = game.hint.letter;
   return g;
 }
 function draw(){
+  if (mode === 'duo') return duoDraw();
   const row = board.children[game.guesses.length]; if (!row || game.over) return;
   const gh = ghostLetters();
   [...row.children].forEach((t,i) => {
@@ -875,8 +1991,9 @@ function score(guess, ans){
 }
 function buzz(p){ if (settings.vibrate && navigator.vibrate) try{ navigator.vibrate(p) }catch(e){} }
 function reject(msg){
-  const row = board.children[game.guesses.length];
-  row.classList.remove('shake'); void row.offsetWidth; row.classList.add('shake'); buzz(80); sfx('error'); toast(msg);
+  const rows = mode === 'duo' ? [0,1].filter(k => !duoDone(k)).map(k => duoRow(k, game.guesses.length)) : [board.children[game.guesses.length]];
+  rows.filter(Boolean).forEach(row => { row.classList.remove('shake'); void row.offsetWidth; row.classList.add('shake') });
+  buzz(80); sfx('error'); toast(msg);
 }
 function hardModeError(guess){
   const g = [...guess];
@@ -885,7 +2002,7 @@ function hardModeError(guess){
     for (let i = 0; i < COLS; i++) if (res[i] === 'correct' && g[i] !== p[i]) return `La letra ${i+1} debe ser ${p[i].toUpperCase()}`;
     for (let i = 0; i < COLS; i++) if (res[i] === 'present' && !g.includes(p[i])) return `Debes usar la ${p[i].toUpperCase()}`;
   }
-  if (game.hint && g[game.hint.pos] !== game.hint.letter) return `La letra ${game.hint.pos+1} debe ser ${game.hint.letter.toUpperCase()}`;
+  if (game.hint && game.hint.letter && g[game.hint.pos] !== game.hint.letter) return `La letra ${game.hint.pos+1} debe ser ${game.hint.letter.toUpperCase()}`;
   return null;
 }
 function submit(){
@@ -895,12 +2012,16 @@ function submit(){
   if (!DICT.has(current)){
     const w = current;
     reject(`«${w.toUpperCase()}» no está en el diccionario`);
-    return actionToast(`«${w.toUpperCase()}» no está en el diccionario`, 'Agregar', () => {
-      DICT.add(w);
-      const list = store.get('ps-custom', []); if (!list.includes(w)){ list.push(w); store.set('ps-custom', list) }
-      toast(`«${w.toUpperCase()}» agregada`); if (word() === w) submit();
-    });
+    return actionToast(`«${w.toUpperCase()}» no está en el diccionario`, [
+      { label: 'Agregar', fn: () => {
+        DICT.add(w);
+        const list = store.get('ps-custom', []); if (!list.includes(w)){ list.push(w); store.set('ps-custom', list) }
+        toast(`«${w.toUpperCase()}» agregada`); if (word() === w) submit();
+      } },
+      { label: 'Reportar', href: waLink(`Hola, en Palabra Secreta no se acepta la palabra «${w.toUpperCase()}». ¿Puedes agregarla?`) }
+    ]);
   }
+  if (mode === 'duo') return duoSubmit(current);
   if (settings.hard && !tuto){ const err = hardModeError(current); if (err) return reject(err) }
   const row = board.children[game.guesses.length];
   const guess = current, res = score(guess, game.answer), step = COLS > 6 ? 170 : 220;
@@ -937,11 +2058,14 @@ const ACH = [
   ['sinpista','🦉','Sin ayuda','Gana 10 partidas sin pista'],
   ['racha3','🔥','En racha','Racha de 3 victorias'],
   ['racha7','🌋','Imparable','Racha de 7 victorias'],
-  ['diario4','📅','Día completo','Gana las 4 palabras del día el mismo día'],
+  ['diario4','📅','Día completo','Gana las 5 palabras del día el mismo día'],
   ['reto','🤝','Reto aceptado','Gana un reto de un amigo'],
   ['creador','✉️','Retador','Crea un reto para un amigo'],
   ['categoria','🏷️','Especialista','Gana una partida de categoría'],
-  ['cats','🌎','Sabelotodo','Gana en las 7 categorías'],
+  ['cats','🌎','Sabelotodo','Gana en todas las categorías'],
+  ['duo','👯','Doble acierto','Gana una Doble palabra'],
+  ['pase','📱','Duelo','Termina una ronda de Pasa el teléfono'],
+  ['archivo','🗓️','Al día','Gana una palabra del historial'],
   ['reloj5','⏱️','Contra el reloj','Adivina 5 palabras en contrarreloj'],
   ['reloj10','🚀','Velocista','Adivina 10 palabras en contrarreloj'],
   ['cincuenta','🏅','Veterano','Juega 50 partidas']
@@ -960,7 +2084,8 @@ function checkAch(won){
     if (COLS === 8) unlock('ocho'); if (settings.hard) unlock('dificil');
     if (!game.hint){ c.nohint++; if (c.nohint >= 10) unlock('sinpista') }
     if (mode === 'reto') unlock('reto');
-    if (mode === 'cat'){ unlock('categoria'); if (!c.cats.includes(cat.key)) c.cats.push(cat.key); if (c.cats.length >= 7) unlock('cats') }
+    if (mode === 'arch') unlock('archivo');
+    if (mode === 'cat'){ unlock('categoria'); if (!c.cats.includes(cat.key)) c.cats.push(cat.key); if (c.cats.length >= Object.keys(CATS).length) unlock('cats') }
     if (mode === 'daily' && LENGTHS.every(L => { const g = store.get(`ps-daily-${todayKey()}-${L}`, null); return g && g.won })) unlock('diario4');
   }
   if (c.played >= 50) unlock('cincuenta');
@@ -985,10 +2110,12 @@ function finish(won){
   game.over = true; game.won = won; save();
   buzz(won ? [40,60,40] : 200); sfx(won ? 'win' : 'lose');
   if (mode === 'tuto') return setTimeout(tutoDone, 900);
+  if (mode === 'duo'){ if (won) unlock('duo'); return setTimeout(showDuoResult, won ? 1200 : 600) }
+  if (mode === 'pass') return setTimeout(passAfter, won ? 1200 : 700);
   if (mode === 'time'){
     if (!timeRun) return;
     if (won){ timeRun.score++; sfx('point'); toast(`+1 · ${timeRun.score} ${timeRun.score === 1 ? 'acierto' : 'aciertos'}`) }
-    else toast(`Era «${game.answer.toUpperCase()}»`);
+    else toast(`Era «${showWord(game.answer).toUpperCase()}»`);
     tickTime(); return setTimeout(() => { if (timeRun) newTimeWord() }, won ? 900 : 1500);
   }
   if (mode === 'daily' || mode === 'free'){
@@ -1029,22 +2156,28 @@ function defHTML(w){
 const praise = ['¡Genio!','¡Increíble!','¡Muy bien!','¡Bien hecho!','¡Lo lograste!','¡Por poco!'];
 function showResult(){
   let next;
-  if (mode === 'reto') next = `<button class="secondary" id="makeRetoBtn">Crear un reto para tu amigo</button><button class="secondary" id="leaveBtn">Volver al juego normal</button>`;
+  if (mode === 'arch'){
+    const pend = LENGTHS.filter(n => { const g = store.get(`ps-daily-${archDay}-${n}`, null); return !(g && g.over) });
+    next = `${pend.length ? `<button class="secondary" id="nextArch">Jugar la de ${pend[0]} letras de ese día</button>` : ''}<button class="secondary" id="histBtn">Ver historial</button><button class="secondary" id="leaveBtn">Volver al juego normal</button>`;
+  } else if (mode === 'reto') next = `<button class="secondary" id="makeRetoBtn">Crear un reto para tu amigo</button><button class="secondary" id="leaveBtn">Volver al juego normal</button>`;
   else if (mode === 'cat') next = `<button class="secondary" id="againCat">Otra de ${CATS[cat.key]}</button><button class="secondary" id="leaveBtn">Volver al juego normal</button>`;
   else if (mode === 'daily'){
     const pending = LENGTHS.filter(n => { const g = store.get(`ps-daily-${todayKey()}-${n}`, null); return !(g && g.over) });
     next = `${pending.length ? `<button class="secondary" id="nextDaily">Jugar la del día de ${pending[0]} letras</button>` : ''}<p class="sub">Nuevas palabras del día en <b id="countdown"></b></p><button class="secondary" id="toFree">Seguir en modo Libre</button>`;
   } else next = `<button class="secondary" id="againBtn">${settings.randomLen ? 'Jugar otra (largo al azar)' : 'Jugar otra'}</button>`;
   showModal(`
-    ${mode === 'reto' ? '<p class="sub">Reto de un amigo</p>' : mode === 'cat' ? `<p class="sub">Categoría: ${CATS[cat.key]}</p>` : ''}
+    ${mode === 'arch' ? `<p class="sub">Archivo · ${fmtDay(archDay)}</p>` : mode === 'reto' ? '<p class="sub">Reto de un amigo</p>' : mode === 'cat' ? `<p class="sub">Categoría: ${CATS[cat.key]}</p>` : ''}
     <h2>${game.won ? praise[game.guesses.length-1] : 'Se acabaron los intentos'}</h2>
     <p>${game.won ? `Adivinaste en ${game.guesses.length} de ${ROWS} intentos.` : 'La palabra secreta era:'}</p>
-    <div class="answer">${[...game.answer].map(c => `<b>${c.toUpperCase()}</b>`).join('')}</div>
+    <div class="answer">${[...showWord(game.answer)].map(c => `<b>${c.toUpperCase()}</b>`).join('')}</div>
     ${defHTML(game.answer)}
     ${mode === 'daily' || mode === 'free' ? statsHTML() : ''}
     <button class="primary" id="shareBtn">Compartir resultado</button>
+    <button class="secondary" id="imgBtn">Compartir como imagen</button>
     ${next}`, () => {
-    $('shareBtn').onclick = share;
+    $('shareBtn').onclick = share; $('imgBtn').onclick = shareImage;
+    if ($('histBtn')) $('histBtn').onclick = openHistory;
+    if ($('nextArch')) $('nextArch').onclick = () => { closeModal(); COLS = +$('nextArch').textContent.match(/\d/)[0]; load() };
     if ($('againBtn')) $('againBtn').onclick = () => { closeModal(); newFree() };
     if ($('againCat')) $('againCat').onclick = () => { closeModal(); newCatWord() };
     if ($('makeRetoBtn')) $('makeRetoBtn').onclick = openCreateReto;
@@ -1069,7 +2202,7 @@ function tickCountdown(){
 function shareText(){
   const [g, y, b] = settings.contrast ? ['🟧','🟦','⬛'] : ['🟩','🟨','⬛'];
   const d = new Date(), date = d.getDate() + '/' + (d.getMonth()+1);
-  const label = mode === 'daily' ? date : mode === 'reto' ? '(tu reto)' : mode === 'cat' ? `(${CATS[cat.key]})` : '(libre)';
+  const label = mode === 'daily' ? date : mode === 'arch' ? `${+archDay.slice(8)}/${+archDay.slice(5,7)}` : mode === 'pass' ? '(duelo)' : mode === 'reto' ? '(tu reto)' : mode === 'cat' ? `(${CATS[cat.key]})` : '(libre)';
   const head = `Palabra Secreta ${label} · ${COLS} letras ${game.won ? game.guesses.length : 'X'}/${ROWS}${settings.hard ? '*' : ''}${game.hint ? ' (con pista)' : ''}`;
   const grid = game.guesses.map(w => score(w, game.answer).map(r => r === 'correct' ? g : r === 'present' ? y : b).join('')).join('\n');
   return head + '\n\n' + grid;
@@ -1097,7 +2230,7 @@ function endTime(){
   showModal(`<h2>¡Se acabó el tiempo!</h2>
     <p>Adivinaste</p><div class="code">${r.score}</div><p>${r.score === 1 ? 'palabra' : 'palabras'} de ${r.n} letras en 3 minutos.</p>
     <p class="sub">${record && r.score ? '¡Nuevo récord!' : `Tu récord: ${best}`}</p>
-    <p class="sub">La última palabra era «${game.answer.toUpperCase()}».</p>
+    <p class="sub">La última palabra era «${showWord(game.answer).toUpperCase()}».</p>
     <button class="primary" id="shareTime">Compartir</button>
     <button class="secondary" id="againTime">Jugar otra vez</button>
     <button class="secondary" id="leaveBtn">Volver al juego normal</button>`, () => {
@@ -1110,7 +2243,7 @@ function openTime(){
   showModal(`<h2>Contrarreloj</h2>
     <p>Adivina todas las palabras que puedas en <b>3 minutos</b>. Al acertar o fallar, sale otra palabra al instante.</p>
     <div class="opt-title">¿De cuántas letras?</div>
-    <div class="pick-len">${LENGTHS.map(n => `<button data-tl="${n}">${n}<small>Récord ${store.get('ps-time-best-' + n, 0)}</small></button>`).join('')}</div>
+    <div class="pick-len row5">${LENGTHS.map(n => `<button data-tl="${n}">${n}<small>🏆 ${store.get('ps-time-best-' + n, 0)}</small></button>`).join('')}</div>
     <button class="secondary" id="closeBtn">Cancelar</button>`, () => {
     document.querySelectorAll('[data-tl]').forEach(b => b.onclick = () => startTime(+b.dataset.tl));
   });
@@ -1130,8 +2263,21 @@ function openCats(){
 $('hintBtn').onclick = () => {
   if (blockedInTuto()) return;
   if (mode === 'time') return toast('En contrarreloj no hay pistas');
+  if (mode === 'duo') return toast('En Doble palabra no hay pistas');
   if (game.over) return toast('La partida ya terminó');
-  if (game.hint) return toast(`Tu pista: la letra ${game.hint.pos+1} es ${game.hint.letter.toUpperCase()}`);
+  if (game.hint) return toast(game.hint.type === 'def' ? 'Ya usaste tu pista de significado' : `Tu pista: la letra ${game.hint.pos+1} es ${game.hint.letter.toUpperCase()}`);
+  if (!ANSMAP.get(game.answer)) return letterHint();
+  showModal(`<h2>Pista</h2><p>Tienes una pista por partida. ¿Cuál quieres?</p>
+    <div class="menu">
+      <button id="hLetter">Revelar una letra<small>Te digo una letra y su lugar</small></button>
+      <button id="hDef">Ver el significado<small>Te digo qué quiere decir la palabra</small></button>
+    </div>
+    <button class="secondary" id="closeBtn">Cancelar</button>`, () => {
+    $('hLetter').onclick = () => { closeModal(); letterHint() };
+    $('hDef').onclick = () => { closeModal(); game.hint = { type: 'def' }; save(); showHint() };
+  });
+};
+function letterHint(){
   const a = [...game.answer], known = new Set();
   game.guesses.forEach(w => score(w, game.answer).forEach((r,i) => { if (r === 'correct') known.add(i) }));
   const open = a.map((_,i) => i).filter(i => !known.has(i));
@@ -1139,11 +2285,11 @@ $('hintBtn').onclick = () => {
   const pos = open[hash(game.answer + game.guesses.length) % open.length];
   game.hint = { pos, letter: a[pos] }; save(); showHint(); draw();
   toast(`Pista: la letra ${pos+1} es ${a[pos].toUpperCase()}`);
-};
+}
 function showHint(){
   const h = $('hintLine');
-  h.hidden = !game.hint;
-  if (game.hint) h.innerHTML = `Pista: la letra <b>${game.hint.pos+1}</b> es <b>${game.hint.letter.toUpperCase()}</b>`;
+  h.hidden = !game.hint || mode === 'duo';
+  if (game.hint) h.innerHTML = game.hint.type === 'def' ? `Pista: <i>${(ANSMAP.get(game.answer) || {}).d || ''}</i>` : `Pista: la letra <b>${game.hint.pos+1}</b> es <b>${game.hint.letter.toUpperCase()}</b>`;
   $('hintBtn').classList.toggle('used', !!game.hint);
   sizeBoard();
 }
@@ -1155,12 +2301,17 @@ function showModal(html, after, locked){ modalLocked = !!locked; $('modalCard').
 function closeModal(){ $('modal').hidden = true; modalLocked = false; clearInterval(cdTimer) }
 $('modal').addEventListener('click', e => { if (e.target.id === 'modal' && !modalLocked) closeModal() });
 let toastT;
-function actionToast(msg, label, fn){
+function actionToast(msg, btns){
   const t = $('toast'); t.innerHTML = ''; t.append(msg + ' ');
-  const b = document.createElement('button'); b.className = 'toast-btn'; b.textContent = label;
-  b.onclick = () => { t.hidden = true; fn() }; t.appendChild(b);
-  t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 5000);
+  btns.forEach(o => {
+    const b = document.createElement(o.href ? 'a' : 'button'); b.className = 'toast-btn'; b.textContent = o.label;
+    if (o.href){ b.href = o.href; b.target = '_blank'; b.rel = 'noopener'; b.onclick = () => { t.hidden = true } }
+    else b.onclick = () => { t.hidden = true; o.fn() };
+    t.appendChild(b);
+  });
+  t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 6000);
 }
+const waLink = text => `https://wa.me/${REPORT_WA}?text=${encodeURIComponent(text)}`;
 function toast(msg){ const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2200) }
 
 $('statsBtn').onclick = () => {
@@ -1174,16 +2325,21 @@ $('menuBtn').onclick = () => {
   <div class="menu">
     <button id="mReto">Retar a un amigo<small>Escribe tu palabra secreta y mándasela</small></button>
     <button id="mCode">Tengo un código de reto<small>Juega la palabra que te mandaron</small></button>
-    <button id="mCats">Categorías<small>Animales, comida, lugares y más</small></button>
+    <button id="mHist">Historial<small>Tus resultados y las palabras de días anteriores</small></button>
+    <button id="mCats">Categorías<small>Animales, comida, mexicanismos y más</small></button>
+    <button id="mDuo">Doble palabra<small>Dos palabras a la vez en ${DUO_ROWS} intentos</small></button>
+    <button id="mPass">Pasa el teléfono<small>Duelo de 2 jugadores en el mismo celular</small></button>
     <button id="mTime">Contrarreloj<small>Todas las palabras que puedas en 3 minutos</small></button>
     <button id="mAch">Logros<small>${Object.keys(store.get('ps-ach', {})).length} de ${ACH.length} medallas</small></button>
     <button id="mBack">Respaldo<small>Pasa tu progreso a otro teléfono</small></button>
+    <button id="mFb">Enviar comentario<small>Reporta una palabra o comparte una idea</small></button>
     <button id="mHelp">Cómo jugar<small>Reglas paso a paso</small></button>
     <button id="mTuto">Repetir la práctica<small>La partida guiada del inicio</small></button>
     <button id="mNews">Novedades<small>Lo nuevo del juego</small></button>
   </div>
   <button class="secondary" id="closeBtn">Cerrar</button>`, () => {
     $('mReto').onclick = openCreateReto; $('mCode').onclick = openEnterCode; $('mCats').onclick = openCats; $('mTime').onclick = openTime;
+    $('mHist').onclick = openHistory; $('mDuo').onclick = openDuo; $('mPass').onclick = openPass; $('mFb').onclick = openFeedback;
     $('mAch').onclick = openAch; $('mBack').onclick = openBackup; $('mHelp').onclick = () => showHelp(0); $('mTuto').onclick = () => { closeModal(); startTuto(true) };
     $('mNews').onclick = () => showNews();
   });
@@ -1221,7 +2377,7 @@ function openBackup(){
 }
 function openCreateReto(){
   showModal(`<h2>Retar a un amigo</h2>
-    <p>Escribe una palabra real de 5 a 8 letras. Tu amigo tendrá 6 intentos para adivinarla.</p>
+    <p>Escribe una palabra real de 4 a 8 letras. Tu amigo tendrá 6 intentos para adivinarla.</p>
     <input class="field" id="retoInput" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="PALABRA">
     <p class="err" id="retoErr"></p>
     <button class="primary" id="retoGo">Crear reto</button>
@@ -1229,7 +2385,7 @@ function openCreateReto(){
     const inp = $('retoInput'); setTimeout(() => inp.focus(), 50);
     const go = () => {
       const w = norm(inp.value.trim()).replace(/[^a-zñ]/g, ''), n = [...w].length;
-      if (n < 5 || n > 8) return $('retoErr').textContent = 'La palabra debe tener de 5 a 8 letras';
+      if (n < 4 || n > 8) return $('retoErr').textContent = 'La palabra debe tener de 4 a 8 letras';
       if (!DICT.has(w)) return $('retoErr').textContent = 'Esa palabra no está en el diccionario';
       unlock('creador'); showRetoCode(w);
     };
@@ -1273,14 +2429,15 @@ const HELP = [
     ${mini('perro', ['', '', '', 'absent'])}<p class="sub">La <b>R</b> no está en la palabra.</p>`],
   ['Escribe a tu manera', `<p>Toca cualquier cuadrito para escribir en ese lugar. Puedes llenar las letras en el orden que quieras.</p>
     <p>Las letras que ya acertaste aparecen en verde en la siguiente fila para ayudarte.</p>
-    <p>Solo se aceptan palabras reales, sin acentos. La Ñ cuenta como letra. Si una palabra real no se acepta, toca <b>Agregar</b>.</p>`],
-  ['Modos de juego', `<p><b>Diario:</b> 4 palabras al día (de 5, 6, 7 y 8 letras), las mismas para todos. Una ✓ marca las que ya jugaste.</p>
+    <p>Mantén presionada una tecla para ver en qué lugares ya probaste esa letra.</p>
+    <p>Solo se aceptan palabras reales, sin acentos. La Ñ cuenta como letra. Si una palabra real no se acepta, toca <b>Agregar</b> o <b>Reportar</b>.</p>`],
+  ['Modos de juego', `<p><b>Diario:</b> 5 palabras al día (de 4 a 8 letras), las mismas para todos. Una ✓ marca las que ya jugaste.</p>
     <p><b>Libre:</b> todas las partidas que quieras.</p>
-    <p>En el <b>Menú ☰</b> hay retos para amigos, categorías y contrarreloj.</p>`],
+    <p>En el <b>Menú ☰</b> hay retos para amigos, categorías, contrarreloj, Doble palabra, duelos y tu historial.</p>`],
   ['Botones', `<div class="legend">
-      <span><i class="ico">💡</i>Pista: revela una letra (una por partida)</span>
+      <span><i class="ico">💡</i>Pista: una letra o el significado (una por partida)</span>
       <span><i class="ico">📊</i>Estadísticas y logros</span>
-      <span><i class="ico">⚙️</i>Ajustes: tema, sonidos, modo difícil</span>
+      <span><i class="ico">⚙️</i>Ajustes: tema, letra grande, sonidos</span>
       <span><i class="ico">☰</i>Menú: retos, categorías y más</span>
     </div>`]
 ];
@@ -1297,13 +2454,17 @@ function showNews(after){
   store.set('ps-news', NEWS_VER);
   showModal(`<h2>Novedades</h2>
     <div class="legend">
-      <span><i class="ico">🏷️</i>Categorías: animales, comida, lugares y más</span>
-      <span><i class="ico">⏱️</i>Contrarreloj de 3 minutos</span>
-      <span><i class="ico">🏅</i>Logros para desbloquear</span>
-      <span><i class="ico">📖</i>Significado de la palabra al terminar</span>
-      <span><i class="ico">✓</i>Marcas en las palabras del día que ya jugaste</span>
-      <span><i class="ico">💾</i>Respaldo para pasar tu progreso a otro teléfono</span>
-      <span><i class="ico">🔊</i>Sonidos (actívalos en ⚙️)</span>
+      <span><i class="ico">📚</i>${ANS.length.toLocaleString('es-MX')} palabras con su significado (y con acentos al final)</span>
+      <span><i class="ico">4</i>Palabras de 4 letras para empezar fácil</span>
+      <span><i class="ico">👯</i>Doble palabra: dos tableros a la vez</span>
+      <span><i class="ico">📱</i>Pasa el teléfono: duelo entre 2 jugadores</span>
+      <span><i class="ico">🗓️</i>Historial: juega las palabras de días anteriores</span>
+      <span><i class="ico">🌮</i>Categoría Mexicanismos y 3 categorías más</span>
+      <span><i class="ico">💡</i>Pista de significado</span>
+      <span><i class="ico">⌨️</i>ENVIAR ahora está a la derecha. Mantén presionada una tecla para ver dónde ya la probaste</span>
+      <span><i class="ico">☀️</i>Tema claro y letra grande en Ajustes</span>
+      <span><i class="ico">🖼️</i>Comparte tu resultado como imagen</span>
+      <span><i class="ico">✉️</i>Reporta palabras que falten desde el Menú</span>
     </div>
     <p class="sub">Todo está en el Menú ☰.</p>
     <button class="primary" id="nOk">¡Genial!</button>`, () => { $('nOk').onclick = () => { closeModal(); if (after) after() } });
@@ -1345,7 +2506,7 @@ function tutoDone(){
       <span><i class="ico">📊</i>Estadísticas y logros</span>
       <span><i class="ico">⚙️</i>Ajustes: tema, sonidos y más</span>
       <span><i class="ico">☰</i>Menú: retos, categorías, contrarreloj</span>
-      <span><i class="ico">5 6 7 8</i>Cuántas letras tiene la palabra</span>
+      <span><i class="ico">4–8</i>Cuántas letras tiene la palabra</span>
     </div>
     <button class="primary" id="tEnd">¡A jugar!</button>`, () => {
     $('tEnd').onclick = () => {
@@ -1365,12 +2526,13 @@ $('settingsBtn').onclick = () => {
     ${row('opt-hard','Modo difícil','Debes usar las letras que ya descubriste')}
     ${row('opt-sound','Sonidos','Efectos al escribir, acertar y perder')}
     ${row('opt-vibrate','Vibración','Al acertar, perder o escribir mal')}
-    ${row('opt-randomLen','Largo al azar','En modo Libre, cada partida nueva tiene 5, 6, 7 u 8 letras')}
+    ${row('opt-big','Letra grande','Textos y teclado más grandes')}
+    ${row('opt-randomLen','Largo al azar','En modo Libre, cada partida nueva tiene de 4 a 8 letras')}
     ${row('opt-ghosts','Letras descubiertas','Muestra en la fila las letras que ya tienes')}
     ${row('opt-contrast','Alto contraste','Naranja = en su lugar, azul = en otro lugar')}
     <div class="opt-title">Tema</div>
-    <div class="themes">${[['dark','Oscuro','#0c0d10','#2e2f33','#45474d'],['purple','Morado','#150e22','#2c2240','#453860'],['blue','Azul','#0a1424','#1c2c44','#33476a']].map(([k,n,a,b,c]) =>
-      `<button data-theme-opt="${k}" aria-pressed="${settings.theme === k}" style="background:${b}"><i><b style="background:${a}"></b><b style="background:${c}"></b><b style="background:#2f8a5c"></b><b style="background:#f2ab2a"></b></i>${n}</button>`).join('')}</div>
+    <div class="themes">${[['dark','Oscuro','#0c0d10','#2e2f33','#45474d'],['light','Claro','#f2f3f6','#e1e3e9','#c5c9d2'],['purple','Morado','#150e22','#2c2240','#453860'],['blue','Azul','#0a1424','#1c2c44','#33476a']].map(([k,n,a,b,c]) =>
+      `<button data-theme-opt="${k}" aria-pressed="${settings.theme === k}" style="background:${b};color:${k === 'light' ? '#17181c' : '#f5f5f2'}"><i><b style="background:${a}"></b><b style="background:${c}"></b><b style="background:#2f8a5c"></b><b style="background:#f2ab2a"></b></i>${n}</button>`).join('')}</div>
     ${store.get('ps-custom', []).length ? `<div class="opt-title">Palabras que agregaste</div><p class="sub" style="text-align:left">${store.get('ps-custom', []).map(w => w.toUpperCase()).join(', ')}</p><button class="secondary" id="clearCustom">Borrar palabras agregadas</button>` : ''}
     <button class="primary" id="closeBtn">Listo</button>`, () => {
     const cc = $('clearCustom'); if (cc) cc.onclick = () => { store.get('ps-custom', []).forEach(w => DICT.delete(w)); store.set('ps-custom', []); POOL.forEach(w => DICT.add(w)); ANS.forEach(a => DICT.add(a.w)); toast('Palabras agregadas borradas'); closeModal() };
@@ -1378,7 +2540,7 @@ $('settingsBtn').onclick = () => {
       settings.theme = b.dataset.themeOpt; store.set('ps-settings', settings); applySettings();
       document.querySelectorAll('[data-theme-opt]').forEach(x => x.setAttribute('aria-pressed', x === b));
     });
-    ['hard','vibrate','contrast','ghosts','randomLen','sound'].forEach(k => $('opt-' + k).onchange = e => {
+    ['hard','vibrate','contrast','ghosts','randomLen','sound','big'].forEach(k => $('opt-' + k).onchange = e => {
       if (k === 'hard' && e.target.checked && game.guesses.length && !game.over){ e.target.checked = false; return toast('Activa el modo difícil al empezar una partida') }
       settings[k] = e.target.checked; store.set('ps-settings', settings); applySettings(); draw();
       if (k === 'sound' && settings.sound) sfx('point');
@@ -1391,17 +2553,21 @@ function applySettings(){
   r.classList.toggle('contrast', settings.contrast);
   r.classList.toggle('theme-purple', settings.theme === 'purple');
   r.classList.toggle('theme-blue', settings.theme === 'blue');
+  r.classList.toggle('theme-light', settings.theme === 'light');
+  r.classList.toggle('big', !!settings.big);
   const m = document.querySelector('meta[name="theme-color"]');
-  if (m) m.content = { dark:'#0c0d10', purple:'#150e22', blue:'#0a1424' }[settings.theme] || '#0c0d10';
+  if (m) m.content = { dark:'#0c0d10', light:'#f2f3f6', purple:'#150e22', blue:'#0a1424' }[settings.theme] || '#0c0d10';
 }
 
 // ---------- cargar partidas ----------
 function save(){ const k = gameKey(); if (k) store.set(k, game) }
 function resetVisuals(){
-  [...board.children].forEach(r => [...r.children].forEach(t => { t.textContent = ''; t.className = 'tile' }));
-  kb.querySelectorAll('.key').forEach(b => { b.classList.remove('correct','present','absent'); delete b.dataset.s });
+  board.querySelectorAll('.tile').forEach(t => { t.textContent = ''; t.className = 'tile' });
+  board.querySelectorAll('.grid').forEach(g => g.classList.remove('solved'));
+  kb.querySelectorAll('.key').forEach(b => { b.classList.remove('correct','present','absent'); b.style.background = ''; delete b.dataset.s });
 }
 function render(){
+  if (mode === 'duo') return duoRender();
   resetVisuals(); clearSlots();
   game.guesses.forEach((guess, r) => {
     const res = score(guess, game.answer);
@@ -1423,10 +2589,14 @@ function newFree(){
   game = { answer: pick(freeList(COLS), game && game.answer), guesses: [], over: false, won: false, hint: null }; save(); render();
 }
 function modeLine(){
-  const el = $('modeLine'); el.hidden = !['reto','cat','time'].includes(mode);
+  const el = $('modeLine'); el.hidden = !['reto','cat','time','arch','duo','pass'].includes(mode);
   if (mode === 'reto') el.innerHTML = `Reto de un amigo · ${COLS} letras <button id="mlExit">Salir</button>`;
   if (mode === 'cat') el.innerHTML = `${CATS[cat.key]} · ${COLS} letras <button id="mlExit">Salir</button>`;
   if (mode === 'time') el.innerHTML = `⏱ <span id="timeLeft">3:00</span> · Aciertos <span id="timeScore">0</span> <button id="mlExit">Salir</button>`;
+  if (mode === 'arch') el.innerHTML = `Archivo · ${fmtDay(archDay)} <button id="mlHist">Historial</button> <button id="mlExit">Salir</button>`;
+  if (mode === 'duo') el.innerHTML = `Doble palabra · ${COLS} letras · ${DUO_ROWS} intentos <button id="mlExit">Salir</button>`;
+  if (mode === 'pass') el.innerHTML = `Turno de ${esc(passRun.names[passPlayer()])} · Ronda ${passRun.round} <button id="mlExit">Salir</button>`;
+  if ($('mlHist')) $('mlHist').onclick = openHistory;
   if (!el.hidden) $('mlExit').onclick = () => { if (mode === 'time') stopTimer(); goNormal() };
   if (mode !== 'tuto') $('coach').hidden = true;
   sizeBoard();
@@ -1444,12 +2614,280 @@ function load(keepGame){
     game = saved && saved.answer === reto.word ? saved : { answer: reto.word, guesses: [], over: false, won: false, hint: null };
     render(); if (game.over) setTimeout(showResult, 300); return;
   }
-  if (mode === 'daily'){
-    const answer = dailyWord(COLS, todayKey());
+  if (mode === 'daily' || mode === 'arch'){
+    const answer = dailyWord(COLS, mode === 'arch' ? archDay : todayKey());
     game = saved && saved.answer === answer ? saved : { answer, guesses: [], over: false, won: false, hint: null };
-    render(); if (game.over) setTimeout(showResult, 300);
+    render(); if (game.over && !quietLoad) setTimeout(showResult, 300);
   } else if (saved && saved.answer && !saved.over){ game = saved; render() }
   else { game = null; newFree() }
+}
+
+// ---------- utilidades ----------
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+const fmtDay = k => { const [y,m,d] = k.split('-').map(Number); return new Date(y, m-1, d).toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short' }) };
+
+// ---------- comentarios ----------
+function openFeedback(){
+  const base = 'Hola, sobre Palabra Secreta: ';
+  showModal(`<h2>Enviar comentario</h2>
+    <p>¿Falta una palabra, encontraste un error o tienes una idea? Escríbela y mándala por WhatsApp.</p>
+    <textarea id="fbTxt" rows="4" placeholder="Por ejemplo: no acepta la palabra…"></textarea>
+    <a class="primary btnlink" id="fbGo" target="_blank" rel="noopener" href="${waLink(base)}">Enviar por WhatsApp</a>
+    <button class="secondary" id="closeBtn">Cancelar</button>`, () => {
+    $('fbTxt').oninput = e => { $('fbGo').href = waLink(base + e.target.value) };
+  });
+}
+
+// ---------- historial y archivo ----------
+function openHistory(){
+  const rows = [], today = new Date(); let played = 0, won = 0;
+  for (let i = 0; i < 30; i++){
+    const k = dayKey(new Date(today.getFullYear(), today.getMonth(), today.getDate() - i));
+    const chips = LENGTHS.map(n => {
+      const g = store.get(`ps-daily-${k}-${n}`, null);
+      let cls = 'none', txt = '';
+      if (g && g.over){ played++; if (g.won){ won++; cls = 'win'; txt = g.guesses.length } else { cls = 'lose'; txt = '✕' } }
+      else if (g && g.guesses && g.guesses.length){ cls = 'prog'; txt = '…' }
+      return `<button class="hchip ${cls}" data-day="${k}" data-n="${n}" aria-label="${n} letras">${txt}</button>`;
+    }).join('');
+    rows.push(`<div class="hrow"><span>${i === 0 ? 'Hoy' : i === 1 ? 'Ayer' : fmtDay(k)}</span><div>${chips}</div></div>`);
+  }
+  showModal(`<h2>Historial</h2>
+    <p class="sub">Últimos 30 días · jugaste ${played} ${played === 1 ? 'palabra' : 'palabras'} y ganaste ${won}</p>
+    <div class="hhead"><span>Letras</span><div>${LENGTHS.map(n => `<i>${n}</i>`).join('')}</div></div>
+    <div class="hist">${rows.join('')}</div>
+    <p class="sub">Toca un cuadro para jugar esa palabra del día. Verde: ganaste (con tus intentos). Rojo: perdiste.</p>
+    <button class="primary" id="closeBtn">Cerrar</button>`, () => {
+    document.querySelectorAll('.hchip').forEach(b => b.onclick = () => {
+      const k = b.dataset.day, n = +b.dataset.n;
+      closeModal();
+      if (k === todayKey()){ store.set('ps-mode', 'daily'); store.set('ps-len', n); return goNormal('daily') }
+      stopTimer(); reto = null; cat = null; passRun = null; tuto = null;
+      mode = 'arch'; archDay = k; COLS = n; load();
+    });
+  });
+}
+
+// ---------- doble palabra ----------
+function openDuo(){
+  showModal(`<h2>Doble palabra</h2>
+    <p>Adivina <b>dos palabras a la vez</b> en ${DUO_ROWS} intentos. Cada palabra que escribes cuenta para los dos tableros.</p>
+    <p class="sub">En el teclado, la mitad izquierda de cada tecla es el tablero izquierdo y la mitad derecha, el derecho.</p>
+    <div class="opt-title">¿De cuántas letras?</div>
+    <div class="pick-len row5">${LENGTHS.map(n => `<button data-dl="${n}">${n}<small>letras</small></button>`).join('')}</div>
+    <button class="secondary" id="closeBtn">Cancelar</button>`, () => {
+    document.querySelectorAll('[data-dl]').forEach(b => b.onclick = () => startDuo(+b.dataset.dl));
+  });
+}
+function startDuo(n){
+  stopTimer(); reto = null; cat = null; passRun = null; archDay = null; tuto = null;
+  mode = 'duo'; COLS = n; closeModal();
+  const list = freeList(n), a = pick(list), b = pick(list, a);
+  game = { answer: a, answers: [a, b], solvedAt: [-1, -1], guesses: [], over: false, won: false, hint: null };
+  load(true);
+}
+function duoBuild(){
+  board.innerHTML = ''; board.classList.add('duo');
+  for (let k = 0; k < 2; k++){
+    const g = document.createElement('div'); g.className = 'grid';
+    for (let r = 0; r < DUO_ROWS; r++){
+      const row = document.createElement('div'); row.className = 'row';
+      row.style.gridTemplateColumns = `repeat(${COLS}, var(--tile))`;
+      for (let c = 0; c < COLS; c++){ const t = document.createElement('div'); t.className = 'tile'; row.appendChild(t) }
+      g.appendChild(row);
+    }
+    board.appendChild(g);
+  }
+}
+function duoSize(){
+  const gap = 4, mid = 14, w = (wrap.clientWidth - mid) / 2, h = wrap.clientHeight - 16;
+  const size = Math.max(16, Math.floor(Math.min((w - gap*(COLS-1)) / COLS, (h - gap*(DUO_ROWS-1)) / DUO_ROWS, 48)));
+  board.style.setProperty('--tile', size + 'px'); board.style.setProperty('--gap', gap + 'px');
+}
+const duoRow = (k, r) => board.children[k] && board.children[k].children[r];
+const duoDone = k => !!game && !!game.solvedAt && game.solvedAt[k] >= 0;
+function duoRender(){
+  resetVisuals(); clearSlots();
+  for (let k = 0; k < 2; k++){
+    const last = duoDone(k) ? game.solvedAt[k] : game.guesses.length - 1;
+    for (let r = 0; r <= last; r++){
+      const res = score(game.guesses[r], game.answers[k]);
+      [...duoRow(k, r).children].forEach((t,i) => { t.textContent = [...game.guesses[r]][i]; t.classList.add(res[i]) });
+    }
+    board.children[k].classList.toggle('solved', duoDone(k));
+  }
+  duoKeys(); $('hintLine').hidden = true; $('hintBtn').classList.remove('used'); duoDraw();
+}
+function duoDraw(){
+  const r = game.guesses.length;
+  for (let k = 0; k < 2; k++){
+    if (duoDone(k) || game.over) continue;
+    const row = duoRow(k, r); if (!row) continue;
+    [...row.children].forEach((t,i) => {
+      t.textContent = slots[i] || '';
+      t.classList.toggle('filled', !!slots[i]);
+      t.classList.toggle('cursor', i === cursor && !busy);
+    });
+  }
+}
+function duoSubmit(guess){
+  const r = game.guesses.length, step = COLS > 6 ? 150 : 190, newly = [];
+  game.guesses.push(guess); clearSlots(); busy = true;
+  for (let k = 0; k < 2; k++){
+    if (duoDone(k)) continue;
+    const row = duoRow(k, r), res = score(guess, game.answers[k]);
+    [...row.children].forEach((t,i) => {
+      t.classList.remove('cursor');
+      setTimeout(() => {
+        t.classList.add('flip'); if (k === 0) sfx('flip');
+        setTimeout(() => { t.classList.remove('filled'); t.classList.add(res[i]) }, 200);
+      }, i * step);
+    });
+    if (guess === game.answers[k]){ game.solvedAt[k] = r; newly.push(k) }
+  }
+  setTimeout(() => {
+    busy = false; duoKeys();
+    newly.forEach(k => { board.children[k].classList.add('solved'); [...duoRow(k, r).children].forEach((t,i) => setTimeout(() => t.classList.add('win'), i * 90)) });
+    if (newly.length) sfx('point');
+    if (duoDone(0) && duoDone(1)) finish(true);
+    else if (game.guesses.length === DUO_ROWS) finish(false);
+    else duoDraw();
+  }, COLS * step + 300);
+}
+const KEYCOL = { correct:'var(--green)', present:'var(--amber)', absent:'var(--absent)' };
+function duoKeys(){
+  kb.querySelectorAll('.key').forEach(b => {
+    const ch = b.dataset.k; if (ch.length > 1) return;
+    const st = [0,1].map(k => {
+      if (duoDone(k)) return 'done';
+      let best = null;
+      game.guesses.forEach(g => score(g, game.answers[k]).forEach((s,i) => { if ([...g][i] === ch && (!best || rank[s] > rank[best])) best = s }));
+      return best;
+    });
+    const [l, r] = st.map((s, k) => s === 'done' ? (st[1-k] === 'done' ? null : st[1-k]) : s);
+    b.classList.remove('correct','present','absent'); b.style.background = '';
+    if (!l && !r) return;
+    if (l === 'absent' && r === 'absent') return b.classList.add('absent');
+    b.style.background = `linear-gradient(90deg, ${l ? KEYCOL[l] : 'var(--surface-2)'} 50%, ${r ? KEYCOL[r] : 'var(--surface-2)'} 50%)`;
+  });
+}
+function showDuoResult(){
+  const n = game.guesses.length, got = game.solvedAt.filter(x => x >= 0).length;
+  showModal(`<p class="sub">Doble palabra · ${COLS} letras</p>
+    <h2>${game.won ? (n <= 5 ? '¡Increíble!' : '¡Lo lograste!') : 'Se acabaron los intentos'}</h2>
+    <p>${game.won ? `Adivinaste las dos en ${n} de ${DUO_ROWS} intentos.` : `Adivinaste ${got} de 2. Las palabras eran:`}</p>
+    ${game.answers.map(w => `<div class="answer">${[...showWord(w)].map(c => `<b>${c.toUpperCase()}</b>`).join('')}</div>${defHTML(w)}`).join('')}
+    <button class="primary" id="shareDuo">Compartir resultado</button>
+    <button class="secondary" id="againDuo">Otra Doble palabra</button>
+    <button class="secondary" id="leaveBtn">Volver al juego normal</button>`, () => {
+    $('shareDuo').onclick = () => shareOrCopy(duoShareText(), 'Resultado copiado. Pégalo en WhatsApp.');
+    $('againDuo').onclick = () => startDuo(COLS);
+    $('leaveBtn').onclick = () => { closeModal(); goNormal() };
+  });
+}
+function duoShareText(){
+  const [g, y, b] = settings.contrast ? ['🟧','🟦','⬛'] : ['🟩','🟨','⬛'];
+  const em = (w, ans) => score(w, ans).map(r => r === 'correct' ? g : r === 'present' ? y : b).join('');
+  const blocks = game.answers.map((ans, k) => { const last = duoDone(k) ? game.solvedAt[k] : game.guesses.length - 1; return game.guesses.slice(0, last + 1).map(w => em(w, ans)).join('\n') });
+  return `Palabra Secreta · Doble palabra (${COLS} letras) ${game.won ? game.guesses.length : 'X'}/${DUO_ROWS}\n\nPalabra 1:\n${blocks[0]}\n\nPalabra 2:\n${blocks[1]}`;
+}
+
+// ---------- pasa el teléfono ----------
+function openPass(){
+  const prev = store.get('ps-pass-names', ['Jugador 1', 'Jugador 2']);
+  let n = 5;
+  showModal(`<h2>Pasa el teléfono</h2>
+    <p>Dos jugadores, un teléfono. Cada quien adivina su propia palabra en su turno; gana quien lo logre en menos intentos.</p>
+    <input class="field small" id="pn1" maxlength="14" value="${esc(prev[0])}" placeholder="Jugador 1" aria-label="Nombre del jugador 1">
+    <input class="field small" id="pn2" maxlength="14" value="${esc(prev[1])}" placeholder="Jugador 2" aria-label="Nombre del jugador 2">
+    <div class="opt-title">¿De cuántas letras?</div>
+    <div class="pick-len row5">${LENGTHS.map(L => `<button data-pl="${L}" aria-pressed="${L === n}">${L}</button>`).join('')}</div>
+    <button class="primary" id="passGo">Empezar</button>
+    <button class="secondary" id="closeBtn">Cancelar</button>`, () => {
+    document.querySelectorAll('[data-pl]').forEach(b => b.onclick = () => { n = +b.dataset.pl; document.querySelectorAll('[data-pl]').forEach(x => x.setAttribute('aria-pressed', x === b)) });
+    $('passGo').onclick = () => {
+      const names = [$('pn1').value.trim() || 'Jugador 1', $('pn2').value.trim() || 'Jugador 2'];
+      store.set('ps-pass-names', names);
+      stopTimer(); reto = null; cat = null; archDay = null; tuto = null;
+      passRun = { names, n, round: 0, first: 1, wins: [0, 0] };
+      passRound();
+    };
+  });
+}
+function passRound(){
+  const r = passRun; r.round++; r.first = 1 - r.first; r.turn = 0; r.res = [];
+  const list = freeList(r.n), a = pick(list); r.words = [a, pick(list, a)];
+  passTurn();
+}
+const passPlayer = () => (passRun.first + passRun.turn) % 2;
+function passTurn(){
+  const r = passRun, p = passPlayer();
+  mode = 'pass'; COLS = r.n;
+  game = { answer: r.words[r.turn], guesses: [], over: false, won: false, hint: null };
+  load(true);
+  showModal(`<p class="sub">Ronda ${r.round} · Turno ${r.turn + 1} de 2</p>
+    <h2>Turno de ${esc(r.names[p])}</h2>
+    <p>${esc(r.names[1 - p])}, no mires la pantalla 👀</p>
+    <button class="primary" id="passStart">Soy ${esc(r.names[p])}, ¡empezar!</button>`, () => { $('passStart').onclick = closeModal }, true);
+}
+function passAfter(){
+  const r = passRun, p = passPlayer();
+  r.res[p] = { tries: game.won ? game.guesses.length : ROWS + 1, won: game.won, word: game.answer, hint: !!game.hint };
+  if (r.turn === 0){
+    r.turn = 1;
+    return showModal(`<h2>${esc(r.names[p])} terminó</h2>
+      <p>${game.won ? `Adivinó en <b>${game.guesses.length}</b> ${game.guesses.length === 1 ? 'intento' : 'intentos'}.` : 'No logró adivinar su palabra.'}</p>
+      <p>Ahora pásale el teléfono a <b>${esc(r.names[1 - p])}</b>.</p>
+      <button class="primary" id="passNext">Listo, ya lo tiene</button>`, () => { $('passNext').onclick = () => { closeModal(); passTurn() } }, true);
+  }
+  const [a, b] = r.res, win = a.tries === b.tries ? -1 : a.tries < b.tries ? 0 : 1;
+  if (win >= 0) r.wins[win]++;
+  unlock('pase'); sfx('win');
+  const line = i => `<div class="pres${win === i ? ' win' : ''}"><b>${esc(r.names[i])}${win === i ? ' 🏆' : ''}</b><span>${r.res[i].won ? `${r.res[i].tries} ${r.res[i].tries === 1 ? 'intento' : 'intentos'}` : 'No la adivinó'}${r.res[i].hint ? ' · con pista' : ''}</span><small>Su palabra: ${showWord(r.res[i].word).toUpperCase()}</small></div>`;
+  showModal(`<p class="sub">Ronda ${r.round}</p>
+    <h2>${win < 0 ? '¡Empate!' : `¡Gana ${esc(r.names[win])}!`}</h2>
+    ${line(0)}${line(1)}
+    <div class="score2">${esc(r.names[0])} <b>${r.wins[0]}</b> – <b>${r.wins[1]}</b> ${esc(r.names[1])}</div>
+    <button class="primary" id="passAgain">Otra ronda</button>
+    <button class="secondary" id="leaveBtn">Terminar</button>`, () => {
+    $('passAgain').onclick = () => { closeModal(); passRound() };
+    $('leaveBtn').onclick = () => { closeModal(); goNormal() };
+  }, true);
+}
+
+// ---------- compartir como imagen ----------
+function roundRect(x, a, b, w, h, r){ x.beginPath(); x.moveTo(a + r, b); x.arcTo(a + w, b, a + w, b + h, r); x.arcTo(a + w, b + h, a, b + h, r); x.arcTo(a, b + h, a, b, r); x.arcTo(a, b, a + w, b, r); x.closePath() }
+function shareImage(){
+  const cs = getComputedStyle(document.documentElement), v = n => cs.getPropertyValue(n).trim();
+  const size = 56, gap = 8, rows = game.guesses.length, W = 600;
+  const gridW = COLS * size + (COLS - 1) * gap, oy = 210, H = oy + rows * (size + gap) + 80;
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const x = c.getContext('2d');
+  x.fillStyle = v('--bg'); x.fillRect(0, 0, W, H);
+  x.font = '700 44px Fredoka, Nunito, sans-serif'; x.textAlign = 'left';
+  const t1 = 'Palabra ', t2 = 'Secreta', w1 = x.measureText(t1).width, w2 = x.measureText(t2).width, sx = (W - w1 - w2) / 2;
+  x.fillStyle = v('--fg'); x.fillText(t1, sx, 74); x.fillStyle = v('--brand-amber'); x.fillText(t2, sx + w1, 74);
+  const head = shareText().split('\n')[0].replace(/^Palabra Secreta\s*/, '').replace(/\s*\d+\/\d+.*$|\s*X\/\d+.*$/, '');
+  x.textAlign = 'center'; x.fillStyle = v('--muted'); x.font = '700 22px Nunito, sans-serif'; x.fillText(head, W / 2, 114);
+  x.fillStyle = v('--fg'); x.font = '700 56px Fredoka, Nunito, sans-serif';
+  x.fillText(`${game.won ? game.guesses.length : 'X'}/${ROWS}`, W / 2, 182);
+  const col = { correct: v('--green'), present: v('--amber'), absent: v('--absent') }, ox = (W - gridW) / 2;
+  game.guesses.forEach((w, r) => score(w, game.answer).forEach((s, i) => {
+    x.fillStyle = col[s]; roundRect(x, ox + i * (size + gap), oy + r * (size + gap), size, size, 10); x.fill();
+  }));
+  const st = mode === 'daily' || mode === 'free' ? getStats() : null;
+  x.fillStyle = v('--muted'); x.font = '700 20px Nunito, sans-serif';
+  x.fillText(st ? `Racha: ${st.streak} · Ganadas: ${st.played ? Math.round(st.wins / st.played * 100) : 0}% · ¿Me superas?` : '¿Me superas?', W / 2, oy + rows * (size + gap) + 44);
+  const url = c.toDataURL('image/png');
+  const fallback = () => showModal(`<h2>Tu resultado</h2><img class="shot" src="${url}" alt="Imagen con tu resultado"><p class="sub">Mantén presionada la imagen para guardarla o compartirla.</p><button class="primary" id="closeBtn">Listo</button>`);
+  if (!c.toBlob || !navigator.canShare || window.top !== window) return fallback();
+  c.toBlob(blob => {
+    try{
+      const file = new File([blob], 'palabra-secreta.png', { type: 'image/png' });
+      if (navigator.canShare({ files: [file] })) return navigator.share({ files: [file] }).catch(() => {});
+    }catch(e){}
+    fallback();
+  }, 'image/png');
 }
 
 applySettings();
