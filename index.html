@@ -101,6 +101,35 @@ h1{font-size:1.3rem;white-space:nowrap}
 .err{color:#ff8a7a;font-weight:700;font-size:.85rem;min-height:1.2em;margin:4px 0}
 .code{font:700 2rem var(--display);letter-spacing:.15em;color:var(--brand-amber);margin:8px 0;user-select:text}
 .linkbox{font-size:.78rem;color:var(--muted);word-break:break-all;user-select:text;background:var(--bg);border-radius:8px;padding:8px;margin:6px 0}
+.coach{margin-top:8px;background:var(--card);border:2px solid var(--brand-amber);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:.9rem;line-height:1.35}
+.coach p{margin:0;flex:1}
+.coach button{flex:none;background:var(--brand-green);color:#fff;border:0;border-radius:9px;padding:8px 12px;font:800 .85rem var(--body);cursor:pointer}
+.coach .cg{color:var(--green)}.coach .cy{color:var(--amber)}
+body.in-tuto .bar{opacity:.4}
+.tile.win{animation:bounce .5s ease}
+@keyframes bounce{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}70%{transform:translateY(3px)}}
+.len{position:relative}
+.len.done-win::after,.len.done-lose::after{content:"✓";position:absolute;top:-5px;right:-5px;width:15px;height:15px;border-radius:50%;font:800 .62rem/15px var(--body);color:#fff;background:var(--brand-green)}
+.len.done-lose::after{content:"✕";background:#8a4a4a}
+.def{background:var(--surface);border-radius:12px;padding:10px 12px;margin:4px 0 8px;text-align:left}
+.def p{margin:4px 0 0;color:var(--fg);font-size:.92rem}
+.tag{display:inline-block;font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--brand-amber)}
+.mini{display:flex;gap:4px;justify-content:center;margin:10px 0 2px}
+.mini b{width:34px;height:34px;border-radius:7px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:1.1rem}
+.mini b.correct{background:var(--green)}.mini b.present{background:var(--amber)}.mini b.absent{background:var(--absent);color:#c9cad0}
+.dots{display:flex;gap:6px;justify-content:center;margin:14px 0 4px}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--surface-2)}.dots i.on{background:var(--brand-amber)}
+.btnrow{display:flex;gap:8px}.btnrow>*{flex:1}
+.legend .ico{background:none!important;width:auto;min-width:28px;height:auto;font-style:normal;font-size:1.05rem;text-align:center;font-weight:800}
+.pick-len,.cats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0}
+.pick-len button,.cats button{background:var(--surface);color:var(--fg);border:0;border-radius:12px;padding:12px 8px;font:800 1rem var(--body);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.pick-len button{font:700 1.5rem var(--display)}
+.pick-len small,.cats small{font:600 .75rem var(--body);color:var(--muted)}
+.achs{display:flex;flex-direction:column;gap:6px;margin:10px 0;text-align:left}
+.ach{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:10px;padding:8px 10px;opacity:.55}
+.ach.on{opacity:1}.ach span{font-size:1.4rem;width:30px;text-align:center}
+.ach b{display:block;font-size:.92rem}.ach small{color:var(--muted);font-size:.78rem}
+#timeLeft{font-variant-numeric:tabular-nums}#timeLeft.low{color:#ff8a7a}
 .hint-line b{color:var(--fg);background:var(--surface-2);padding:1px 7px;border-radius:5px}
 .sub{font-size:.8rem;margin-top:4px}
 .dist{display:flex;flex-direction:column;gap:4px;margin:8px 0 14px;font-variant-numeric:tabular-nums}
@@ -151,7 +180,8 @@ textarea{width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);b
     <div class="lengths" id="lengths"></div>
     <button class="icon-btn" id="newBtn" aria-label="Nueva palabra"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></button>
   </div>
-  <div class="reto-line" id="retoLine" hidden></div>
+  <div class="reto-line" id="modeLine" hidden></div>
+  <div class="coach" id="coach" hidden></div>
   <div class="hint-line" id="hintLine" hidden></div>
   <div class="board-wrap" id="wrap"><div class="board" id="board"></div></div>
   <div class="kb" id="kb"></div>
@@ -438,6 +468,7 @@ const BYLEN = {};
 for (const w of new Set(POOL)){ const n = [...w].length; (BYLEN[n] = BYLEN[n] || []).push(w) }
 const LENGTHS = [5,6,7,8];
 const ROWS = 6;
+const NEWS_VER = 2;
 const $ = id => document.getElementById(id);
 const board = $('board'), kb = $('kb'), wrap = $('wrap');
 const store = {
@@ -445,60 +476,301 @@ const store = {
   set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)) }catch(e){} }
 };
 function norm(s){ return s.toLowerCase().replace(/ñ/g,'\u0001').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\u0001/g,'ñ') }
+// ===== Palabras de respuesta: palabra|categoría|significado =====
+const CATS = { a:'Animales', c:'Comida', h:'Casa y objetos', n:'Naturaleza', b:'Cuerpo y salud', l:'Lugares', p:'Personas' };
+const ANS_RAW = `
+perro|a|Animal doméstico, conocido como el mejor amigo del ser humano.
+tigre|a|Felino grande de pelaje naranja con rayas negras.
+cebra|a|Animal africano parecido al caballo, con rayas blancas y negras.
+burro|a|Animal de carga parecido al caballo, con orejas largas.
+mosca|a|Insecto volador muy común que zumba.
+pulpo|a|Animal marino con ocho tentáculos.
+raton|a|Roedor pequeño de cola larga.
+zorro|a|Animal astuto de hocico puntiagudo y cola esponjosa.
+cabra|a|Animal de granja con cuernos que da leche.
+oveja|a|Animal de granja cubierto de lana.
+mango|c|Fruta tropical dulce de pulpa amarilla.
+queso|c|Alimento hecho con leche cuajada.
+arroz|c|Grano blanco que se cocina hervido.
+pasta|c|Masa de harina, como el espagueti o los fideos.
+elote|c|Mazorca de maíz tierno.
+leche|c|Líquido blanco que producen las vacas y otros mamíferos.
+salsa|c|Mezcla para acompañar comidas, muchas veces picante.
+fresa|c|Fruta roja y pequeña con semillas por fuera.
+limon|c|Fruta ácida, muy usada en México con casi todo.
+huevo|c|Lo ponen las gallinas; se come frito, cocido o revuelto.
+silla|h|Mueble con respaldo para sentarse.
+plato|h|Recipiente donde se sirve la comida.
+llave|h|Objeto de metal para abrir y cerrar cerraduras.
+horno|h|Aparato que cocina con calor encerrado.
+reloj|h|Instrumento que marca la hora.
+libro|h|Conjunto de hojas impresas y encuadernadas para leer.
+lapiz|h|Instrumento con grafito para escribir o dibujar.
+bolsa|h|Recipiente flexible para llevar cosas.
+cielo|n|Espacio azul que vemos sobre nosotros.
+nieve|n|Agua congelada que cae en copos blancos.
+playa|n|Orilla de arena junto al mar.
+selva|n|Bosque tropical muy denso y húmedo.
+arena|n|Granos finos de roca que forman las playas y desiertos.
+monte|n|Elevación natural del terreno.
+fuego|n|Llamas que producen luz y calor.
+hielo|n|Agua en estado sólido por el frío.
+brazo|b|Extremidad que va del hombro a la mano.
+nariz|b|Órgano del olfato, en medio de la cara.
+oreja|b|Parte externa del oído.
+labio|b|Cada uno de los bordes de la boca.
+pecho|b|Parte delantera del cuerpo, entre el cuello y el vientre.
+salud|b|Estado de bienestar del cuerpo y la mente.
+calle|l|Camino en una ciudad con casas o edificios a los lados.
+plaza|l|Espacio abierto y amplio en una ciudad o pueblo.
+banco|l|Lugar donde se guarda y presta dinero; también un asiento largo.
+museo|l|Lugar donde se exhiben obras de arte o de historia.
+hotel|l|Edificio donde se hospedan los viajeros.
+madre|p|Mujer que tiene hijos.
+padre|p|Hombre que tiene hijos.
+amigo|p|Persona con quien tienes amistad.
+actor|p|Persona que interpreta personajes en teatro, cine o televisión.
+reina|p|Mujer que gobierna un reino, o esposa del rey.
+joven|p|Persona de poca edad.
+conejo|a|Animal de orejas largas que se mueve saltando.
+jirafa|a|El animal más alto, de cuello muy largo.
+pajaro|a|Animal con plumas, pico y alas.
+aguila|a|Ave rapaz; aparece en la bandera de México.
+jaguar|a|Felino americano de piel amarilla con manchas negras.
+iguana|a|Reptil verde parecido a una lagartija grande.
+delfin|a|Mamífero marino muy inteligente y juguetón.
+gusano|a|Animal pequeño y alargado sin patas.
+tomate|c|Fruto rojo usado en salsas y ensaladas.
+papaya|c|Fruta tropical anaranjada y dulce.
+helado|c|Postre dulce y congelado.
+pepino|c|Verdura alargada y verde, muy fresca.
+frijol|c|Semilla que se come cocida; base de la cocina mexicana.
+azucar|c|Sustancia dulce que se usa para endulzar.
+sandia|c|Fruta grande, verde por fuera y roja por dentro.
+pastel|c|Postre horneado para celebraciones.
+cereza|c|Fruta pequeña, roja y redonda, con hueso.
+espejo|h|Superficie que refleja la imagen.
+cocina|h|Lugar de la casa donde se prepara la comida.
+puerta|h|Abertura con hoja que sirve para entrar y salir.
+tijera|h|Herramienta de dos hojas para cortar.
+maleta|h|Valija para llevar ropa cuando viajas.
+cobija|h|Manta para taparse y no tener frío.
+jardin|h|Terreno donde se cultivan plantas y flores.
+lluvia|n|Agua que cae de las nubes.
+bosque|n|Lugar con muchos árboles.
+volcan|n|Montaña que puede expulsar lava y ceniza.
+laguna|n|Depósito natural de agua, más pequeño que un lago.
+tierra|n|Nuestro planeta; también el suelo que pisamos.
+viento|n|Aire en movimiento.
+piedra|n|Trozo de roca dura.
+planta|n|Ser vivo que crece en la tierra, como un árbol o una flor.
+cabeza|b|Parte superior del cuerpo, donde está el cerebro.
+diente|b|Pieza dura de la boca que sirve para masticar.
+pierna|b|Extremidad que va de la cadera al pie.
+hombro|b|Unión del brazo con el tronco.
+cuello|b|Parte que une la cabeza con el cuerpo.
+parque|l|Terreno con árboles y juegos para pasear.
+ciudad|l|Población grande con muchos habitantes.
+tienda|l|Lugar donde se venden productos.
+puente|l|Construcción para cruzar un río o un camino.
+teatro|l|Lugar donde se presentan obras y espectáculos.
+doctor|p|Persona que cura enfermedades.
+payaso|p|Artista de circo que hace reír.
+pirata|p|Ladrón que roba en el mar.
+abuelo|p|Padre de tu papá o de tu mamá.
+vecino|p|Persona que vive cerca de ti.
+alumno|p|Persona que aprende en una escuela.
+caballo|a|Animal grande que se usa para montar.
+tortuga|a|Reptil lento con caparazón.
+ballena|a|El mamífero más grande; vive en el mar.
+camello|a|Animal del desierto con jorobas.
+ardilla|a|Roedor pequeño de cola esponjosa que trepa árboles.
+hormiga|a|Insecto pequeño que vive en colonias muy organizadas.
+gallina|a|Ave de granja que pone huevos.
+canguro|a|Animal australiano que salta y lleva a su cría en una bolsa.
+lagarto|a|Reptil de cuerpo alargado, cola larga y cuatro patas.
+tiburon|a|Pez grande del mar con muchos dientes afilados.
+cebolla|c|Verdura de capas que hace llorar al cortarla.
+galleta|c|Pan pequeño, dulce o salado, horneado y crujiente.
+naranja|c|Fruta cítrica redonda y jugosa; también un color.
+manzana|c|Fruta redonda, roja, verde o amarilla, crujiente.
+platano|c|Fruta alargada de cáscara amarilla.
+lechuga|c|Verdura de hojas verdes para ensaladas.
+pescado|c|Pez preparado como alimento.
+cuchara|h|Utensilio con cabeza redonda para tomar líquidos.
+ventana|h|Abertura en la pared para que entren luz y aire.
+botella|h|Recipiente de cuello angosto para líquidos.
+tenedor|h|Utensilio con dientes para pinchar la comida.
+lampara|h|Aparato que da luz.
+juguete|h|Objeto que sirve para jugar.
+cortina|h|Tela que cubre una ventana.
+montaña|n|Gran elevación natural del terreno.
+planeta|n|Cuerpo celeste que gira alrededor de una estrella, como la Tierra.
+girasol|n|Flor amarilla grande que gira buscando el sol.
+cascada|n|Caída de agua de un río desde una altura.
+granizo|n|Lluvia de bolitas de hielo.
+rodilla|b|Articulación en medio de la pierna.
+espalda|b|Parte trasera del cuerpo, de los hombros a la cintura.
+ombligo|b|Cicatriz redonda en medio del vientre.
+cerebro|b|Órgano dentro de la cabeza que controla el cuerpo.
+corazon|b|Órgano que bombea la sangre por todo el cuerpo.
+tobillo|b|Articulación que une el pie con la pierna.
+pestaña|b|Pelo que crece en el borde de los párpados.
+escuela|l|Lugar donde se enseña y se aprende.
+mercado|l|Lugar con puestos donde se compran y venden productos.
+oficina|l|Lugar donde se trabaja con escritorios y papeles.
+iglesia|l|Templo religioso cristiano.
+estadio|l|Recinto grande para ver deportes o conciertos.
+hermano|p|Hijo de tus mismos padres.
+maestro|p|Persona que enseña.
+abogado|p|Persona que defiende a otros ante la ley.
+bombero|p|Persona que apaga incendios y rescata personas.
+cartero|p|Persona que entrega las cartas.
+soldado|p|Persona que sirve en el ejército.
+vaquero|p|Persona que cuida ganado a caballo.
+mariposa|a|Insecto de alas grandes y coloridas.
+elefante|a|El animal terrestre más grande, con trompa larga.
+pinguino|a|Ave que no vuela, nada en el mar y vive en el frío.
+cangrejo|a|Animal marino con caparazón y dos pinzas.
+mosquito|a|Insecto pequeño que pica para chupar sangre.
+leopardo|a|Felino de piel amarilla con manchas negras.
+avestruz|a|El ave más grande; corre muy rápido pero no vuela.
+camaleon|a|Reptil que cambia de color.
+tortilla|c|Pan redondo y delgado de maíz o harina.
+aguacate|c|Fruto verde y cremoso con el que se hace guacamole.
+calabaza|c|Fruto grande y anaranjado, típico de otoño.
+limonada|c|Bebida de agua, limón y azúcar.
+ensalada|c|Platillo de verduras frescas mezcladas.
+espinaca|c|Verdura de hojas verdes muy nutritiva.
+pimienta|c|Especia picante en granos negros.
+almohada|h|Cojín para apoyar la cabeza al dormir.
+alfombra|h|Tapete grande que cubre el piso.
+cuaderno|h|Libreta de hojas para escribir.
+sombrero|h|Prenda para cubrir la cabeza, con ala alrededor.
+paraguas|h|Objeto que se abre para protegerse de la lluvia.
+lavadora|h|Aparato para lavar ropa.
+escalera|h|Serie de escalones para subir o bajar.
+estrella|n|Astro que brilla con luz propia en el cielo.
+desierto|n|Lugar muy seco con poca lluvia y poca vida.
+arcoiris|n|Arco de colores que aparece en el cielo tras la lluvia.
+tormenta|n|Lluvia fuerte con viento, rayos y truenos.
+invierno|n|La estación más fría del año.
+garganta|b|Parte interna del cuello por donde pasan comida y aire.
+estomago|b|Órgano donde se digiere la comida.
+costilla|b|Cada uno de los huesos curvos del pecho.
+medicina|b|Sustancia que sirve para curar; también la ciencia de curar.
+hospital|l|Lugar donde se atiende a los enfermos.
+farmacia|l|Tienda donde se venden medicinas.
+edificio|l|Construcción grande con varios pisos.
+semaforo|l|Luces que dirigen el tránsito en las calles.
+profesor|p|Persona que enseña una materia.
+princesa|p|Hija de un rey o de una reina.
+cocinero|p|Persona que prepara la comida.
+pescador|p|Persona que pesca.
+mecanico|p|Persona que repara máquinas y coches.
+`;
+const ANS = ANS_RAW.trim().split('\n').map(l => { const [w,c,d] = l.split('|'); return { w: norm(w), c, d } });
+const ANSMAP = new Map(ANS.map(a => [a.w, a]));
+ANS.forEach(a => DICT.add(a.w));
+const ANS_BY = {}; ANS.forEach(a => { const n = [...a.w].length; (ANS_BY[n] = ANS_BY[n] || []).push(a.w) });
 
-const settings = Object.assign({ hard:false, vibrate:true, contrast:false, ghosts:true, theme:'dark', randomLen:false }, store.get('ps-settings', {}));
-let mode = store.get('ps-mode', 'daily'); let reto = null; // reto = {word, code}           // 'daily' | 'free'
+const settings = Object.assign({ hard:false, vibrate:true, contrast:false, ghosts:true, theme:'dark', randomLen:false, sound:false }, store.get('ps-settings', {}));
+const baseMode = () => store.get('ps-mode', 'daily') === 'free' ? 'free' : 'daily';
+let mode = baseMode();                 // daily | free | reto | cat | time | tuto
+let reto = null, cat = null, timeRun = null, tuto = null;
 let COLS = LENGTHS.includes(store.get('ps-len', 5)) ? store.get('ps-len', 5) : 5;
-let game, slots = [], cursor = 0, busy = false;               // game = {answer, guesses, over, won, hint}
+let game, slots = [], cursor = 0, busy = false;
+const special = () => !['daily','free'].includes(mode);
+
+// ---------- listas de palabras ----------
+function freeList(n){
+  const set = new Set(ANS_BY[n] || []);
+  (BYLEN[n] || []).forEach(w => { if (!/s$/.test(w)) set.add(w) });
+  return [...set];
+}
+function pick(list, prev){ let w; do { w = list[Math.floor(Math.random() * list.length)] } while (w === prev && list.length > 1); return w }
 
 // ---------- palabra del día ----------
-function todayKey(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') }
+function dayKey(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') }
+function todayKey(){ return dayKey(new Date()) }
 function hash(str){ let h = 2166136261; for (const c of str){ h ^= c.codePointAt(0); h = Math.imul(h, 16777619) } return h >>> 0 }
 function dailyWord(len, day){
-  const list = BYLEN[len].slice().sort();
-  const start = Date.UTC(2026, 0, 1), [y,m,d] = day.split('-').map(Number);
-  const n = Math.round((Date.UTC(y, m-1, d) - start) / 864e5);
-  // recorre la lista en un orden revuelto fijo para que no se repita pronto
-  const order = list.map((w,i) => [hash(w + '#' + len), w]).sort((a,b) => a[0] - b[0]).map(x => x[1]);
+  const list = ANS_BY[len].slice().sort();
+  const [y,m,d] = day.split('-').map(Number);
+  const n = Math.round((Date.UTC(y, m-1, d) - Date.UTC(2026, 0, 1)) / 864e5);
+  const order = list.map(w => [hash(w + '#' + len), w]).sort((a,b) => a[0] - b[0]).map(x => x[1]);
   return order[((n % order.length) + order.length) % order.length];
 }
-const gameKey = () => mode === 'reto' ? `ps-reto-${reto.code}` : mode === 'daily' ? `ps-daily-${todayKey()}-${COLS}` : `ps-free-${COLS}`;
+const gameKey = () => mode === 'reto' ? `ps-reto-${reto.code}` : mode === 'daily' ? `ps-daily-${todayKey()}-${COLS}` : mode === 'free' ? `ps-free-${COLS}` : null;
+const statsKey = () => `ps-st2-${special() ? baseMode() : mode}`;
+
 // ---------- códigos de reto ----------
 const ABC = 'abcdefghijklmnñopqrstuvwxyz', CODE = '0123456789abcdefghijkmnpqrs';
 function encodeReto(w){
   const ix = [...w].map(c => ABC.indexOf(c)), L = ix.length;
-  const body = ix.map((v,i) => CODE[(v + 7*i + 3*L + 5) % 27]).join('');
-  return body + CODE[(ix.reduce((a,b,i) => a + b*(i+1), 0) + L) % 27];
+  return ix.map((v,i) => CODE[(v + 7*i + 3*L + 5) % 27]).join('') + CODE[(ix.reduce((a,b,i) => a + b*(i+1), 0) + L) % 27];
 }
 function decodeReto(code){
   code = (code || '').toLowerCase().replace(/^.*reto-/, '').replace(/[^0-9a-z]/g, '');
   const L = code.length - 1; if (L < 5 || L > 8) return null;
-  const ix = [...code.slice(0, L)].map((c,i) => { const v = CODE.indexOf(c); return v < 0 ? -1 : ((v - 7*i - 3*L - 5) % 27 + 27*10) % 27 });
+  const ix = [...code.slice(0, L)].map((c,i) => { const v = CODE.indexOf(c); return v < 0 ? -1 : ((v - 7*i - 3*L - 5) % 27 + 270) % 27 });
   if (ix.includes(-1)) return null;
   if (CODE[(ix.reduce((a,b,i) => a + b*(i+1), 0) + L) % 27] !== code[L]) return null;
   return { word: ix.map(v => ABC[v]).join(''), code };
 }
-function startReto(r){
-  reto = r; mode = 'reto'; COLS = [...r.word].length; closeModal(); load();
-  toast(`¡Reto cargado! Adivina la palabra de ${COLS} letras`);
+
+// ---------- cambiar de modo ----------
+function stopTimer(){ if (timeRun){ clearInterval(timeRun.timer); timeRun = null } }
+function goNormal(m){
+  stopTimer(); reto = null; cat = null; tuto = null;
+  mode = m || baseMode(); COLS = LENGTHS.includes(store.get('ps-len', 5)) ? store.get('ps-len', 5) : 5;
+  try{ if (/^#reto-/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search) }catch(e){}
+  load();
 }
-function leaveReto(){ reto = null; mode = store.get('ps-mode', 'daily'); COLS = LENGTHS.includes(store.get('ps-len', 5)) ? store.get('ps-len', 5) : 5; try{ history.replaceState(null, '', location.pathname + location.search) }catch(e){} load() }
-const statsKey = () => `ps-st2-${mode}`;
+function startReto(r){ stopTimer(); cat = null; reto = r; mode = 'reto'; COLS = [...r.word].length; closeModal(); load(); toast(`¡Reto cargado! Adivina la palabra de ${COLS} letras`) }
+function startCat(key){ stopTimer(); reto = null; cat = { key, prev: null }; mode = 'cat'; closeModal(); newCatWord() }
+function newCatWord(){
+  const list = ANS.filter(a => a.c === cat.key).map(a => a.w);
+  const w = pick(list, cat.prev); cat.prev = w; COLS = [...w].length;
+  game = { answer: w, guesses: [], over: false, won: false, hint: null }; load(true);
+}
+function startTime(n){
+  stopTimer(); reto = null; cat = null; mode = 'time'; COLS = n; closeModal();
+  timeRun = { end: Date.now() + 180000, score: 0, n, prev: null, timer: null };
+  newTimeWord(); timeRun.timer = setInterval(tickTime, 250); tickTime();
+}
+function newTimeWord(){
+  const w = pick(freeList(COLS), timeRun.prev); timeRun.prev = w;
+  game = { answer: w, guesses: [], over: false, won: false, hint: null }; load(true);
+}
 
 // ---------- barra de controles ----------
 const modeBtns = { daily: $('modeDaily'), free: $('modeFree') };
-Object.entries(modeBtns).forEach(([m, b]) => b.onclick = () => { if (m !== mode){ reto = null; mode = m; store.set('ps-mode', m); load() } });
+const blockedInTuto = () => { if (mode === 'tuto'){ toast('Termina primero la práctica'); return true } return false };
+Object.entries(modeBtns).forEach(([m, b]) => b.onclick = () => { if (blockedInTuto()) return; if (m !== mode){ store.set('ps-mode', m); goNormal(m) } });
 LENGTHS.forEach(n => {
   const b = document.createElement('button'); b.className = 'len'; b.id = 'len-' + n; b.textContent = n;
   b.setAttribute('aria-label', n + ' letras');
-  b.onclick = () => { if (mode === 'reto'){ reto = null; mode = store.get('ps-mode', 'daily'); COLS = n; store.set('ps-len', n); return load() } if (n !== COLS){ COLS = n; store.set('ps-len', n); load() } };
+  b.onclick = () => {
+    if (blockedInTuto()) return;
+    if (special()){ store.set('ps-len', n); return goNormal() }
+    if (n !== COLS){ COLS = n; store.set('ps-len', n); load() }
+  };
   $('lengths').appendChild(b);
 });
 $('newBtn').onclick = () => {
   if (mode === 'daily') return toast('En modo Diario hay una palabra al día. Cambia a Libre para jugar más.');
   if (!game.over && game.guesses.length) toast('Palabra anterior: ' + game.answer.toUpperCase());
+  if (mode === 'cat') return newCatWord();
   newFree();
 };
+function markDaily(){
+  LENGTHS.forEach(n => {
+    const b = $('len-' + n), g = mode === 'daily' ? store.get(`ps-daily-${todayKey()}-${n}`, null) : null;
+    b.classList.toggle('done-win', !!(g && g.over && g.won));
+    b.classList.toggle('done-lose', !!(g && g.over && !g.won));
+  });
+}
 
 function buildBoard(){
   board.innerHTML = '';
@@ -518,6 +790,22 @@ function sizeBoard(){
 }
 window.addEventListener('resize', sizeBoard);
 
+// ---------- sonido ----------
+let actx;
+function sfx(kind){
+  if (!settings.sound) return;
+  try{
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const notes = { key:[[660,.03]], flip:[[440,.05]], error:[[180,.12]], win:[[523,.1],[659,.1],[784,.1],[1047,.2]], lose:[[392,.15],[330,.15],[262,.3]], point:[[784,.08],[1047,.12]] }[kind] || [];
+    let t = actx.currentTime;
+    notes.forEach(([f, d]) => {
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = 'triangle'; o.frequency.value = f; g.gain.setValueAtTime(.12, t); g.gain.exponentialRampToValueAtTime(.001, t + d);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + d); t += d * .9;
+    });
+  }catch(e){}
+}
+
 // ---------- teclado ----------
 ['qwertyuiop','asdfghjklñ','⏎zxcvbnm⌫'].forEach(line => {
   const r = document.createElement('div'); r.className = 'kr';
@@ -532,26 +820,27 @@ window.addEventListener('resize', sizeBoard);
 });
 kb.addEventListener('click', e => { const b = e.target.closest('.key'); if (b){ press(b.dataset.k); b.blur() } });
 document.addEventListener('keydown', e => {
-  if (!$('modal').hidden){ if (e.key === 'Escape') closeModal(); return }
+  if (!$('modal').hidden){ if (e.key === 'Escape' && !modalLocked) closeModal(); return }
   if (e.ctrlKey || e.metaKey || e.altKey) return;
-  const k = ['Enter','Backspace','ArrowLeft','ArrowRight'].includes(e.key) ? e.key : norm(e.key);
-  if (/^[a-zñ]$/.test(k) || ['Enter','Backspace','ArrowLeft','ArrowRight'].includes(e.key)){ e.preventDefault(); press(k) }
+  const named = ['Enter','Backspace','ArrowLeft','ArrowRight'].includes(e.key);
+  const k = named ? e.key : norm(e.key);
+  if (/^[a-zñ]$/.test(k) || named){ e.preventDefault(); press(k) }
 });
 
 function press(k){
-  if (game.over || busy) return;
+  if (!game || game.over || busy) return;
+  if (tuto && tuto.wait) return toast('Toca «Siguiente» para continuar');
   if (k === 'Enter') return submit();
   if (k === 'ArrowLeft'){ cursor = Math.max(0, cursor - 1); return draw() }
   if (k === 'ArrowRight'){ cursor = Math.min(COLS - 1, cursor + 1); return draw() }
   if (k === 'Backspace'){
     if (slots[cursor]) slots[cursor] = '';
     else if (cursor > 0){ cursor--; slots[cursor] = '' }
-    return draw();
+    sfx('key'); return draw();
   }
-  slots[cursor] = k;
-  // salta a la siguiente casilla vacía (hacia adelante y luego desde el inicio)
+  slots[cursor] = k; sfx('key');
   for (let step = 1; step <= COLS; step++){ const j = (cursor + step) % COLS; if (!slots[j]){ cursor = j; break } if (step === COLS) cursor = Math.min(cursor + 1, COLS - 1) }
-  draw();
+  draw(); if (tuto) tutoCheck();
 }
 const word = () => slots.join('');
 const isFull = () => slots.length === COLS && slots.every(Boolean);
@@ -570,13 +859,12 @@ function ghostLetters(){
 }
 function draw(){
   const row = board.children[game.guesses.length]; if (!row || game.over) return;
-  const cur = slots, gh = ghostLetters();
+  const gh = ghostLetters();
   [...row.children].forEach((t,i) => {
-    const ghost = !cur[i] && gh[i];
     t.classList.toggle('cursor', i === cursor && !busy);
-    t.textContent = cur[i] || gh[i] || '';
-    t.classList.toggle('filled', !!cur[i]);
-    t.classList.toggle('ghost', !!ghost);
+    t.textContent = slots[i] || gh[i] || '';
+    t.classList.toggle('filled', !!slots[i]);
+    t.classList.toggle('ghost', !slots[i] && !!gh[i]);
   });
 }
 function score(guess, ans){
@@ -588,7 +876,7 @@ function score(guess, ans){
 function buzz(p){ if (settings.vibrate && navigator.vibrate) try{ navigator.vibrate(p) }catch(e){} }
 function reject(msg){
   const row = board.children[game.guesses.length];
-  row.classList.remove('shake'); void row.offsetWidth; row.classList.add('shake'); buzz(80); toast(msg);
+  row.classList.remove('shake'); void row.offsetWidth; row.classList.add('shake'); buzz(80); sfx('error'); toast(msg);
 }
 function hardModeError(guess){
   const g = [...guess];
@@ -603,6 +891,7 @@ function hardModeError(guess){
 function submit(){
   if (!isFull()) return reject('Faltan letras');
   const current = word();
+  if (tuto && current !== tuto.expect) return reject(`Para la práctica escribe ${tuto.expect.toUpperCase()}`);
   if (!DICT.has(current)){
     const w = current;
     reject(`«${w.toUpperCase()}» no está en el diccionario`);
@@ -612,18 +901,21 @@ function submit(){
       toast(`«${w.toUpperCase()}» agregada`); if (word() === w) submit();
     });
   }
-  if (settings.hard){ const err = hardModeError(current); if (err) return reject(err) }
+  if (settings.hard && !tuto){ const err = hardModeError(current); if (err) return reject(err) }
   const row = board.children[game.guesses.length];
   const guess = current, res = score(guess, game.answer), step = COLS > 6 ? 170 : 220;
   game.guesses.push(guess); clearSlots(); busy = true; save();
   [...row.children].forEach(t => t.classList.remove('cursor'));
   [...row.children].forEach((t,i) => setTimeout(() => {
-    t.classList.remove('ghost'); t.classList.add('flip');
+    t.classList.remove('ghost'); t.classList.add('flip'); sfx('flip');
     setTimeout(() => { t.classList.remove('filled'); t.classList.add(res[i]) }, 200);
   }, i * step));
   setTimeout(() => {
     paintKeys(guess, res); busy = false; draw();
-    if (guess === game.answer) finish(true); else if (game.guesses.length === ROWS) finish(false);
+    const won = guess === game.answer;
+    if (won) [...row.children].forEach((t,i) => setTimeout(() => t.classList.add('win'), i * 90));
+    if (won) finish(true); else if (game.guesses.length === ROWS) finish(false);
+    else if (tuto) tutoAfterGuess();
   }, COLS * step + 300);
 }
 const rank = { absent:1, present:2, correct:3 };
@@ -634,14 +926,55 @@ function paintKeys(guess, res){
   });
 }
 
-// ---------- fin de partida y estadísticas ----------
+// ---------- logros ----------
+const ACH = [
+  ['primera','🌱','Primer paso','Gana tu primera partida'],
+  ['tres','🎯','Puntería','Gana en 3 intentos o menos'],
+  ['dos','⚡','Relámpago','Gana en 2 intentos o menos'],
+  ['uno','🔮','Adivino','Gana en el primer intento'],
+  ['ocho','📏','Palabra larga','Gana una palabra de 8 letras'],
+  ['dificil','🧠','Sin atajos','Gana en modo difícil'],
+  ['sinpista','🦉','Sin ayuda','Gana 10 partidas sin pista'],
+  ['racha3','🔥','En racha','Racha de 3 victorias'],
+  ['racha7','🌋','Imparable','Racha de 7 victorias'],
+  ['diario4','📅','Día completo','Gana las 4 palabras del día el mismo día'],
+  ['reto','🤝','Reto aceptado','Gana un reto de un amigo'],
+  ['creador','✉️','Retador','Crea un reto para un amigo'],
+  ['categoria','🏷️','Especialista','Gana una partida de categoría'],
+  ['cats','🌎','Sabelotodo','Gana en las 7 categorías'],
+  ['reloj5','⏱️','Contra el reloj','Adivina 5 palabras en contrarreloj'],
+  ['reloj10','🚀','Velocista','Adivina 10 palabras en contrarreloj'],
+  ['cincuenta','🏅','Veterano','Juega 50 partidas']
+];
+function unlock(id){
+  const got = store.get('ps-ach', {}); if (got[id]) return;
+  got[id] = todayKey(); store.set('ps-ach', got);
+  const a = ACH.find(x => x[0] === id); if (a) setTimeout(() => toast(`${a[1]} Logro: ${a[2]}`), 900);
+}
+function checkAch(won){
+  const c = Object.assign({ played:0, nohint:0, cats:[] }, store.get('ps-cnt', {}));
+  c.played++;
+  if (won){
+    unlock('primera'); const n = game.guesses.length;
+    if (n <= 3) unlock('tres'); if (n <= 2) unlock('dos'); if (n === 1) unlock('uno');
+    if (COLS === 8) unlock('ocho'); if (settings.hard) unlock('dificil');
+    if (!game.hint){ c.nohint++; if (c.nohint >= 10) unlock('sinpista') }
+    if (mode === 'reto') unlock('reto');
+    if (mode === 'cat'){ unlock('categoria'); if (!c.cats.includes(cat.key)) c.cats.push(cat.key); if (c.cats.length >= 7) unlock('cats') }
+    if (mode === 'daily' && LENGTHS.every(L => { const g = store.get(`ps-daily-${todayKey()}-${L}`, null); return g && g.won })) unlock('diario4');
+  }
+  if (c.played >= 50) unlock('cincuenta');
+  store.set('ps-cnt', c);
+}
+
+// ---------- fin de partida ----------
 function getStats(){
   const base = { played:0, wins:0, streak:0, best:0, dist:[0,0,0,0,0,0], last:null };
   let s = store.get(statsKey(), null);
   if (!s){
-    // une las estadísticas viejas (que estaban separadas por número de letras)
+    const m = special() ? baseMode() : mode;
     s = Object.assign({}, base, { dist:[0,0,0,0,0,0] });
-    LENGTHS.forEach(n => { const o = store.get(`ps-st-${mode}-${n}`, null); if (!o) return;
+    LENGTHS.forEach(n => { const o = store.get(`ps-st-${m}-${n}`, null); if (!o) return;
       s.played += o.played || 0; s.wins += o.wins || 0; s.best = Math.max(s.best, o.best || 0); s.streak = Math.max(s.streak, o.streak || 0);
       (o.dist || []).forEach((v,i) => s.dist[i] += v || 0); if (o.last && (!s.last || o.last > s.last)) s.last = o.last });
     store.set(statsKey(), s);
@@ -650,23 +983,35 @@ function getStats(){
 }
 function finish(won){
   game.over = true; game.won = won; save();
-  if (mode === 'reto'){ buzz(won ? [40,60,40] : 200); return setTimeout(showResult, 400) }
-  const s = getStats();
-  s.played++;
-  if (won){
-    s.wins++; s.dist[game.guesses.length - 1]++;
-    if (mode === 'daily'){
-      const y = new Date(); y.setDate(y.getDate() - 1);
-      const yk = y.getFullYear() + '-' + String(y.getMonth()+1).padStart(2,'0') + '-' + String(y.getDate()).padStart(2,'0');
-      s.streak = s.last === todayKey() ? Math.max(1, s.streak) : s.last === yk ? s.streak + 1 : 1; s.last = todayKey();
-    } else s.streak++;
-    s.best = Math.max(s.best, s.streak); buzz([40,60,40]);
-  } else { s.streak = 0; buzz(200) }
-  store.set(statsKey(), s);
-  setTimeout(showResult, 400);
+  buzz(won ? [40,60,40] : 200); sfx(won ? 'win' : 'lose');
+  if (mode === 'tuto') return setTimeout(tutoDone, 900);
+  if (mode === 'time'){
+    if (!timeRun) return;
+    if (won){ timeRun.score++; sfx('point'); toast(`+1 · ${timeRun.score} ${timeRun.score === 1 ? 'acierto' : 'aciertos'}`) }
+    else toast(`Era «${game.answer.toUpperCase()}»`);
+    tickTime(); return setTimeout(() => { if (timeRun) newTimeWord() }, won ? 900 : 1500);
+  }
+  if (mode === 'daily' || mode === 'free'){
+    const s = getStats();
+    s.played++;
+    if (won){
+      s.wins++; s.dist[game.guesses.length - 1]++;
+      if (mode === 'daily'){
+        const y = new Date(); y.setDate(y.getDate() - 1);
+        s.streak = s.last === todayKey() ? Math.max(1, s.streak) : s.last === dayKey(y) ? s.streak + 1 : 1; s.last = todayKey();
+      } else s.streak++;
+      s.best = Math.max(s.best, s.streak);
+    } else s.streak = 0;
+    store.set(statsKey(), s);
+    if (s.streak >= 3) unlock('racha3'); if (s.streak >= 7) unlock('racha7');
+    markDaily();
+  }
+  checkAch(won);
+  setTimeout(showResult, won ? 1200 : 500);
 }
 function statsHTML(){
-  const s = getStats(), max = Math.max(1, ...s.dist), last = game.over && game.won ? game.guesses.length - 1 : -1;
+  const s = getStats(), max = Math.max(1, ...s.dist), last = game && game.over && game.won && !special() ? game.guesses.length - 1 : -1;
+  const m = special() ? baseMode() : mode;
   return `
     <div class="stats">
       <div>${s.played}<small>Jugadas</small></div>
@@ -674,30 +1019,40 @@ function statsHTML(){
       <div>${s.streak}<small>Racha</small></div>
       <div>${s.best}<small>Mejor</small></div>
     </div>
-    <p class="sub">Intentos para ganar · modo ${mode === 'daily' ? 'Diario' : 'Libre'}, todas las longitudes</p>
+    <p class="sub">Intentos para ganar · modo ${m === 'daily' ? 'Diario' : 'Libre'}, todas las longitudes</p>
     <div class="dist">${s.dist.map((n,i) => `<div class="drow"><span>${i+1}</span><div class="dbar${i === last ? ' now' : ''}" style="width:${Math.max(8, n / max * 100)}%">${n}</div></div>`).join('')}</div>`;
+}
+function defHTML(w){
+  const a = ANSMAP.get(w); if (!a) return '';
+  return `<div class="def"><span class="tag">${CATS[a.c]}</span><p>${a.d}</p></div>`;
 }
 const praise = ['¡Genio!','¡Increíble!','¡Muy bien!','¡Bien hecho!','¡Lo lograste!','¡Por poco!'];
 function showResult(){
-  const nextBtn = mode === 'reto'
-    ? `<button class="secondary" id="makeRetoBtn">Crear un reto para tu amigo</button><button class="secondary" id="leaveBtn">Volver al juego normal</button>`
-    : mode === 'daily'
-    ? `<p class="sub">Nueva palabra del día en <b id="countdown"></b></p><button class="secondary" id="toFree">Seguir en modo Libre</button>`
-    : `<button class="secondary" id="againBtn">${settings.randomLen ? 'Jugar otra (largo al azar)' : 'Jugar otra'}</button>`;
+  let next;
+  if (mode === 'reto') next = `<button class="secondary" id="makeRetoBtn">Crear un reto para tu amigo</button><button class="secondary" id="leaveBtn">Volver al juego normal</button>`;
+  else if (mode === 'cat') next = `<button class="secondary" id="againCat">Otra de ${CATS[cat.key]}</button><button class="secondary" id="leaveBtn">Volver al juego normal</button>`;
+  else if (mode === 'daily'){
+    const pending = LENGTHS.filter(n => { const g = store.get(`ps-daily-${todayKey()}-${n}`, null); return !(g && g.over) });
+    next = `${pending.length ? `<button class="secondary" id="nextDaily">Jugar la del día de ${pending[0]} letras</button>` : ''}<p class="sub">Nuevas palabras del día en <b id="countdown"></b></p><button class="secondary" id="toFree">Seguir en modo Libre</button>`;
+  } else next = `<button class="secondary" id="againBtn">${settings.randomLen ? 'Jugar otra (largo al azar)' : 'Jugar otra'}</button>`;
   showModal(`
-    ${mode === 'reto' ? '<p class="sub">Reto de un amigo</p>' : ''}
+    ${mode === 'reto' ? '<p class="sub">Reto de un amigo</p>' : mode === 'cat' ? `<p class="sub">Categoría: ${CATS[cat.key]}</p>` : ''}
     <h2>${game.won ? praise[game.guesses.length-1] : 'Se acabaron los intentos'}</h2>
     <p>${game.won ? `Adivinaste en ${game.guesses.length} de ${ROWS} intentos.` : 'La palabra secreta era:'}</p>
     <div class="answer">${[...game.answer].map(c => `<b>${c.toUpperCase()}</b>`).join('')}</div>
-    ${mode === 'reto' ? '' : statsHTML()}
+    ${defHTML(game.answer)}
+    ${mode === 'daily' || mode === 'free' ? statsHTML() : ''}
     <button class="primary" id="shareBtn">Compartir resultado</button>
-    ${nextBtn}`);
-  $('shareBtn').onclick = share;
-  if ($('againBtn')) $('againBtn').onclick = () => { closeModal(); newFree() };
-  if ($('makeRetoBtn')) $('makeRetoBtn').onclick = openCreateReto;
-  if ($('leaveBtn')) $('leaveBtn').onclick = () => { closeModal(); leaveReto() };
-  if ($('toFree')) $('toFree').onclick = () => { closeModal(); mode = 'free'; store.set('ps-mode','free'); load() };
-  tickCountdown();
+    ${next}`, () => {
+    $('shareBtn').onclick = share;
+    if ($('againBtn')) $('againBtn').onclick = () => { closeModal(); newFree() };
+    if ($('againCat')) $('againCat').onclick = () => { closeModal(); newCatWord() };
+    if ($('makeRetoBtn')) $('makeRetoBtn').onclick = openCreateReto;
+    if ($('leaveBtn')) $('leaveBtn').onclick = () => { closeModal(); goNormal() };
+    if ($('nextDaily')) $('nextDaily').onclick = () => { closeModal(); const n = +$('nextDaily').textContent.match(/\d/)[0]; COLS = n; store.set('ps-len', n); load() };
+    if ($('toFree')) $('toFree').onclick = () => { closeModal(); store.set('ps-mode','free'); goNormal('free') };
+    tickCountdown();
+  });
 }
 let cdTimer;
 function tickCountdown(){
@@ -714,21 +1069,67 @@ function tickCountdown(){
 function shareText(){
   const [g, y, b] = settings.contrast ? ['🟧','🟦','⬛'] : ['🟩','🟨','⬛'];
   const d = new Date(), date = d.getDate() + '/' + (d.getMonth()+1);
-  const head = `Palabra Secreta ${mode === 'daily' ? date : mode === 'reto' ? '(tu reto)' : '(libre)'} · ${COLS} letras ${game.won ? game.guesses.length : 'X'}/${ROWS}${settings.hard ? '*' : ''}${game.hint ? ' (con pista)' : ''}`;
+  const label = mode === 'daily' ? date : mode === 'reto' ? '(tu reto)' : mode === 'cat' ? `(${CATS[cat.key]})` : '(libre)';
+  const head = `Palabra Secreta ${label} · ${COLS} letras ${game.won ? game.guesses.length : 'X'}/${ROWS}${settings.hard ? '*' : ''}${game.hint ? ' (con pista)' : ''}`;
   const grid = game.guesses.map(w => score(w, game.answer).map(r => r === 'correct' ? g : r === 'present' ? y : b).join('')).join('\n');
   return head + '\n\n' + grid;
 }
-function share(){
-  const text = shareText();
+function shareOrCopy(text, okMsg){
   if (navigator.share && window.top === window){ navigator.share({ text }).catch(() => {}); return }
-  const fallback = () => showModal(`<h2>Copia tu resultado</h2><textarea id="shareTxt" readonly rows="8">${text}</textarea><button class="primary" id="closeBtn">Listo</button>`, () => { const t = $('shareTxt'); t.focus(); t.select() });
-  try{
-    navigator.clipboard.writeText(text).then(() => toast('Resultado copiado. Pégalo en WhatsApp.'), fallback);
-  }catch(e){ fallback() }
+  const fallback = () => showModal(`<h2>Copia el texto</h2><textarea id="shareTxt" readonly rows="8">${text}</textarea><button class="primary" id="closeBtn">Listo</button>`, () => { const t = $('shareTxt'); t.focus(); t.select() });
+  try{ navigator.clipboard.writeText(text).then(() => toast(okMsg), fallback) }catch(e){ fallback() }
+}
+function share(){ shareOrCopy(shareText(), 'Resultado copiado. Pégalo en WhatsApp.') }
+
+// ---------- contrarreloj ----------
+function tickTime(){
+  if (!timeRun) return;
+  const left = Math.max(0, timeRun.end - Date.now()), s = Math.ceil(left / 1000);
+  const el = $('timeLeft'); if (el){ el.textContent = Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); el.classList.toggle('low', s <= 20) }
+  const sc = $('timeScore'); if (sc) sc.textContent = timeRun.score;
+  if (left <= 0) endTime();
+}
+function endTime(){
+  const r = timeRun; clearInterval(r.timer); timeRun = null; game.over = true; busy = false;
+  const key = 'ps-time-best-' + r.n, best = Math.max(store.get(key, 0), r.score), record = r.score > store.get(key, 0);
+  store.set(key, best); if (r.score >= 5) unlock('reloj5'); if (r.score >= 10) unlock('reloj10');
+  sfx(record ? 'win' : 'lose');
+  showModal(`<h2>¡Se acabó el tiempo!</h2>
+    <p>Adivinaste</p><div class="code">${r.score}</div><p>${r.score === 1 ? 'palabra' : 'palabras'} de ${r.n} letras en 3 minutos.</p>
+    <p class="sub">${record && r.score ? '¡Nuevo récord!' : `Tu récord: ${best}`}</p>
+    <p class="sub">La última palabra era «${game.answer.toUpperCase()}».</p>
+    <button class="primary" id="shareTime">Compartir</button>
+    <button class="secondary" id="againTime">Jugar otra vez</button>
+    <button class="secondary" id="leaveBtn">Volver al juego normal</button>`, () => {
+    $('shareTime').onclick = () => shareOrCopy(`Palabra Secreta ⏱️ Contrarreloj\nAdiviné ${r.score} ${r.score === 1 ? 'palabra' : 'palabras'} de ${r.n} letras en 3 minutos. ¿Me superas?`, 'Resultado copiado.');
+    $('againTime').onclick = () => startTime(r.n);
+    $('leaveBtn').onclick = () => { closeModal(); goNormal() };
+  });
+}
+function openTime(){
+  showModal(`<h2>Contrarreloj</h2>
+    <p>Adivina todas las palabras que puedas en <b>3 minutos</b>. Al acertar o fallar, sale otra palabra al instante.</p>
+    <div class="opt-title">¿De cuántas letras?</div>
+    <div class="pick-len">${LENGTHS.map(n => `<button data-tl="${n}">${n}<small>Récord ${store.get('ps-time-best-' + n, 0)}</small></button>`).join('')}</div>
+    <button class="secondary" id="closeBtn">Cancelar</button>`, () => {
+    document.querySelectorAll('[data-tl]').forEach(b => b.onclick = () => startTime(+b.dataset.tl));
+  });
+}
+
+// ---------- categorías ----------
+function openCats(){
+  const done = Object.assign({ cats:[] }, store.get('ps-cnt', {})).cats;
+  showModal(`<h2>Categorías</h2><p>Adivina palabras de un solo tema. El largo cambia en cada palabra.</p>
+    <div class="cats">${Object.entries(CATS).map(([k,n]) => `<button data-cat="${k}">${n}${done.includes(k) ? ' ✓' : ''}<small>${ANS.filter(a => a.c === k).length} palabras</small></button>`).join('')}</div>
+    <button class="secondary" id="closeBtn">Cancelar</button>`, () => {
+    document.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => startCat(b.dataset.cat));
+  });
 }
 
 // ---------- pista ----------
 $('hintBtn').onclick = () => {
+  if (blockedInTuto()) return;
+  if (mode === 'time') return toast('En contrarreloj no hay pistas');
   if (game.over) return toast('La partida ya terminó');
   if (game.hint) return toast(`Tu pista: la letra ${game.hint.pos+1} es ${game.hint.letter.toUpperCase()}`);
   const a = [...game.answer], known = new Set();
@@ -744,13 +1145,15 @@ function showHint(){
   h.hidden = !game.hint;
   if (game.hint) h.innerHTML = `Pista: la letra <b>${game.hint.pos+1}</b> es <b>${game.hint.letter.toUpperCase()}</b>`;
   $('hintBtn').classList.toggle('used', !!game.hint);
+  sizeBoard();
 }
 
 // ---------- modales ----------
-function showModal(html, after){ $('modalCard').innerHTML = html; $('modal').hidden = false;
+let modalLocked = false;
+function showModal(html, after, locked){ modalLocked = !!locked; $('modalCard').innerHTML = html; $('modal').hidden = false; $('modalCard').scrollTop = 0;
   const c = $('closeBtn'); if (c) c.onclick = closeModal; if (after) after(); }
-function closeModal(){ $('modal').hidden = true; clearInterval(cdTimer) }
-$('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal() });
+function closeModal(){ $('modal').hidden = true; modalLocked = false; clearInterval(cdTimer) }
+$('modal').addEventListener('click', e => { if (e.target.id === 'modal' && !modalLocked) closeModal() });
 let toastT;
 function actionToast(msg, label, fn){
   const t = $('toast'); t.innerHTML = ''; t.append(msg + ' ');
@@ -761,18 +1164,61 @@ function actionToast(msg, label, fn){
 function toast(msg){ const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2200) }
 
 $('statsBtn').onclick = () => {
-  if (game.over) return showResult();
-  showModal(`<h2>Estadísticas</h2>${statsHTML()}<button class="primary" id="closeBtn">Cerrar</button>`);
+  if (blockedInTuto()) return;
+  if (game.over && (mode === 'daily' || mode === 'free')) return showResult();
+  showModal(`<h2>Estadísticas</h2>${statsHTML()}<button class="secondary" id="achBtn2">Ver logros</button><button class="primary" id="closeBtn">Cerrar</button>`, () => { $('achBtn2').onclick = openAch });
 };
-$('menuBtn').onclick = () => showModal(`<h2>Menú</h2>
+$('menuBtn').onclick = () => {
+  if (blockedInTuto()) return;
+  showModal(`<h2>Menú</h2>
   <div class="menu">
     <button id="mReto">Retar a un amigo<small>Escribe tu palabra secreta y mándasela</small></button>
     <button id="mCode">Tengo un código de reto<small>Juega la palabra que te mandaron</small></button>
-    <button id="mHelp">Cómo jugar<small>Reglas y colores</small></button>
+    <button id="mCats">Categorías<small>Animales, comida, lugares y más</small></button>
+    <button id="mTime">Contrarreloj<small>Todas las palabras que puedas en 3 minutos</small></button>
+    <button id="mAch">Logros<small>${Object.keys(store.get('ps-ach', {})).length} de ${ACH.length} medallas</small></button>
+    <button id="mBack">Respaldo<small>Pasa tu progreso a otro teléfono</small></button>
+    <button id="mHelp">Cómo jugar<small>Reglas paso a paso</small></button>
+    <button id="mTuto">Repetir la práctica<small>La partida guiada del inicio</small></button>
+    <button id="mNews">Novedades<small>Lo nuevo del juego</small></button>
   </div>
   <button class="secondary" id="closeBtn">Cerrar</button>`, () => {
-  $('mReto').onclick = openCreateReto; $('mCode').onclick = openEnterCode; $('mHelp').onclick = showHelp;
-});
+    $('mReto').onclick = openCreateReto; $('mCode').onclick = openEnterCode; $('mCats').onclick = openCats; $('mTime').onclick = openTime;
+    $('mAch').onclick = openAch; $('mBack').onclick = openBackup; $('mHelp').onclick = () => showHelp(0); $('mTuto').onclick = () => { closeModal(); startTuto(true) };
+    $('mNews').onclick = () => showNews();
+  });
+};
+function openAch(){
+  const got = store.get('ps-ach', {});
+  showModal(`<h2>Logros</h2><p class="sub">${Object.keys(got).length} de ${ACH.length} desbloqueados</p>
+    <div class="achs">${ACH.map(([id,ic,n,d]) => `<div class="ach${got[id] ? ' on' : ''}"><span>${got[id] ? ic : '🔒'}</span><div><b>${n}</b><small>${d}</small></div></div>`).join('')}</div>
+    <button class="primary" id="closeBtn">Cerrar</button>`);
+}
+function openBackup(){
+  showModal(`<h2>Respaldo</h2>
+    <p>Copia tu código de respaldo y guárdalo (por ejemplo, mándatelo por WhatsApp). En otro teléfono, pégalo en «Restaurar».</p>
+    <button class="primary" id="bkCopy">Copiar mi respaldo</button>
+    <div class="opt-title">Restaurar</div>
+    <textarea id="bkIn" rows="3" placeholder="Pega aquí tu código de respaldo"></textarea>
+    <p class="err" id="bkErr"></p>
+    <button class="secondary" id="bkGo">Restaurar progreso</button>
+    <button class="secondary" id="closeBtn">Cerrar</button>`, () => {
+    $('bkCopy').onclick = () => {
+      const data = {};
+      try{ for (let i = 0; i < localStorage.length; i++){ const k = localStorage.key(i); if (/^ps-(st2-|custom|settings|ach|cnt|time-best|tuto|news|len|mode)/.test(k)) data[k] = localStorage.getItem(k) } }catch(e){}
+      const code = 'PS1:' + btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+      try{ navigator.clipboard.writeText(code).then(() => toast('Respaldo copiado'), () => { $('bkIn').value = code; $('bkIn').select(); toast('Copia el código del cuadro') }) }catch(e){ $('bkIn').value = code }
+    };
+    $('bkGo').onclick = () => {
+      try{
+        const v = $('bkIn').value.trim(); if (!/^PS1:/.test(v)) throw 0;
+        const data = JSON.parse(decodeURIComponent(escape(atob(v.slice(4)))));
+        Object.entries(data).forEach(([k, val]) => { if (/^ps-/.test(k)) localStorage.setItem(k, val) });
+        toast('Progreso restaurado'); setTimeout(() => location.reload(), 800);
+      }catch(e){ $('bkErr').textContent = 'Ese código no es válido. Cópialo completo, empezando por PS1:' }
+    };
+  });
+}
 function openCreateReto(){
   showModal(`<h2>Retar a un amigo</h2>
     <p>Escribe una palabra real de 5 a 8 letras. Tu amigo tendrá 6 intentos para adivinarla.</p>
@@ -785,7 +1231,7 @@ function openCreateReto(){
       const w = norm(inp.value.trim()).replace(/[^a-zñ]/g, ''), n = [...w].length;
       if (n < 5 || n > 8) return $('retoErr').textContent = 'La palabra debe tener de 5 a 8 letras';
       if (!DICT.has(w)) return $('retoErr').textContent = 'Esa palabra no está en el diccionario';
-      showRetoCode(w);
+      unlock('creador'); showRetoCode(w);
     };
     $('retoGo').onclick = go; inp.onkeydown = e => { if (e.key === 'Enter') go() };
   });
@@ -800,11 +1246,7 @@ function showRetoCode(w){
     ${link ? `<div class="linkbox">${link}</div><p class="sub">Con el enlace se abre el reto directo. También puede escribir el código en Menú → «Tengo un código de reto».</p>` : `<p class="sub">Tu amigo abre el juego, toca Menú → «Tengo un código de reto» y escribe el código.</p>`}
     <button class="primary" id="copyReto">${navigator.share && window.top === window ? 'Enviar reto' : 'Copiar mensaje'}</button>
     <button class="secondary" id="closeBtn">Cerrar</button>`, () => {
-    $('copyReto').onclick = () => {
-      const text = msg.replace(/\\n/g, '\n');
-      if (navigator.share && window.top === window){ navigator.share({ text }).catch(() => {}); return }
-      try{ navigator.clipboard.writeText(text).then(() => toast('Mensaje copiado. Pégalo en WhatsApp.'), () => toast('Copia el código: ' + CODEU)) }catch(e){ toast('Copia el código: ' + CODEU) }
-    };
+    $('copyReto').onclick = () => shareOrCopy(msg, 'Mensaje copiado. Pégalo en WhatsApp.');
   });
 }
 function openEnterCode(){
@@ -819,25 +1261,109 @@ function openEnterCode(){
     $('codeGo').onclick = go; inp.onkeydown = e => { if (e.key === 'Enter') go() };
   });
 }
-function checkHash(){ const h = location.hash.slice(1); if (/^reto-/.test(h)){ const r = decodeReto(h); if (r && (!reto || reto.code !== r.code)) startReto(r) } }
+function checkHash(){ const h = location.hash.slice(1); if (/^reto-/.test(h) && mode !== 'tuto'){ const r = decodeReto(h); if (r && (!reto || reto.code !== r.code)) startReto(r) } }
 window.addEventListener('hashchange', checkHash);
-const showHelp = () => showModal(`
-  <h2>Cómo jugar</h2>
-  <p>Adivina la palabra secreta en 6 intentos. Elige de 5 a 8 letras.</p>
-  <div class="legend">
-    <span><i style="background:var(--green)"></i>Letra correcta en su lugar</span>
-    <span><i style="background:var(--amber)"></i>Letra en la palabra, pero en otro lugar</span>
-    <span><i style="background:var(--absent);border:1px solid var(--surface-2)"></i>Letra que no está</span>
-  </div>
-  <p><b>Diario:</b> una palabra al día, la misma para todos. Compara tu resultado con tus amigos.<br><b>Libre:</b> todas las partidas que quieras.</p>
-  <p><b>Retos:</b> en el Menú puedes crear una palabra para un amigo o jugar el código que te mandaron.</p>
-  <p>Toca un cuadrito para escribir en ese lugar; puedes llenar las letras en el orden que quieras.</p>
-  <p>Solo se aceptan palabras reales, sin acentos. Si una palabra real no se acepta, toca «Agregar» y quedará guardada en tu teléfono. Tienes una pista por partida.</p>
-  <button class="primary" id="closeBtn">¡A jugar!</button>`);
+
+// ---------- instrucciones por pasos ----------
+const mini = (w, cls) => `<div class="mini">${[...w].map((c,i) => `<b class="${cls[i] || ''}">${c.toUpperCase()}</b>`).join('')}</div>`;
+const HELP = [
+  ['Cómo jugar', `<p>Adivina la palabra secreta en <b>6 intentos</b>. Escribe una palabra real y toca <b>ENVIAR</b>. Los colores te dicen qué tan cerca estás.</p>
+    ${mini('mango', ['correct'])}<p class="sub">La <b>M</b> está en la palabra y en su lugar.</p>
+    ${mini('nariz', ['present'])}<p class="sub">La <b>N</b> está en la palabra, pero en otro lugar.</p>
+    ${mini('perro', ['', '', '', 'absent'])}<p class="sub">La <b>R</b> no está en la palabra.</p>`],
+  ['Escribe a tu manera', `<p>Toca cualquier cuadrito para escribir en ese lugar. Puedes llenar las letras en el orden que quieras.</p>
+    <p>Las letras que ya acertaste aparecen en verde en la siguiente fila para ayudarte.</p>
+    <p>Solo se aceptan palabras reales, sin acentos. La Ñ cuenta como letra. Si una palabra real no se acepta, toca <b>Agregar</b>.</p>`],
+  ['Modos de juego', `<p><b>Diario:</b> 4 palabras al día (de 5, 6, 7 y 8 letras), las mismas para todos. Una ✓ marca las que ya jugaste.</p>
+    <p><b>Libre:</b> todas las partidas que quieras.</p>
+    <p>En el <b>Menú ☰</b> hay retos para amigos, categorías y contrarreloj.</p>`],
+  ['Botones', `<div class="legend">
+      <span><i class="ico">💡</i>Pista: revela una letra (una por partida)</span>
+      <span><i class="ico">📊</i>Estadísticas y logros</span>
+      <span><i class="ico">⚙️</i>Ajustes: tema, sonidos, modo difícil</span>
+      <span><i class="ico">☰</i>Menú: retos, categorías y más</span>
+    </div>`]
+];
+function showHelp(p, locked, onDone){
+  const [t, body] = HELP[p], last = p === HELP.length - 1;
+  showModal(`<p class="sub">Paso ${p+1} de ${HELP.length}</p><h2>${t}</h2>${body}
+    <div class="dots">${HELP.map((_,i) => `<i class="${i === p ? 'on' : ''}"></i>`).join('')}</div>
+    <div class="btnrow">${p > 0 ? '<button class="secondary" id="hPrev">Anterior</button>' : ''}<button class="primary" id="hNext">${last ? '¡A jugar!' : 'Siguiente'}</button></div>`, () => {
+    if ($('hPrev')) $('hPrev').onclick = () => showHelp(p - 1, locked, onDone);
+    $('hNext').onclick = () => { if (last){ closeModal(); if (onDone) onDone() } else showHelp(p + 1, locked, onDone) };
+  }, locked);
+}
+function showNews(after){
+  store.set('ps-news', NEWS_VER);
+  showModal(`<h2>Novedades</h2>
+    <div class="legend">
+      <span><i class="ico">🏷️</i>Categorías: animales, comida, lugares y más</span>
+      <span><i class="ico">⏱️</i>Contrarreloj de 3 minutos</span>
+      <span><i class="ico">🏅</i>Logros para desbloquear</span>
+      <span><i class="ico">📖</i>Significado de la palabra al terminar</span>
+      <span><i class="ico">✓</i>Marcas en las palabras del día que ya jugaste</span>
+      <span><i class="ico">💾</i>Respaldo para pasar tu progreso a otro teléfono</span>
+      <span><i class="ico">🔊</i>Sonidos (actívalos en ⚙️)</span>
+    </div>
+    <p class="sub">Todo está en el Menú ☰.</p>
+    <button class="primary" id="nOk">¡Genial!</button>`, () => { $('nOk').onclick = () => { closeModal(); if (after) after() } });
+}
+
+// ---------- práctica guiada (obligatoria la primera vez) ----------
+function coach(html, btn, fn){
+  const c = $('coach'); c.hidden = false;
+  c.innerHTML = `<p>${html}</p>${btn ? `<button id="coachBtn">${btn}</button>` : ''}`;
+  if (btn) $('coachBtn').onclick = fn;
+  sizeBoard();
+}
+function startTuto(again){
+  stopTimer(); reto = null; cat = null; mode = 'tuto'; COLS = 5;
+  tuto = { step: 0, expect: 'nariz', again };
+  game = { answer: 'mango', guesses: [], over: false, won: false, hint: null };
+  load(true);
+  showModal(`<h2>¡Bienvenido a Palabra Secreta!</h2>
+    <p>Antes de empezar, vamos a jugar una <b>partida de práctica</b> de 30 segundos para que veas cómo funciona.</p>
+    ${mini('?????', [])}
+    <button class="primary" id="tGo">Empezar práctica</button>`, () => { $('tGo').onclick = () => { closeModal(); tutoStep(1) } }, true);
+}
+function tutoStep(n){
+  tuto.step = n; tuto.wait = false;
+  if (n === 1){ tuto.expect = 'nariz'; coach('Paso 1 de 3 · Escribe <b>NARIZ</b> con el teclado y toca <b>ENVIAR</b>.') }
+  if (n === 2){ tuto.wait = true; coach('Mira los colores: la <b class="cg">A</b> está en su lugar (verde). La <b class="cy">N</b> está en la palabra pero en otro lugar (amarillo). <b>R, I y Z</b> no están (gris).', 'Siguiente', () => tutoStep(3)) }
+  if (n === 3){ tuto.expect = 'mango'; cursor = 0; draw(); coach('Paso 2 de 3 · La A ya aparece en verde. <b>Toca el último cuadrito</b> de la fila y escribe la <b>O</b>.') }
+  if (n === 4){ coach('Paso 3 de 3 · ¡Eso! Puedes escribir en el orden que quieras. Completa <b>MANGO</b> y toca <b>ENVIAR</b>.') }
+}
+function tutoCheck(){ if (tuto.step === 3 && slots[4] === 'o' && slots.filter(Boolean).length === 1) tutoStep(4) }
+function tutoAfterGuess(){ if (tuto.step === 1) tutoStep(2) }
+function tutoDone(){
+  $('coach').hidden = true; sizeBoard(); const again = tuto.again;
+  showModal(`<h2>¡Ganaste la práctica! 🎉</h2>
+    ${defHTML('mango')}
+    <p>Ya sabes jugar. Revisa qué hace cada botón:</p>
+    <div class="legend">
+      <span><i class="ico">💡</i>Pista: revela una letra</span>
+      <span><i class="ico">📊</i>Estadísticas y logros</span>
+      <span><i class="ico">⚙️</i>Ajustes: tema, sonidos y más</span>
+      <span><i class="ico">☰</i>Menú: retos, categorías, contrarreloj</span>
+      <span><i class="ico">5 6 7 8</i>Cuántas letras tiene la palabra</span>
+    </div>
+    <button class="primary" id="tEnd">¡A jugar!</button>`, () => {
+    $('tEnd').onclick = () => {
+      closeModal(); store.set('ps-tuto', true); goNormal();
+      if (!again && store.get('ps-news', 0) < NEWS_VER && store.get('ps-seen3', false)) showNews();
+      else store.set('ps-news', NEWS_VER);
+      checkHash();
+    };
+  }, true);
+}
+
+// ---------- ajustes ----------
 $('settingsBtn').onclick = () => {
+  if (blockedInTuto()) return;
   const row = (id, title, desc) => `<label class="opt" for="${id}"><span><b>${title}</b><small>${desc}</small></span><input type="checkbox" id="${id}" ${settings[id.slice(4)] ? 'checked' : ''}><i class="sw"></i></label>`;
   showModal(`<h2>Ajustes</h2>
     ${row('opt-hard','Modo difícil','Debes usar las letras que ya descubriste')}
+    ${row('opt-sound','Sonidos','Efectos al escribir, acertar y perder')}
     ${row('opt-vibrate','Vibración','Al acertar, perder o escribir mal')}
     ${row('opt-randomLen','Largo al azar','En modo Libre, cada partida nueva tiene 5, 6, 7 u 8 letras')}
     ${row('opt-ghosts','Letras descubiertas','Muestra en la fila las letras que ya tienes')}
@@ -847,14 +1373,16 @@ $('settingsBtn').onclick = () => {
       `<button data-theme-opt="${k}" aria-pressed="${settings.theme === k}" style="background:${b}"><i><b style="background:${a}"></b><b style="background:${c}"></b><b style="background:#2f8a5c"></b><b style="background:#f2ab2a"></b></i>${n}</button>`).join('')}</div>
     ${store.get('ps-custom', []).length ? `<div class="opt-title">Palabras que agregaste</div><p class="sub" style="text-align:left">${store.get('ps-custom', []).map(w => w.toUpperCase()).join(', ')}</p><button class="secondary" id="clearCustom">Borrar palabras agregadas</button>` : ''}
     <button class="primary" id="closeBtn">Listo</button>`, () => {
-    const cc = $('clearCustom'); if (cc) cc.onclick = () => { store.get('ps-custom', []).forEach(w => DICT.delete(w)); store.set('ps-custom', []); POOL.forEach(w => DICT.add(w)); toast('Palabras agregadas borradas'); closeModal() };
+    const cc = $('clearCustom'); if (cc) cc.onclick = () => { store.get('ps-custom', []).forEach(w => DICT.delete(w)); store.set('ps-custom', []); POOL.forEach(w => DICT.add(w)); ANS.forEach(a => DICT.add(a.w)); toast('Palabras agregadas borradas'); closeModal() };
     document.querySelectorAll('[data-theme-opt]').forEach(b => b.onclick = () => {
       settings.theme = b.dataset.themeOpt; store.set('ps-settings', settings); applySettings();
       document.querySelectorAll('[data-theme-opt]').forEach(x => x.setAttribute('aria-pressed', x === b));
     });
-    ['hard','vibrate','contrast','ghosts','randomLen'].forEach(k => $('opt-' + k).onchange = e => {
+    ['hard','vibrate','contrast','ghosts','randomLen','sound'].forEach(k => $('opt-' + k).onchange = e => {
       if (k === 'hard' && e.target.checked && game.guesses.length && !game.over){ e.target.checked = false; return toast('Activa el modo difícil al empezar una partida') }
-      settings[k] = e.target.checked; store.set('ps-settings', settings); applySettings(); draw(); if (k === 'randomLen'){ setNewIcon(); if (settings.randomLen && mode === 'free') toast('Toca 🎲 o termina la partida para cambiar de largo') }
+      settings[k] = e.target.checked; store.set('ps-settings', settings); applySettings(); draw();
+      if (k === 'sound' && settings.sound) sfx('point');
+      if (k === 'randomLen'){ setNewIcon(); if (settings.randomLen && mode === 'free') toast('Toca 🎲 o termina la partida para cambiar de largo') }
     });
   });
 };
@@ -868,7 +1396,7 @@ function applySettings(){
 }
 
 // ---------- cargar partidas ----------
-function save(){ store.set(gameKey(), game) }
+function save(){ const k = gameKey(); if (k) store.set(k, game) }
 function resetVisuals(){
   [...board.children].forEach(r => [...r.children].forEach(t => { t.textContent = ''; t.className = 'tile' }));
   kb.querySelectorAll('.key').forEach(b => { b.classList.remove('correct','present','absent'); delete b.dataset.s });
@@ -884,7 +1412,7 @@ function render(){
 }
 const REDO_ICON = $('newBtn').innerHTML;
 const DICE_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="8.5" cy="15.5" r="1.3" fill="currentColor" stroke="none"/></svg>';
-function setNewIcon(){ $('newBtn').innerHTML = settings.randomLen ? DICE_ICON : REDO_ICON; $('newBtn').setAttribute('aria-label', settings.randomLen ? 'Nueva palabra con largo al azar' : 'Nueva palabra') }
+function setNewIcon(){ $('newBtn').innerHTML = settings.randomLen && mode === 'free' ? DICE_ICON : REDO_ICON; $('newBtn').setAttribute('aria-label', settings.randomLen && mode === 'free' ? 'Nueva palabra con largo al azar' : 'Nueva palabra') }
 function newFree(){
   if (mode === 'free' && settings.randomLen && game){
     const opts = LENGTHS.filter(n => n !== COLS);
@@ -892,26 +1420,29 @@ function newFree(){
     LENGTHS.forEach(x => $('len-' + x).setAttribute('aria-pressed', x === COLS));
     buildBoard();
   }
-  const list = BYLEN[COLS], prev = game && game.answer;
-  let next; do { next = list[Math.floor(Math.random() * list.length)] } while (next === prev && list.length > 1);
-  game = { answer: next, guesses: [], over: false, won: false, hint: null }; save(); render();
+  game = { answer: pick(freeList(COLS), game && game.answer), guesses: [], over: false, won: false, hint: null }; save(); render();
 }
-function load(){
+function modeLine(){
+  const el = $('modeLine'); el.hidden = !['reto','cat','time'].includes(mode);
+  if (mode === 'reto') el.innerHTML = `Reto de un amigo · ${COLS} letras <button id="mlExit">Salir</button>`;
+  if (mode === 'cat') el.innerHTML = `${CATS[cat.key]} · ${COLS} letras <button id="mlExit">Salir</button>`;
+  if (mode === 'time') el.innerHTML = `⏱ <span id="timeLeft">3:00</span> · Aciertos <span id="timeScore">0</span> <button id="mlExit">Salir</button>`;
+  if (!el.hidden) $('mlExit').onclick = () => { if (mode === 'time') stopTimer(); goNormal() };
+  if (mode !== 'tuto') $('coach').hidden = true;
+  sizeBoard();
+}
+function load(keepGame){
+  const normal = !special();
   modeBtns.daily.setAttribute('aria-pressed', mode === 'daily'); modeBtns.free.setAttribute('aria-pressed', mode === 'free');
   LENGTHS.forEach(x => $('len-' + x).setAttribute('aria-pressed', x === COLS));
-  $('newBtn').hidden = mode === 'daily'; setNewIcon();
-  buildBoard();
+  $('newBtn').hidden = !(mode === 'free' || mode === 'cat'); setNewIcon();
+  document.body.classList.toggle('in-tuto', mode === 'tuto');
+  buildBoard(); modeLine(); markDaily();
+  if (keepGame){ render(); if (mode === 'time') tickTime(); return }
   const saved = store.get(gameKey(), null);
-  $('retoLine').hidden = mode !== 'reto';
   if (mode === 'reto'){
-    $('retoLine').innerHTML = `Reto de un amigo · ${COLS} letras <button id="leaveReto">Salir</button>`;
-    $('leaveReto').onclick = leaveReto;
-    modeBtns.daily.setAttribute('aria-pressed', false); modeBtns.free.setAttribute('aria-pressed', false);
-    $('newBtn').hidden = true;
-    const saved2 = store.get(gameKey(), null);
-    game = saved2 && saved2.answer === reto.word ? saved2 : { answer: reto.word, guesses: [], over: false, won: false, hint: null };
-    render(); if (game.over) setTimeout(showResult, 300);
-    return;
+    game = saved && saved.answer === reto.word ? saved : { answer: reto.word, guesses: [], over: false, won: false, hint: null };
+    render(); if (game.over) setTimeout(showResult, 300); return;
   }
   if (mode === 'daily'){
     const answer = dailyWord(COLS, todayKey());
@@ -921,8 +1452,12 @@ function load(){
   else { game = null; newFree() }
 }
 
-applySettings(); load(); checkHash();
-if (!store.get('ps-seen3', false) && mode !== 'reto'){ store.set('ps-seen3', true); showHelp() }
+applySettings();
+if (!store.get('ps-tuto', false)) startTuto(false);
+else {
+  load(); checkHash();
+  if (store.get('ps-news', 0) < NEWS_VER && mode !== 'reto') showNews();
+}
 </script>
 
 <script>
