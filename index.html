@@ -91,6 +91,16 @@ h1{font-size:1.3rem;white-space:nowrap}
 .seg button{border:0;background:none;color:var(--muted);font:800 .82rem var(--body);padding:7px 10px;border-radius:8px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--surface-2);color:var(--fg)}
 .hint-line{text-align:center;color:var(--muted);font-size:.85rem;padding-top:6px}
+.reto-line{display:flex;align-items:center;justify-content:center;gap:8px;padding-top:8px;font-weight:800;font-size:.9rem;color:var(--brand-amber)}
+.reto-line button{background:var(--surface);color:var(--fg);border:0;border-radius:8px;padding:5px 10px;font:800 .78rem var(--body);cursor:pointer}
+.menu{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.menu button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--surface);color:var(--fg);border:0;border-radius:12px;padding:13px 14px;font:800 1rem var(--body);cursor:pointer}
+.menu small{color:var(--muted);font-weight:600;font-size:.8rem}
+.field{width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:2px solid var(--surface-2);border-radius:12px;padding:12px;font:700 1.3rem var(--display);text-align:center;letter-spacing:.12em;text-transform:uppercase;margin:10px 0 4px;user-select:text}
+.field:focus{outline:none;border-color:var(--brand-amber)}
+.err{color:#ff8a7a;font-weight:700;font-size:.85rem;min-height:1.2em;margin:4px 0}
+.code{font:700 2rem var(--display);letter-spacing:.15em;color:var(--brand-amber);margin:8px 0;user-select:text}
+.linkbox{font-size:.78rem;color:var(--muted);word-break:break-all;user-select:text;background:var(--bg);border-radius:8px;padding:8px;margin:6px 0}
 .hint-line b{color:var(--fg);background:var(--surface-2);padding:1px 7px;border-radius:5px}
 .sub{font-size:.8rem;margin-top:4px}
 .dist{display:flex;flex-direction:column;gap:4px;margin:8px 0 14px;font-variant-numeric:tabular-nums}
@@ -128,7 +138,7 @@ textarea{width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);b
 <body>
 <div class="app">
   <header>
-    <button class="icon-btn" id="helpBtn" aria-label="Cómo jugar">?</button>
+    <button class="icon-btn" id="menuBtn" aria-label="Menú"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     <h1>Palabra <span>Secreta</span></h1>
     <div class="tools">
       <button class="icon-btn" id="hintBtn" aria-label="Pista"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg></button>
@@ -141,6 +151,7 @@ textarea{width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);b
     <div class="lengths" id="lengths"></div>
     <button class="icon-btn" id="newBtn" aria-label="Nueva palabra"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></button>
   </div>
+  <div class="reto-line" id="retoLine" hidden></div>
   <div class="hint-line" id="hintLine" hidden></div>
   <div class="board-wrap" id="wrap"><div class="board" id="board"></div></div>
   <div class="kb" id="kb"></div>
@@ -436,7 +447,7 @@ const store = {
 function norm(s){ return s.toLowerCase().replace(/ñ/g,'\u0001').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\u0001/g,'ñ') }
 
 const settings = Object.assign({ hard:false, vibrate:true, contrast:false, ghosts:true, theme:'dark', randomLen:false }, store.get('ps-settings', {}));
-let mode = store.get('ps-mode', 'daily');           // 'daily' | 'free'
+let mode = store.get('ps-mode', 'daily'); let reto = null; // reto = {word, code}           // 'daily' | 'free'
 let COLS = LENGTHS.includes(store.get('ps-len', 5)) ? store.get('ps-len', 5) : 5;
 let game, slots = [], cursor = 0, busy = false;               // game = {answer, guesses, over, won, hint}
 
@@ -451,16 +462,36 @@ function dailyWord(len, day){
   const order = list.map((w,i) => [hash(w + '#' + len), w]).sort((a,b) => a[0] - b[0]).map(x => x[1]);
   return order[((n % order.length) + order.length) % order.length];
 }
-const gameKey = () => mode === 'daily' ? `ps-daily-${todayKey()}-${COLS}` : `ps-free-${COLS}`;
+const gameKey = () => mode === 'reto' ? `ps-reto-${reto.code}` : mode === 'daily' ? `ps-daily-${todayKey()}-${COLS}` : `ps-free-${COLS}`;
+// ---------- códigos de reto ----------
+const ABC = 'abcdefghijklmnñopqrstuvwxyz', CODE = '0123456789abcdefghijkmnpqrs';
+function encodeReto(w){
+  const ix = [...w].map(c => ABC.indexOf(c)), L = ix.length;
+  const body = ix.map((v,i) => CODE[(v + 7*i + 3*L + 5) % 27]).join('');
+  return body + CODE[(ix.reduce((a,b,i) => a + b*(i+1), 0) + L) % 27];
+}
+function decodeReto(code){
+  code = (code || '').toLowerCase().replace(/^.*reto-/, '').replace(/[^0-9a-z]/g, '');
+  const L = code.length - 1; if (L < 5 || L > 8) return null;
+  const ix = [...code.slice(0, L)].map((c,i) => { const v = CODE.indexOf(c); return v < 0 ? -1 : ((v - 7*i - 3*L - 5) % 27 + 27*10) % 27 });
+  if (ix.includes(-1)) return null;
+  if (CODE[(ix.reduce((a,b,i) => a + b*(i+1), 0) + L) % 27] !== code[L]) return null;
+  return { word: ix.map(v => ABC[v]).join(''), code };
+}
+function startReto(r){
+  reto = r; mode = 'reto'; COLS = [...r.word].length; closeModal(); load();
+  toast(`¡Reto cargado! Adivina la palabra de ${COLS} letras`);
+}
+function leaveReto(){ reto = null; mode = store.get('ps-mode', 'daily'); COLS = LENGTHS.includes(store.get('ps-len', 5)) ? store.get('ps-len', 5) : 5; try{ history.replaceState(null, '', location.pathname + location.search) }catch(e){} load() }
 const statsKey = () => `ps-st2-${mode}`;
 
 // ---------- barra de controles ----------
 const modeBtns = { daily: $('modeDaily'), free: $('modeFree') };
-Object.entries(modeBtns).forEach(([m, b]) => b.onclick = () => { if (m !== mode){ mode = m; store.set('ps-mode', m); load() } });
+Object.entries(modeBtns).forEach(([m, b]) => b.onclick = () => { if (m !== mode){ reto = null; mode = m; store.set('ps-mode', m); load() } });
 LENGTHS.forEach(n => {
   const b = document.createElement('button'); b.className = 'len'; b.id = 'len-' + n; b.textContent = n;
   b.setAttribute('aria-label', n + ' letras');
-  b.onclick = () => { if (n !== COLS){ COLS = n; store.set('ps-len', n); load() } };
+  b.onclick = () => { if (mode === 'reto'){ reto = null; mode = store.get('ps-mode', 'daily'); COLS = n; store.set('ps-len', n); return load() } if (n !== COLS){ COLS = n; store.set('ps-len', n); load() } };
   $('lengths').appendChild(b);
 });
 $('newBtn').onclick = () => {
@@ -619,6 +650,7 @@ function getStats(){
 }
 function finish(won){
   game.over = true; game.won = won; save();
+  if (mode === 'reto'){ buzz(won ? [40,60,40] : 200); return setTimeout(showResult, 400) }
   const s = getStats();
   s.played++;
   if (won){
@@ -647,18 +679,23 @@ function statsHTML(){
 }
 const praise = ['¡Genio!','¡Increíble!','¡Muy bien!','¡Bien hecho!','¡Lo lograste!','¡Por poco!'];
 function showResult(){
-  const nextBtn = mode === 'daily'
+  const nextBtn = mode === 'reto'
+    ? `<button class="secondary" id="makeRetoBtn">Crear un reto para tu amigo</button><button class="secondary" id="leaveBtn">Volver al juego normal</button>`
+    : mode === 'daily'
     ? `<p class="sub">Nueva palabra del día en <b id="countdown"></b></p><button class="secondary" id="toFree">Seguir en modo Libre</button>`
     : `<button class="secondary" id="againBtn">${settings.randomLen ? 'Jugar otra (largo al azar)' : 'Jugar otra'}</button>`;
   showModal(`
+    ${mode === 'reto' ? '<p class="sub">Reto de un amigo</p>' : ''}
     <h2>${game.won ? praise[game.guesses.length-1] : 'Se acabaron los intentos'}</h2>
     <p>${game.won ? `Adivinaste en ${game.guesses.length} de ${ROWS} intentos.` : 'La palabra secreta era:'}</p>
     <div class="answer">${[...game.answer].map(c => `<b>${c.toUpperCase()}</b>`).join('')}</div>
-    ${statsHTML()}
+    ${mode === 'reto' ? '' : statsHTML()}
     <button class="primary" id="shareBtn">Compartir resultado</button>
     ${nextBtn}`);
   $('shareBtn').onclick = share;
   if ($('againBtn')) $('againBtn').onclick = () => { closeModal(); newFree() };
+  if ($('makeRetoBtn')) $('makeRetoBtn').onclick = openCreateReto;
+  if ($('leaveBtn')) $('leaveBtn').onclick = () => { closeModal(); leaveReto() };
   if ($('toFree')) $('toFree').onclick = () => { closeModal(); mode = 'free'; store.set('ps-mode','free'); load() };
   tickCountdown();
 }
@@ -677,7 +714,7 @@ function tickCountdown(){
 function shareText(){
   const [g, y, b] = settings.contrast ? ['🟧','🟦','⬛'] : ['🟩','🟨','⬛'];
   const d = new Date(), date = d.getDate() + '/' + (d.getMonth()+1);
-  const head = `Palabra Secreta ${mode === 'daily' ? date : '(libre)'} · ${COLS} letras ${game.won ? game.guesses.length : 'X'}/${ROWS}${settings.hard ? '*' : ''}${game.hint ? ' (con pista)' : ''}`;
+  const head = `Palabra Secreta ${mode === 'daily' ? date : mode === 'reto' ? '(tu reto)' : '(libre)'} · ${COLS} letras ${game.won ? game.guesses.length : 'X'}/${ROWS}${settings.hard ? '*' : ''}${game.hint ? ' (con pista)' : ''}`;
   const grid = game.guesses.map(w => score(w, game.answer).map(r => r === 'correct' ? g : r === 'present' ? y : b).join('')).join('\n');
   return head + '\n\n' + grid;
 }
@@ -727,7 +764,64 @@ $('statsBtn').onclick = () => {
   if (game.over) return showResult();
   showModal(`<h2>Estadísticas</h2>${statsHTML()}<button class="primary" id="closeBtn">Cerrar</button>`);
 };
-$('helpBtn').onclick = () => showModal(`
+$('menuBtn').onclick = () => showModal(`<h2>Menú</h2>
+  <div class="menu">
+    <button id="mReto">Retar a un amigo<small>Escribe tu palabra secreta y mándasela</small></button>
+    <button id="mCode">Tengo un código de reto<small>Juega la palabra que te mandaron</small></button>
+    <button id="mHelp">Cómo jugar<small>Reglas y colores</small></button>
+  </div>
+  <button class="secondary" id="closeBtn">Cerrar</button>`, () => {
+  $('mReto').onclick = openCreateReto; $('mCode').onclick = openEnterCode; $('mHelp').onclick = showHelp;
+});
+function openCreateReto(){
+  showModal(`<h2>Retar a un amigo</h2>
+    <p>Escribe una palabra real de 5 a 8 letras. Tu amigo tendrá 6 intentos para adivinarla.</p>
+    <input class="field" id="retoInput" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="PALABRA">
+    <p class="err" id="retoErr"></p>
+    <button class="primary" id="retoGo">Crear reto</button>
+    <button class="secondary" id="closeBtn">Cancelar</button>`, () => {
+    const inp = $('retoInput'); setTimeout(() => inp.focus(), 50);
+    const go = () => {
+      const w = norm(inp.value.trim()).replace(/[^a-zñ]/g, ''), n = [...w].length;
+      if (n < 5 || n > 8) return $('retoErr').textContent = 'La palabra debe tener de 5 a 8 letras';
+      if (!DICT.has(w)) return $('retoErr').textContent = 'Esa palabra no está en el diccionario';
+      showRetoCode(w);
+    };
+    $('retoGo').onclick = go; inp.onkeydown = e => { if (e.key === 'Enter') go() };
+  });
+}
+function retoLink(code){ return window.top === window && /^https?:/.test(location.protocol) ? location.origin + location.pathname + '#reto-' + code : '' }
+function showRetoCode(w){
+  const code = encodeReto(w), link = retoLink(code), CODEU = code.toUpperCase();
+  const msg = `¡Te reto en Palabra Secreta! Adivina mi palabra de ${[...w].length} letras.\n` + (link ? link : `Abre el juego → Menú → «Tengo un código de reto» y escribe: ${CODEU}`);
+  showModal(`<h2>¡Reto listo!</h2>
+    <p>Comparte este código con tu amigo:</p>
+    <div class="code">${CODEU}</div>
+    ${link ? `<div class="linkbox">${link}</div><p class="sub">Con el enlace se abre el reto directo. También puede escribir el código en Menú → «Tengo un código de reto».</p>` : `<p class="sub">Tu amigo abre el juego, toca Menú → «Tengo un código de reto» y escribe el código.</p>`}
+    <button class="primary" id="copyReto">${navigator.share && window.top === window ? 'Enviar reto' : 'Copiar mensaje'}</button>
+    <button class="secondary" id="closeBtn">Cerrar</button>`, () => {
+    $('copyReto').onclick = () => {
+      const text = msg.replace(/\\n/g, '\n');
+      if (navigator.share && window.top === window){ navigator.share({ text }).catch(() => {}); return }
+      try{ navigator.clipboard.writeText(text).then(() => toast('Mensaje copiado. Pégalo en WhatsApp.'), () => toast('Copia el código: ' + CODEU)) }catch(e){ toast('Copia el código: ' + CODEU) }
+    };
+  });
+}
+function openEnterCode(){
+  showModal(`<h2>Código de reto</h2>
+    <p>Escribe el código que te mandaron.</p>
+    <input class="field" id="codeInput" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CÓDIGO">
+    <p class="err" id="codeErr"></p>
+    <button class="primary" id="codeGo">Jugar reto</button>
+    <button class="secondary" id="closeBtn">Cancelar</button>`, () => {
+    const inp = $('codeInput'); setTimeout(() => inp.focus(), 50);
+    const go = () => { const r = decodeReto(inp.value); if (!r) return $('codeErr').textContent = 'Ese código no es válido. Revisa que esté completo.'; startReto(r) };
+    $('codeGo').onclick = go; inp.onkeydown = e => { if (e.key === 'Enter') go() };
+  });
+}
+function checkHash(){ const h = location.hash.slice(1); if (/^reto-/.test(h)){ const r = decodeReto(h); if (r && (!reto || reto.code !== r.code)) startReto(r) } }
+window.addEventListener('hashchange', checkHash);
+const showHelp = () => showModal(`
   <h2>Cómo jugar</h2>
   <p>Adivina la palabra secreta en 6 intentos. Elige de 5 a 8 letras.</p>
   <div class="legend">
@@ -736,6 +830,7 @@ $('helpBtn').onclick = () => showModal(`
     <span><i style="background:var(--absent);border:1px solid var(--surface-2)"></i>Letra que no está</span>
   </div>
   <p><b>Diario:</b> una palabra al día, la misma para todos. Compara tu resultado con tus amigos.<br><b>Libre:</b> todas las partidas que quieras.</p>
+  <p><b>Retos:</b> en el Menú puedes crear una palabra para un amigo o jugar el código que te mandaron.</p>
   <p>Toca un cuadrito para escribir en ese lugar; puedes llenar las letras en el orden que quieras.</p>
   <p>Solo se aceptan palabras reales, sin acentos. Si una palabra real no se acepta, toca «Agregar» y quedará guardada en tu teléfono. Tienes una pista por partida.</p>
   <button class="primary" id="closeBtn">¡A jugar!</button>`);
@@ -807,6 +902,17 @@ function load(){
   $('newBtn').hidden = mode === 'daily'; setNewIcon();
   buildBoard();
   const saved = store.get(gameKey(), null);
+  $('retoLine').hidden = mode !== 'reto';
+  if (mode === 'reto'){
+    $('retoLine').innerHTML = `Reto de un amigo · ${COLS} letras <button id="leaveReto">Salir</button>`;
+    $('leaveReto').onclick = leaveReto;
+    modeBtns.daily.setAttribute('aria-pressed', false); modeBtns.free.setAttribute('aria-pressed', false);
+    $('newBtn').hidden = true;
+    const saved2 = store.get(gameKey(), null);
+    game = saved2 && saved2.answer === reto.word ? saved2 : { answer: reto.word, guesses: [], over: false, won: false, hint: null };
+    render(); if (game.over) setTimeout(showResult, 300);
+    return;
+  }
   if (mode === 'daily'){
     const answer = dailyWord(COLS, todayKey());
     game = saved && saved.answer === answer ? saved : { answer, guesses: [], over: false, won: false, hint: null };
@@ -815,8 +921,8 @@ function load(){
   else { game = null; newFree() }
 }
 
-applySettings(); load();
-if (!store.get('ps-seen3', false)){ store.set('ps-seen3', true); $('helpBtn').click() }
+applySettings(); load(); checkHash();
+if (!store.get('ps-seen3', false) && mode !== 'reto'){ store.set('ps-seen3', true); showHelp() }
 </script>
 
 <script>
