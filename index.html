@@ -208,6 +208,46 @@ a.toast-btn{display:inline-block;text-decoration:none}
 
 .key[data-k="Enter"]{background:var(--brand-green);color:#fff;box-shadow:inset 0 -3px 0 var(--brand-edge)}
 .key[data-k="Backspace"]{background:var(--del);color:#fff;box-shadow:inset 0 -3px 0 var(--del-edge);font-size:1.2rem}
+.xgrid{display:grid;gap:3px}
+.xc{width:var(--cell);height:var(--cell);background:var(--surface-2);border-radius:calc(var(--cell) * .18);position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;box-sizing:border-box}
+.xe{width:var(--cell);height:var(--cell)}
+.xc i{position:absolute;top:2px;left:3px;font:800 calc(var(--cell) * .26)/1 var(--body);font-style:normal;color:var(--muted)}
+.xc b{font:600 calc(var(--cell) * .56)/1 var(--display);text-transform:uppercase;color:var(--fg)}
+.xc.hl{background:color-mix(in srgb, var(--brand-amber) 30%, var(--surface-2))}
+.xc.sel{box-shadow:inset 0 0 0 3px var(--brand-amber)}
+.xc.ok{background:var(--green)}
+.xc.ok b,.xc.ok i{color:#fff}
+.xc.rev::after{content:"";position:absolute;right:3px;bottom:3px;width:5px;height:5px;border-radius:50%;background:var(--brand-amber)}
+.xc.bad{box-shadow:inset 0 0 0 2px #ff6b5e}
+.xc.bad b{color:#ff6b5e}
+.xc.win{animation:bounce .5s ease}
+.clue-bar{display:flex;align-items:center;gap:6px;background:var(--card);border-radius:12px;padding:6px;margin-bottom:8px}
+.clue-bar button{flex:none;width:36px;height:42px;border:0;border-radius:9px;background:var(--surface);color:var(--fg);font:800 1.3rem var(--body);cursor:pointer}
+.clue-bar .ct{flex:1;min-width:0;font-size:.92rem;line-height:1.3;cursor:pointer;text-align:left}
+.clue-bar .ct b{color:var(--brand-amber);margin-right:6px}
+.clue-bar small{color:var(--muted)}
+.xli{display:block;width:100%;text-align:left;background:var(--surface);color:var(--fg);border:0;border-radius:10px;padding:9px 11px;margin:5px 0;font:600 .9rem/1.35 var(--body);cursor:pointer}
+.xli b{color:var(--brand-amber);margin-right:6px}
+.xli small{color:var(--muted)}
+.xli.done{opacity:.55;text-decoration:line-through}
+.xwords{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin:10px 0}
+.xwords span{background:var(--surface);border-radius:7px;padding:4px 8px;font:700 .8rem var(--body);letter-spacing:.04em}
+.reto-line{flex-wrap:wrap}
+.themes{display:grid!important;grid-template-columns:repeat(4,1fr);gap:8px}
+.themes button{padding:10px 2px 8px;font-size:.75rem}
+.cpick{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--surface);text-align:left;font-weight:700;cursor:pointer}
+.cpick input{width:52px;height:36px;border:0;padding:0;background:none;border-radius:8px;cursor:pointer}
+.cpresets{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:8px 0 6px}
+.cpresets button{height:42px;border:0;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer}
+.cpresets i{width:12px;height:12px;border-radius:3px}
+.theme-pink{--bg:#1f0d18;--surface:#3a1b2e;--surface-2:#55304a;--absent:#2a1322;--card:#2c1424;--muted:#c49ab4;--brand-amber:#ff8fc7}
+.theme-forest{--bg:#0c1712;--surface:#1a2e24;--surface-2:#2e4a3b;--absent:#13221b;--card:#14251d;--muted:#9bbcaa;--brand-amber:#e8c547}
+.theme-sand{--bg:#f6efe3;--surface:#e8dcc7;--surface-2:#d3c2a5;--fg:#2b2218;--muted:#6e5f4b;--card:#fffaf1;--absent:#9a8b76;--absent-fg:#ffffff;--key-absent-fg:#f3ece0;--brand-amber:#b5651d;color-scheme:light}
+.is-light .tile.correct,.is-light .tile.present,.is-light .key.correct,.is-light .key.present,.is-light .mini b.correct,.is-light .mini b.present,.is-light .answer b,.is-light .hint-line b{color:#fff}
+.is-light .hint-line b{background:var(--brand-green)}
+.is-light .overlay{background:rgba(20,22,30,.45)}
+.is-light .card{box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.square .tile,.square .key,.square .mini b,.square .xc,.square .len,.square .icon-btn{border-radius:3px!important}
 </style>
 
 </head>
@@ -230,7 +270,8 @@ a.toast-btn{display:inline-block;text-decoration:none}
   <div class="reto-line" id="modeLine" hidden></div>
   <div class="coach" id="coach" hidden></div>
   <div class="hint-line" id="hintLine" hidden></div>
-  <div class="board-wrap" id="wrap"><div class="board" id="board"></div></div>
+  <div class="board-wrap" id="wrap"><div class="board" id="board"></div><div class="xgrid" id="xgrid" hidden></div></div>
+  <div class="clue-bar" id="clueBar" hidden><button id="cbPrev" aria-label="Pista anterior">‹</button><div class="ct" id="cbText"></div><button id="cbNext" aria-label="Pista siguiente">›</button></div>
   <div class="kb" id="kb"></div>
 </div>
 <div class="toast" id="toast" hidden></div>
@@ -516,7 +557,7 @@ for (const w of new Set(POOL)){ const n = [...w].length; (BYLEN[n] = BYLEN[n] ||
 const LENGTHS = [4,5,6,7,8];
 const ROWS = 6;
 const DUO_ROWS = 7;
-const NEWS_VER = 3;
+const NEWS_VER = 4;
 const CUTOVER = '2026-11-01';
 // Número de WhatsApp para recibir reportes (con lada, sin + ni espacios). Vacío = el jugador elige el contacto.
 const REPORT_WA = '';
@@ -1764,7 +1805,7 @@ const OLD_DAILY = {"5": ["perro", "tigre", "cebra", "burro", "mosca", "pulpo", "
 const showWord = w => (ANSMAP.get(w) || {}).s || w;
 
 
-const settings = Object.assign({ hard:false, vibrate:true, contrast:false, ghosts:true, theme:'dark', randomLen:false, sound:false, big:false }, store.get('ps-settings', {}));
+const settings = Object.assign({ hard:false, vibrate:true, contrast:false, ghosts:true, theme:'dark', randomLen:false, sound:false, big:false, square:false }, store.get('ps-settings', {}));
 const baseMode = () => store.get('ps-mode', 'daily') === 'free' ? 'free' : 'daily';
 let mode = baseMode();                 // daily | free | reto | cat | time | tuto
 let reto = null, cat = null, timeRun = null, tuto = null, passRun = null, archDay = null;
@@ -1806,7 +1847,7 @@ function decodeReto(code){
 }
 
 // ---------- cambiar de modo ----------
-function stopTimer(){ if (timeRun){ clearInterval(timeRun.timer); timeRun = null } }
+function stopTimer(){ if (timeRun){ clearInterval(timeRun.timer); timeRun = null } if (xTimer){ xSave(); clearInterval(xTimer); xTimer = null } }
 function goNormal(m){
   stopTimer(); reto = null; cat = null; tuto = null; passRun = null; archDay = null;
   mode = m || baseMode(); COLS = LENGTHS.includes(store.get('ps-len', 5)) ? store.get('ps-len', 5) : 5;
@@ -1846,6 +1887,7 @@ LENGTHS.forEach(n => {
   $('lengths').appendChild(b);
 });
 $('newBtn').onclick = () => {
+  if (mode === 'cross') return startCross(cross.kind, cross.cat, true);
   if (mode === 'daily') return toast('En modo Diario hay una palabra al día. Cambia a Libre para jugar más.');
   if (!game.over && game.guesses.length) toast('Palabra anterior: ' + game.answer.toUpperCase());
   if (mode === 'cat') return newCatWord();
@@ -1862,6 +1904,8 @@ function markDaily(){
 
 function buildBoard(){
   board.classList.remove('duo');
+  board.hidden = mode === 'cross'; $('xgrid').hidden = mode !== 'cross';
+  if (mode === 'cross'){ crossBuild(); return sizeBoard() }
   if (mode === 'duo'){ duoBuild(); return sizeBoard() }
   board.innerHTML = '';
   for (let r = 0; r < ROWS; r++){
@@ -1874,6 +1918,7 @@ function buildBoard(){
 }
 function sizeBoard(){
   if (mode === 'duo') return duoSize();
+  if (mode === 'cross') return crossSize();
   const gap = COLS >= 7 ? 5 : 6;
   const w = wrap.clientWidth, h = wrap.clientHeight - 20;
   const size = Math.max(28, Math.floor(Math.min((w - gap*(COLS-1)) / COLS, (h - gap*(ROWS-1)) / ROWS, 66)));
@@ -1912,7 +1957,7 @@ function sfx(kind){
 let lpTimer = null, lpFired = false;
 kb.addEventListener('pointerdown', e => {
   const b = e.target.closest('.key'); lpFired = false; clearTimeout(lpTimer);
-  if (!b || b.dataset.k.length > 1) return;
+  if (!b || b.dataset.k.length > 1 || mode === 'cross') return;
   lpTimer = setTimeout(() => { lpFired = true; keyInfo(b.dataset.k); buzz(20) }, 450);
 });
 ['pointerup','pointerleave','pointercancel'].forEach(ev => kb.addEventListener(ev, () => clearTimeout(lpTimer)));
@@ -1943,6 +1988,7 @@ document.addEventListener('keydown', e => {
 });
 
 function press(k){
+  if (mode === 'cross') return crossPress(k);
   if (!game || game.over || busy) return;
   if (tuto && tuto.wait) return toast('Toca «Siguiente» para continuar');
   if (k === 'Enter') return submit();
@@ -2068,6 +2114,8 @@ const ACH = [
   ['duo','👯','Doble acierto','Gana una Doble palabra'],
   ['pase','📱','Duelo','Termina una ronda de Pasa el teléfono'],
   ['archivo','🗓️','Al día','Gana una palabra del historial'],
+  ['cruci','🧩','Crucigramista','Resuelve tu primer crucigrama'],
+  ['crucirapido','💨','Mente rápida','Resuelve un crucigrama sin ayudas en menos de 3 minutos'],
   ['reloj5','⏱️','Contra el reloj','Adivina 5 palabras en contrarreloj'],
   ['reloj10','🚀','Velocista','Adivina 10 palabras en contrarreloj'],
   ['cincuenta','🏅','Veterano','Juega 50 partidas']
@@ -2264,6 +2312,7 @@ function openCats(){
 // ---------- pista ----------
 $('hintBtn').onclick = () => {
   if (blockedInTuto()) return;
+  if (mode === 'cross') return crossHelp();
   if (mode === 'time') return toast('En contrarreloj no hay pistas');
   if (mode === 'duo') return toast('En Doble palabra no hay pistas');
   if (game.over) return toast('La partida ya terminó');
@@ -2325,6 +2374,7 @@ $('menuBtn').onclick = () => {
   if (blockedInTuto()) return;
   showModal(`<h2>Menú</h2>
   <div class="menu">
+    <button id="mCross">Crucigrama<small>Palabras cruzadas con su significado como pista</small></button>
     <button id="mReto">Retar a un amigo<small>Escribe tu palabra secreta y mándasela</small></button>
     <button id="mCode">Tengo un código de reto<small>Juega la palabra que te mandaron</small></button>
     <button id="mHist">Historial<small>Tus resultados y las palabras de días anteriores</small></button>
@@ -2341,7 +2391,7 @@ $('menuBtn').onclick = () => {
   </div>
   <button class="secondary" id="closeBtn">Cerrar</button>`, () => {
     $('mReto').onclick = openCreateReto; $('mCode').onclick = openEnterCode; $('mCats').onclick = openCats; $('mTime').onclick = openTime;
-    $('mHist').onclick = openHistory; $('mDuo').onclick = openDuo; $('mPass').onclick = openPass; $('mFb').onclick = openFeedback;
+    $('mHist').onclick = openHistory; $('mCross').onclick = openCross; $('mDuo').onclick = openDuo; $('mPass').onclick = openPass; $('mFb').onclick = openFeedback;
     $('mAch').onclick = openAch; $('mBack').onclick = openBackup; $('mHelp').onclick = () => showHelp(0); $('mTuto').onclick = () => { closeModal(); startTuto(true) };
     $('mNews').onclick = () => showNews();
   });
@@ -2435,7 +2485,7 @@ const HELP = [
     <p>Solo se aceptan palabras reales, sin acentos. La Ñ cuenta como letra. Si una palabra real no se acepta, toca <b>Agregar</b> o <b>Reportar</b>.</p>`],
   ['Modos de juego', `<p><b>Diario:</b> 5 palabras al día (de 4 a 8 letras), las mismas para todos. Una ✓ marca las que ya jugaste.</p>
     <p><b>Libre:</b> todas las partidas que quieras.</p>
-    <p>En el <b>Menú ☰</b> hay retos para amigos, categorías, contrarreloj, Doble palabra, duelos y tu historial.</p>`],
+    <p>En el <b>Menú ☰</b> hay crucigramas, retos para amigos, categorías, contrarreloj, Doble palabra, duelos y tu historial.</p>`],
   ['Botones', `<div class="legend">
       <span><i class="ico">💡</i>Pista: una letra o el significado (una por partida)</span>
       <span><i class="ico">📊</i>Estadísticas y logros</span>
@@ -2456,17 +2506,10 @@ function showNews(after){
   store.set('ps-news', NEWS_VER);
   showModal(`<h2>Novedades</h2>
     <div class="legend">
-      <span><i class="ico">📚</i>${ANS.length.toLocaleString('es-MX')} palabras con su significado (y con acentos al final)</span>
-      <span><i class="ico">4</i>Palabras de 4 letras para empezar fácil</span>
-      <span><i class="ico">👯</i>Doble palabra: dos tableros a la vez</span>
-      <span><i class="ico">📱</i>Pasa el teléfono: duelo entre 2 jugadores</span>
-      <span><i class="ico">🗓️</i>Historial: juega las palabras de días anteriores</span>
-      <span><i class="ico">🌮</i>Categoría Mexicanismos y 3 categorías más</span>
-      <span><i class="ico">💡</i>Pista de significado</span>
-      <span><i class="ico">⌨️</i>ENVIAR ahora está a la derecha. Mantén presionada una tecla para ver dónde ya la probaste</span>
-      <span><i class="ico">☀️</i>Tema claro y letra grande en Ajustes</span>
-      <span><i class="ico">🖼️</i>Comparte tu resultado como imagen</span>
-      <span><i class="ico">✉️</i>Reporta palabras que falten desde el Menú</span>
+      <span><i class="ico">🧩</i>Crucigramas: del día, libres y por categoría, con el significado como pista</span>
+      <span><i class="ico">🎨</i>Personaliza tus colores en ⚙️ Ajustes → Tema → Personalizado</span>
+      <span><i class="ico">🌸</i>Temas nuevos: Rosa, Bosque y Arena</span>
+      <span><i class="ico">◻️</i>Opción de fichas cuadradas</span>
     </div>
     <p class="sub">Todo está en el Menú ☰.</p>
     <button class="primary" id="nOk">¡Genial!</button>`, () => { $('nOk').onclick = () => { closeModal(); if (after) after() } });
@@ -2529,20 +2572,22 @@ $('settingsBtn').onclick = () => {
     ${row('opt-sound','Sonidos','Efectos al escribir, acertar y perder')}
     ${row('opt-vibrate','Vibración','Al acertar, perder o escribir mal')}
     ${row('opt-big','Letra grande','Textos y teclado más grandes')}
+    ${row('opt-square','Fichas cuadradas','Esquinas rectas en lugar de redondeadas')}
     ${row('opt-randomLen','Largo al azar','En modo Libre, cada partida nueva tiene de 4 a 8 letras')}
     ${row('opt-ghosts','Letras descubiertas','Muestra en la fila las letras que ya tienes')}
     ${row('opt-contrast','Alto contraste','Naranja = en su lugar, azul = en otro lugar')}
     <div class="opt-title">Tema</div>
-    <div class="themes">${[['dark','Oscuro','#0c0d10','#2e2f33','#45474d'],['light','Claro','#f2f3f6','#e1e3e9','#c5c9d2'],['purple','Morado','#150e22','#2c2240','#453860'],['blue','Azul','#0a1424','#1c2c44','#33476a']].map(([k,n,a,b,c]) =>
-      `<button data-theme-opt="${k}" aria-pressed="${settings.theme === k}" style="background:${b};color:${k === 'light' ? '#17181c' : '#f5f5f2'}"><i><b style="background:${a}"></b><b style="background:${c}"></b><b style="background:#2f8a5c"></b><b style="background:#f2ab2a"></b></i>${n}</button>`).join('')}</div>
+    <div class="themes">${[['dark','Oscuro','#0c0d10','#2e2f33','#45474d'],['light','Claro','#f2f3f6','#e1e3e9','#c5c9d2'],['purple','Morado','#150e22','#2c2240','#453860'],['blue','Azul','#0a1424','#1c2c44','#33476a'],['pink','Rosa','#1f0d18','#3a1b2e','#55304a'],['forest','Bosque','#0c1712','#1a2e24','#2e4a3b'],['sand','Arena','#f6efe3','#e8dcc7','#d3c2a5'],['custom','Personalizado',(settings.custom||CUSTOM_DEF).bg,(settings.custom||CUSTOM_DEF).tile,(settings.custom||CUSTOM_DEF).accent]].map(([k,n,a,b,c]) =>
+      `<button data-theme-opt="${k}" aria-pressed="${settings.theme === k}" style="background:${b};color:${lum(b) > .5 ? '#17181c' : '#f5f5f2'}"><i><b style="background:${a}"></b><b style="background:${c}"></b><b style="background:#2f8a5c"></b><b style="background:#f2ab2a"></b></i>${n}</button>`).join('')}</div>
     ${store.get('ps-custom', []).length ? `<div class="opt-title">Palabras que agregaste</div><p class="sub" style="text-align:left">${store.get('ps-custom', []).map(w => w.toUpperCase()).join(', ')}</p><button class="secondary" id="clearCustom">Borrar palabras agregadas</button>` : ''}
     <button class="primary" id="closeBtn">Listo</button>`, () => {
     const cc = $('clearCustom'); if (cc) cc.onclick = () => { store.get('ps-custom', []).forEach(w => DICT.delete(w)); store.set('ps-custom', []); POOL.forEach(w => DICT.add(w)); ANS.forEach(a => DICT.add(a.w)); toast('Palabras agregadas borradas'); closeModal() };
     document.querySelectorAll('[data-theme-opt]').forEach(b => b.onclick = () => {
+      if (b.dataset.themeOpt === 'custom') return openCustomTheme();
       settings.theme = b.dataset.themeOpt; store.set('ps-settings', settings); applySettings();
       document.querySelectorAll('[data-theme-opt]').forEach(x => x.setAttribute('aria-pressed', x === b));
     });
-    ['hard','vibrate','contrast','ghosts','randomLen','sound','big'].forEach(k => $('opt-' + k).onchange = e => {
+    ['hard','vibrate','contrast','ghosts','randomLen','sound','big','square'].forEach(k => $('opt-' + k).onchange = e => {
       if (k === 'hard' && e.target.checked && game.guesses.length && !game.over){ e.target.checked = false; return toast('Activa el modo difícil al empezar una partida') }
       settings[k] = e.target.checked; store.set('ps-settings', settings); applySettings(); draw();
       if (k === 'sound' && settings.sound) sfx('point');
@@ -2553,12 +2598,26 @@ $('settingsBtn').onclick = () => {
 function applySettings(){
   const r = document.documentElement;
   r.classList.toggle('contrast', settings.contrast);
-  r.classList.toggle('theme-purple', settings.theme === 'purple');
-  r.classList.toggle('theme-blue', settings.theme === 'blue');
-  r.classList.toggle('theme-light', settings.theme === 'light');
+  ['purple','blue','light','pink','forest','sand'].forEach(t => r.classList.toggle('theme-' + t, settings.theme === t));
   r.classList.toggle('big', !!settings.big);
+  r.classList.toggle('square', !!settings.square);
+  const VARS = ['--bg','--surface','--surface-2','--fg','--muted','--card','--absent','--absent-fg','--key-absent-fg','--green','--green-edge','--amber','--amber-edge','--brand-green','--brand-edge','--brand-amber','color-scheme'];
+  VARS.forEach(v => r.style.removeProperty(v));
+  let light = settings.theme === 'light' || settings.theme === 'sand';
+  if (settings.theme === 'custom'){
+    const C = Object.assign({}, CUSTOM_DEF, settings.custom || {}), set = (k, v) => r.style.setProperty(k, v);
+    light = lum(C.bg) > .5; const fg = light ? '#17181c' : '#f5f5f2';
+    set('--bg', C.bg); set('--surface', C.tile); set('--surface-2', mix(C.tile, fg, .18)); set('--fg', fg);
+    set('--muted', mix(fg, C.bg, .4)); set('--card', mix(C.bg, C.tile, .45));
+    set('--absent', light ? mix(C.tile, '#000000', .35) : mix(C.bg, '#000000', .3));
+    set('--absent-fg', light ? '#ffffff' : mix(fg, C.bg, .25)); set('--key-absent-fg', light ? '#f2f2f2' : mix(fg, C.bg, .55));
+    if (!settings.contrast){ set('--green', C.ok); set('--green-edge', mix(C.ok, '#000000', .25)); set('--amber', C.near); set('--amber-edge', mix(C.near, '#000000', .2)) }
+    set('--brand-green', C.ok); set('--brand-edge', mix(C.ok, '#000000', .25)); set('--brand-amber', C.accent);
+    set('color-scheme', light ? 'light' : 'dark');
+  }
+  r.classList.toggle('is-light', light);
   const m = document.querySelector('meta[name="theme-color"]');
-  if (m) m.content = { dark:'#0c0d10', light:'#f2f3f6', purple:'#150e22', blue:'#0a1424' }[settings.theme] || '#0c0d10';
+  if (m) m.content = (settings.theme === 'custom' ? (settings.custom || CUSTOM_DEF).bg : { dark:'#0c0d10', light:'#f2f3f6', purple:'#150e22', blue:'#0a1424', pink:'#1f0d18', forest:'#0c1712', sand:'#f6efe3' }[settings.theme]) || '#0c0d10';
 }
 
 // ---------- cargar partidas ----------
@@ -2570,6 +2629,7 @@ function resetVisuals(){
 }
 function render(){
   if (mode === 'duo') return duoRender();
+  if (mode === 'cross') return crossRender();
   resetVisuals(); clearSlots();
   game.guesses.forEach((guess, r) => {
     const res = score(guess, game.answer);
@@ -2591,13 +2651,16 @@ function newFree(){
   game = { answer: pick(freeList(COLS), game && game.answer), guesses: [], over: false, won: false, hint: null }; save(); render();
 }
 function modeLine(){
-  const el = $('modeLine'); el.hidden = !['reto','cat','time','arch','duo','pass'].includes(mode);
+  const el = $('modeLine'); el.hidden = !['reto','cat','time','arch','duo','pass','cross'].includes(mode);
+  $('clueBar').hidden = mode !== 'cross';
   if (mode === 'reto') el.innerHTML = `Reto de un amigo · ${COLS} letras <button id="mlExit">Salir</button>`;
   if (mode === 'cat') el.innerHTML = `${CATS[cat.key]} · ${COLS} letras <button id="mlExit">Salir</button>`;
   if (mode === 'time') el.innerHTML = `⏱ <span id="timeLeft">3:00</span> · Aciertos <span id="timeScore">0</span> <button id="mlExit">Salir</button>`;
   if (mode === 'arch') el.innerHTML = `Archivo · ${fmtDay(archDay)} <button id="mlHist">Historial</button> <button id="mlExit">Salir</button>`;
   if (mode === 'duo') el.innerHTML = `Doble palabra · ${COLS} letras · ${DUO_ROWS} intentos <button id="mlExit">Salir</button>`;
   if (mode === 'pass') el.innerHTML = `Turno de ${esc(passRun.names[passPlayer()])} · Ronda ${passRun.round} <button id="mlExit">Salir</button>`;
+  if (mode === 'cross') el.innerHTML = `🧩 ${xShort()} · ⏱ <span id="xTime">${mmss(xNow())}</span> <button id="xList">Pistas</button> <button id="mlExit">Salir</button>`;
+  if ($('xList')) $('xList').onclick = crossList;
   if ($('mlHist')) $('mlHist').onclick = openHistory;
   if (!el.hidden) $('mlExit').onclick = () => { if (mode === 'time') stopTimer(); goNormal() };
   if (mode !== 'tuto') $('coach').hidden = true;
@@ -2606,8 +2669,8 @@ function modeLine(){
 function load(keepGame){
   const normal = !special();
   modeBtns.daily.setAttribute('aria-pressed', mode === 'daily'); modeBtns.free.setAttribute('aria-pressed', mode === 'free');
-  LENGTHS.forEach(x => $('len-' + x).setAttribute('aria-pressed', x === COLS));
-  $('newBtn').hidden = !(mode === 'free' || mode === 'cat'); setNewIcon();
+  LENGTHS.forEach(x => $('len-' + x).setAttribute('aria-pressed', x === COLS && mode !== 'cross'));
+  $('newBtn').hidden = !(mode === 'free' || mode === 'cat' || (mode === 'cross' && cross && cross.kind !== 'daily')); setNewIcon();
   document.body.classList.toggle('in-tuto', mode === 'tuto');
   buildBoard(); modeLine(); markDaily();
   if (keepGame){ render(); if (mode === 'time') tickTime(); return }
@@ -2890,6 +2953,285 @@ function shareImage(){
     }catch(e){}
     fallback();
   }, 'image/png');
+}
+
+// ---------- crucigrama ----------
+let cross = null, xTimer = null;
+function xrng(seed){ let s = (seed >>> 0) || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s / 4294967296 } }
+function xPool(catKey){ return ANS.filter(a => (!catKey || a.c === catKey) && !norm(a.d).includes(a.w)) }
+function genCross(pool, rand){
+  const MAX = 10, TARGET = 9; let best = null;
+  const K = (r, c) => r + ',' + c;
+  for (let t = 0; t < 30; t++){
+    const words = pool.map(a => [rand(), a]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
+    const cells = new Map(), dirs = new Map(), placed = []; let b = null;
+    const fits = (w, r0, c0, d) => {
+      const L = [...w], dr = d === 'd' ? 1 : 0, dc = d === 'a' ? 1 : 0; let x = 0;
+      if (cells.has(K(r0 - dr, c0 - dc)) || cells.has(K(r0 + dr * L.length, c0 + dc * L.length))) return -1;
+      let minR = b[0], minC = b[1], maxR = b[2], maxC = b[3];
+      for (let i = 0; i < L.length; i++){
+        const r = r0 + dr * i, c = c0 + dc * i, k = K(r, c);
+        if (cells.has(k)){ if (cells.get(k) !== L[i] || dirs.get(k).includes(d)) return -1; x++ }
+        else if (d === 'a' ? (cells.has(K(r - 1, c)) || cells.has(K(r + 1, c))) : (cells.has(K(r, c - 1)) || cells.has(K(r, c + 1)))) return -1;
+        minR = Math.min(minR, r); minC = Math.min(minC, c); maxR = Math.max(maxR, r); maxC = Math.max(maxC, c);
+      }
+      if (maxR - minR + 1 > MAX || maxC - minC + 1 > MAX) return -1;
+      return x;
+    };
+    const put = (a, r0, c0, d) => {
+      const dr = d === 'd' ? 1 : 0, dc = d === 'a' ? 1 : 0;
+      [...a.w].forEach((ch, i) => {
+        const r = r0 + dr * i, c = c0 + dc * i, k = K(r, c);
+        cells.set(k, ch); dirs.set(k, (dirs.get(k) || []).concat(d));
+        b = b ? [Math.min(b[0], r), Math.min(b[1], c), Math.max(b[2], r), Math.max(b[3], c)] : [r, c, r, c];
+      });
+      placed.push({ w: a.w, r: r0, c: c0, d, clue: a.d });
+    };
+    const first = words.find(a => [...a.w].length >= 6); if (!first) break;
+    put(first, 0, 0, rand() < .5 ? 'a' : 'd');
+    for (const a of words){
+      if (placed.length >= TARGET) break;
+      if (placed.some(p => p.w === a.w)) continue;
+      const L = [...a.w], opts = [];
+      placed.forEach(p => {
+        const P = [...p.w], d = p.d === 'a' ? 'd' : 'a';
+        L.forEach((ch, i) => P.forEach((pc, j) => {
+          if (ch !== pc) return;
+          const r0 = p.d === 'a' ? p.r - i : p.r + j, c0 = p.d === 'a' ? p.c + j : p.c - i;
+          const x = fits(a.w, r0, c0, d); if (x > 0) opts.push([x, r0, c0, d]);
+        }));
+      });
+      if (!opts.length) continue;
+      const top = Math.max(...opts.map(o => o[0])), cand = opts.filter(o => o[0] === top), o = cand[Math.floor(rand() * cand.length)];
+      put(a, o[1], o[2], o[3]);
+    }
+    const area = (b[2] - b[0] + 1) * (b[3] - b[1] + 1), sc = placed.length * 100 - area;
+    if (!best || sc > best.sc) best = { sc, placed, b };
+    if (placed.length >= TARGET && t >= 6) break;
+  }
+  const [r0, c0, r1, c1] = best.b, words = best.placed.map(p => Object.assign({}, p, { r: p.r - r0, c: p.c - c0 }));
+  const starts = [...new Set(words.map(p => p.r * 100 + p.c))].sort((a, b) => a - b);
+  words.forEach(p => p.n = starts.indexOf(p.r * 100 + p.c) + 1);
+  words.sort((a, b) => a.d === b.d ? a.n - b.n : a.d === 'a' ? -1 : 1);
+  return { W: c1 - c0 + 1, H: r1 - r0 + 1, words };
+}
+const xKeys = p => [...p.w].map((_, k) => (p.r + (p.d === 'd' ? k : 0)) + ',' + (p.c + (p.d === 'a' ? k : 0)));
+function xLayout(L){
+  const cells = {};
+  L.words.forEach((p, i) => xKeys(p).forEach((key, k) => { (cells[key] = cells[key] || { ch: [...p.w][k], w: [] }).w.push(i) }));
+  return cells;
+}
+const mmss = ms => { const s = Math.floor(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0') };
+const xShort = () => cross.kind === 'daily' ? 'Del día' : cross.cat ? CATS[cross.cat] : 'Libre';
+const xLabel = () => cross.kind === 'daily' ? `Crucigrama del día ${new Date().getDate()}/${new Date().getMonth() + 1}` : cross.cat ? `Crucigrama de ${CATS[cross.cat]}` : 'Crucigrama libre';
+const xWordOk = i => xKeys(cross.layout.words[i]).every(k => cross.fill[k] === cross.cells[k].ch);
+function xNow(){ return cross ? cross.elapsed + (cross.t0 && !cross.done ? Date.now() - cross.t0 : 0) : 0 }
+function xPause(){ if (cross && cross.t0){ cross.elapsed += Date.now() - cross.t0; cross.t0 = Date.now() } }
+function xSave(){
+  if (!cross) return; xPause();
+  const { kind, cat, layout, fill, rev, elapsed, hints, done } = cross;
+  store.set(cross.key, { kind, cat, layout, fill, rev, elapsed, hints, done });
+}
+function xTick(){ const el = $('xTime'); if (el && cross) el.textContent = mmss(xNow()) }
+function openCross(){
+  const d = store.get('ps-cross-' + todayKey(), null);
+  showModal(`<h2>Crucigrama</h2>
+    <p>Palabras que se cruzan, con su significado como pista. Toca una casilla para ver su pista; tócala otra vez para cambiar entre horizontal y vertical.</p>
+    <div class="menu">
+      <button id="xD">Crucigrama del día<small>${d && d.done ? `Resuelto en ${mmss(d.elapsed)} ✓` : d ? 'Continuar donde lo dejaste' : 'El mismo para todos; compara tu tiempo'}</small></button>
+      <button id="xF">Crucigrama libre<small>Uno nuevo de todos los temas</small></button>
+    </div>
+    <div class="opt-title">Por categoría</div>
+    <div class="cats">${Object.entries(CATS).map(([k, n]) => `<button data-xc="${k}">${n}</button>`).join('')}<button data-xc="">Todas</button></div>
+    <button class="secondary" id="closeBtn">Cancelar</button>`, () => {
+    $('xD').onclick = () => startCross('daily');
+    $('xF').onclick = () => startCross('free');
+    document.querySelectorAll('[data-xc]').forEach(b => b.onclick = () => b.dataset.xc ? startCross('cat', b.dataset.xc) : startCross('free'));
+  });
+}
+function startCross(kind, catKey, fresh){
+  stopTimer(); reto = null; cat = null; passRun = null; archDay = null; tuto = null;
+  closeModal(); mode = 'cross';
+  const key = kind === 'daily' ? 'ps-cross-' + todayKey() : 'ps-cross-free';
+  let saved = store.get(key, null);
+  if (kind !== 'daily' && saved && (fresh || saved.done || saved.kind !== kind || (saved.cat || null) !== (catKey || null))) saved = null;
+  if (!saved || !saved.layout){
+    const rand = xrng(kind === 'daily' ? hash('cruci' + todayKey()) : Math.floor(Math.random() * 4e9));
+    saved = { kind, cat: catKey || null, layout: genCross(xPool(catKey), rand), fill: {}, rev: {}, elapsed: 0, hints: 0, done: false };
+  }
+  cross = Object.assign(saved, { key, t0: null, bad: null });
+  cross.cells = xLayout(cross.layout);
+  const w0 = cross.layout.words.findIndex((_, i) => !xWordOk(i));
+  cross.sel = { w: Math.max(0, w0), k: 0 };
+  game = { answer: '', guesses: [], over: cross.done, won: cross.done, hint: null };
+  load(true); xSave();
+  if (cross.done) return setTimeout(showCrossResult, 300);
+  cross.t0 = Date.now(); clearInterval(xTimer); xTimer = setInterval(xTick, 1000); xTick();
+}
+function crossBuild(){
+  const g = $('xgrid'), L = cross.layout; g.innerHTML = '';
+  g.style.gridTemplateColumns = `repeat(${L.W}, var(--cell))`;
+  const nums = {}; L.words.forEach(p => nums[p.r + ',' + p.c] = p.n);
+  for (let r = 0; r < L.H; r++) for (let c = 0; c < L.W; c++){
+    const k = r + ',' + c, d = document.createElement('div');
+    if (cross.cells[k]){ d.className = 'xc'; d.dataset.k = k; d.innerHTML = (nums[k] ? `<i>${nums[k]}</i>` : '') + '<b></b>' }
+    else d.className = 'xe';
+    g.appendChild(d);
+  }
+}
+function crossSize(){
+  const L = cross.layout, w = wrap.clientWidth, h = wrap.clientHeight - 12, gap = 3;
+  const s = Math.max(20, Math.floor(Math.min((w - gap * (L.W - 1)) / L.W, (h - gap * (L.H - 1)) / L.H, 46)));
+  $('xgrid').style.setProperty('--cell', s + 'px');
+}
+function crossRender(){
+  resetVisuals();
+  const L = cross.layout, cur = L.words[cross.sel.w], selKeys = xKeys(cur), selKey = selKeys[cross.sel.k];
+  const okKeys = new Set(); L.words.forEach((p, i) => { if (xWordOk(i)) xKeys(p).forEach(k => okKeys.add(k)) });
+  $('xgrid').querySelectorAll('.xc').forEach(d => {
+    const k = d.dataset.k;
+    d.querySelector('b').textContent = cross.fill[k] || '';
+    d.classList.toggle('hl', selKeys.includes(k) && !cross.done);
+    d.classList.toggle('sel', k === selKey && !cross.done);
+    d.classList.toggle('ok', okKeys.has(k));
+    d.classList.toggle('rev', !!cross.rev[k]);
+    d.classList.toggle('bad', !!(cross.bad && cross.bad[k]));
+  });
+  $('cbText').innerHTML = `<b>${cur.n} ${cur.d === 'a' ? '→' : '↓'}</b>${cur.clue} <small>(${[...cur.w].length} letras)</small>`;
+  $('hintLine').hidden = true;
+}
+function xSelectCell(k){
+  const c = cross.cells[k]; if (!c) return;
+  const curKey = xKeys(cross.layout.words[cross.sel.w])[cross.sel.k];
+  let wi = c.w.includes(cross.sel.w) ? cross.sel.w : c.w[0];
+  if (k === curKey && c.w.length > 1) wi = c.w.find(i => i !== cross.sel.w);
+  cross.sel = { w: wi, k: xKeys(cross.layout.words[wi]).indexOf(k) }; crossRender();
+}
+function xJump(step){
+  const n = cross.layout.words.length; let w = cross.sel.w;
+  for (let i = 0; i < n; i++){ w = (w + step + n) % n; if (!xWordOk(w)) break }
+  const ks = xKeys(cross.layout.words[w]), k = ks.findIndex(x => !cross.fill[x]);
+  cross.sel = { w, k: k < 0 ? 0 : k }; crossRender();
+}
+function crossPress(k){
+  if (!cross || cross.done || !$('modal').hidden) return;
+  const ks = xKeys(cross.layout.words[cross.sel.w]);
+  if (k === 'Enter') return xJump(1);
+  if (k === 'ArrowRight' || k === 'ArrowLeft'){ cross.sel.k = Math.max(0, Math.min(ks.length - 1, cross.sel.k + (k === 'ArrowRight' ? 1 : -1))); return crossRender() }
+  const key = ks[cross.sel.k];
+  if (cross.bad) delete cross.bad[key];
+  if (k === 'Backspace'){
+    if (cross.fill[key] && !cross.rev[key]) delete cross.fill[key];
+    else if (cross.sel.k > 0){ cross.sel.k--; const k2 = ks[cross.sel.k]; if (!cross.rev[k2]) delete cross.fill[k2] }
+    sfx('key'); xSave(); return crossRender();
+  }
+  if (!cross.rev[key]) cross.fill[key] = k;
+  sfx('key');
+  let nk = cross.sel.k + 1; while (nk < ks.length && cross.rev[ks[nk]]) nk++;
+  if (nk < ks.length) cross.sel.k = nk;
+  const solved = xWordOk(cross.sel.w);
+  xSave(); crossRender();
+  if (solved){ sfx('point'); buzz(30); if (!xCheckDone()) setTimeout(() => { if (mode === 'cross' && !cross.done) xJump(1) }, 250) }
+}
+function xCheckDone(){
+  if (!Object.keys(cross.cells).every(k => cross.fill[k] === cross.cells[k].ch)) return false;
+  xPause(); cross.t0 = null; cross.done = true; game.over = true; game.won = true;
+  clearInterval(xTimer); xTimer = null; xSave(); xTick();
+  const best = store.get('ps-cross-best', null), t = cross.elapsed;
+  cross.record = cross.hints === 0 && (!best || t < best); if (cross.record) store.set('ps-cross-best', t);
+  unlock('cruci'); if (cross.hints === 0 && t < 180000) unlock('crucirapido');
+  sfx('win'); buzz([40, 60, 40]); crossRender();
+  $('xgrid').querySelectorAll('.xc').forEach((d, i) => setTimeout(() => d.classList.add('win'), i * 25));
+  setTimeout(showCrossResult, 1300); return true;
+}
+function crossHelp(){
+  if (cross.done) return toast('El crucigrama ya está resuelto');
+  showModal(`<h2>Ayuda</h2><p>Cada ayuda queda anotada en tu resultado.</p>
+    <div class="menu">
+      <button id="xhL">Revelar una letra<small>La casilla seleccionada</small></button>
+      <button id="xhW">Revelar la palabra<small>La palabra seleccionada completa</small></button>
+      <button id="xhC">Revisar errores<small>Marca en rojo las letras equivocadas</small></button>
+    </div>
+    <button class="secondary" id="closeBtn">Cancelar</button>`, () => {
+    const ks = () => xKeys(cross.layout.words[cross.sel.w]);
+    const reveal = list => { list.forEach(k => { cross.fill[k] = cross.cells[k].ch; cross.rev[k] = true }); cross.hints++; closeModal(); xSave(); crossRender(); if (!xCheckDone() && xWordOk(cross.sel.w)) xJump(1) };
+    $('xhL').onclick = () => reveal([ks()[cross.sel.k]]);
+    $('xhW').onclick = () => reveal(ks());
+    $('xhC').onclick = () => {
+      cross.bad = {}; let n = 0;
+      Object.keys(cross.fill).forEach(k => { if (cross.fill[k] !== cross.cells[k].ch){ cross.bad[k] = 1; n++ } });
+      cross.hints++; closeModal(); xSave(); crossRender();
+      toast(n ? `${n} ${n === 1 ? 'letra equivocada' : 'letras equivocadas'}` : 'Todo lo que llevas está bien');
+    };
+  });
+}
+function crossList(){
+  const L = cross.layout, item = i => { const p = L.words[i]; return `<button class="xli${xWordOk(i) ? ' done' : ''}" data-i="${i}"><b>${p.n}</b>${p.clue} <small>(${[...p.w].length})</small></button>` };
+  const idx = d => L.words.map((p, i) => p.d === d ? i : -1).filter(i => i >= 0);
+  showModal(`<h2>Pistas</h2>
+    <div class="opt-title">→ Horizontales</div>${idx('a').map(item).join('')}
+    <div class="opt-title">↓ Verticales</div>${idx('d').map(item).join('')}
+    <button class="primary" id="closeBtn">Cerrar</button>`, () => {
+    document.querySelectorAll('.xli').forEach(b => b.onclick = () => {
+      const i = +b.dataset.i, ks = xKeys(L.words[i]), k = ks.findIndex(x => !cross.fill[x]);
+      cross.sel = { w: i, k: k < 0 ? 0 : k }; closeModal(); crossRender();
+    });
+  });
+}
+function showCrossResult(){
+  const t = mmss(cross.elapsed), best = store.get('ps-cross-best', null), daily = cross.kind === 'daily', n = cross.layout.words.length;
+  const helps = cross.hints ? `${cross.hints} ${cross.hints === 1 ? 'ayuda' : 'ayudas'}` : 'sin ayudas';
+  showModal(`<p class="sub">${xLabel()}</p><h2>¡Crucigrama resuelto!</h2>
+    <p>Lo terminaste en</p><div class="code">${t}</div>
+    <p class="sub">${n} palabras · ${helps}${cross.record ? ' · ¡Nuevo récord!' : best ? ` · Tu récord sin ayudas: ${mmss(best)}` : ''}</p>
+    <div class="xwords">${cross.layout.words.map(p => `<span>${showWord(p.w).toUpperCase()}</span>`).join('')}</div>
+    <button class="primary" id="xShare">Compartir resultado</button>
+    ${daily ? '<p class="sub">Mañana habrá un crucigrama del día nuevo</p><button class="secondary" id="xFree">Jugar uno libre</button>' : '<button class="secondary" id="xAgain">Otro crucigrama</button>'}
+    <button class="secondary" id="leaveBtn">Volver al juego normal</button>`, () => {
+    $('xShare').onclick = () => shareOrCopy(`Palabra Secreta · ${xLabel()}\n🧩 Resuelto en ${t} · ${n} palabras · ${helps}\n¿Me ganas?`, 'Resultado copiado. Pégalo en WhatsApp.');
+    if ($('xFree')) $('xFree').onclick = () => startCross('free', null, true);
+    if ($('xAgain')) $('xAgain').onclick = () => startCross(cross.kind, cross.cat, true);
+    $('leaveBtn').onclick = () => { closeModal(); goNormal() };
+  });
+}
+$('xgrid').addEventListener('click', e => { const d = e.target.closest('.xc'); if (d && mode === 'cross' && !cross.done) xSelectCell(d.dataset.k) });
+$('cbPrev').onclick = () => { if (mode === 'cross' && !cross.done) xJump(-1) };
+$('cbNext').onclick = () => { if (mode === 'cross' && !cross.done) xJump(1) };
+$('cbText').onclick = () => { if (mode === 'cross' && !cross.done) xSelectCell(xKeys(cross.layout.words[cross.sel.w])[cross.sel.k]) };
+document.addEventListener('visibilitychange', () => {
+  if (mode !== 'cross' || !cross || cross.done) return;
+  if (document.hidden){ xSave(); cross.t0 = null } else cross.t0 = Date.now();
+});
+
+// ---------- tema personalizado ----------
+const hx = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const mix = (a, b, t) => '#' + hx(a).map((v, i) => Math.round(v + (hx(b)[i] - v) * t).toString(16).padStart(2, '0')).join('');
+const lum = h => { const [r, g, b] = hx(h).map(v => v / 255); return .2126 * r + .7152 * g + .0722 * b };
+const CUSTOM_DEF = { bg:'#0c0d10', tile:'#2e2f33', ok:'#2f8a5c', near:'#f2ab2a', accent:'#f2ab2a' };
+const PRESETS = [
+  { bg:'#101820', tile:'#22313f', ok:'#f2aa4c', near:'#4fb0c6', accent:'#f2aa4c' },
+  { bg:'#1b1035', tile:'#2f1f57', ok:'#00b894', near:'#ff6f91', accent:'#ffc75f' },
+  { bg:'#2b2d42', tile:'#3d405b', ok:'#81b29a', near:'#f2cc8f', accent:'#e07a5f' },
+  { bg:'#0f0f0f', tile:'#262626', ok:'#e63946', near:'#f1c40f', accent:'#e63946' },
+  { bg:'#fdf6ec', tile:'#eadfce', ok:'#3a7d44', near:'#e09f3e', accent:'#9e2a2b' },
+  { bg:'#e8f1f2', tile:'#cfdfe2', ok:'#247ba0', near:'#f25f5c', accent:'#247ba0' }
+];
+function openCustomTheme(){
+  const C = Object.assign({}, CUSTOM_DEF, settings.custom || {});
+  const f = (id, label) => `<label class="cpick" for="cp-${id}"><span>${label}</span><input type="color" id="cp-${id}" value="${C[id]}"></label>`;
+  showModal(`<h2>Tu tema</h2><p class="sub">Toca un color para cambiarlo. Lo verás al instante.</p>
+    ${f('bg', 'Fondo')}${f('tile', 'Fichas y teclado')}${f('ok', 'Letra en su lugar')}${f('near', 'Letra en otro lugar')}${f('accent', 'Detalles: título y bordes')}
+    <div class="mini"><b class="correct">S</b><b class="present">O</b><b>L</b><b class="absent">E</b><b>S</b></div>
+    <div class="opt-title">Ideas para empezar</div>
+    <div class="cpresets">${PRESETS.map((p, i) => `<button data-cp="${i}" aria-label="Combinación ${i + 1}" style="background:${p.bg};box-shadow:inset 0 0 0 2px ${p.tile}"><i style="background:${p.ok}"></i><i style="background:${p.near}"></i></button>`).join('')}</div>
+    <button class="primary" id="closeBtn">Listo</button>
+    <button class="secondary" id="cpReset">Volver al tema Oscuro</button>`, () => {
+    const apply = () => { settings.custom = Object.assign({}, C); settings.theme = 'custom'; store.set('ps-settings', settings); applySettings() };
+    ['bg', 'tile', 'ok', 'near', 'accent'].forEach(id => $('cp-' + id).oninput = e => { C[id] = e.target.value; apply() });
+    document.querySelectorAll('[data-cp]').forEach(b => b.onclick = () => { Object.assign(C, PRESETS[+b.dataset.cp]); ['bg', 'tile', 'ok', 'near', 'accent'].forEach(id => $('cp-' + id).value = C[id]); apply() });
+    $('cpReset').onclick = () => { settings.theme = 'dark'; store.set('ps-settings', settings); applySettings(); closeModal() };
+    apply();
+  });
 }
 
 applySettings();
