@@ -2112,7 +2112,7 @@ function finish(won){
   game.over = true; game.won = won; save();
   buzz(won ? [40,60,40] : 200); sfx(won ? 'win' : 'lose');
   if (mode === 'tuto') return setTimeout(tutoDone, 900);
-  if (mode === 'duo'){ if (won) unlock('duo'); return setTimeout(showDuoResult, won ? 1200 : 600) }
+  if (mode === 'duo'){ board.querySelectorAll('.grid').forEach(g => g.classList.remove('solved')); duoKeys(); if (won) unlock('duo'); return setTimeout(showDuoResult, won ? 1200 : 600) }
   if (mode === 'pass') return setTimeout(passAfter, won ? 1200 : 700);
   if (mode === 'time'){
     if (!timeRun) return;
@@ -2716,7 +2716,7 @@ function duoRender(){
       const res = score(game.guesses[r], game.answers[k]);
       [...duoRow(k, r).children].forEach((t,i) => { t.textContent = [...game.guesses[r]][i]; t.classList.add(res[i]) });
     }
-    board.children[k].classList.toggle('solved', duoDone(k));
+    board.children[k].classList.toggle('solved', duoDone(k) && !game.over);
   }
   duoKeys(); $('hintLine').hidden = true; $('hintBtn').classList.remove('used'); duoDraw();
 }
@@ -2761,9 +2761,9 @@ function duoKeys(){
   kb.querySelectorAll('.key').forEach(b => {
     const ch = b.dataset.k; if (ch.length > 1) return;
     const st = [0,1].map(k => {
-      if (duoDone(k)) return 'done';
+      if (duoDone(k) && !game.over) return 'done';
       let best = null;
-      game.guesses.forEach(g => score(g, game.answers[k]).forEach((s,i) => { if ([...g][i] === ch && (!best || rank[s] > rank[best])) best = s }));
+      game.guesses.slice(0, duoDone(k) ? game.solvedAt[k] + 1 : game.guesses.length).forEach(g => score(g, game.answers[k]).forEach((s,i) => { if ([...g][i] === ch && (!best || rank[s] > rank[best])) best = s }));
       return best;
     });
     const [l, r] = st.map((s, k) => s === 'done' ? (st[1-k] === 'done' ? null : st[1-k]) : s);
