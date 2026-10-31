@@ -283,6 +283,29 @@ a.toast-btn{display:inline-block;text-decoration:none}
 @media (hover:hover){
   .key:hover,.menu button:hover,.icon-btn:hover,.len:hover,.sgrid button:hover,.today button:hover,.xli:hover,.xc:hover,.secondary:hover,.primary:hover,.seg button:hover,.hchip:hover{filter:brightness(1.15)}
 }
+.xc.err{background:#c0392b!important;animation:shake .4s}
+.xc.err b,.xc.err i{color:#fff}
+@media (min-width:1200px){
+  .app{max-width:min(1600px,96vw)}
+  .game{max-width:none}
+  .side{width:clamp(320px,24vw,420px)}
+  .kb{width:100%;max-width:880px;margin:0 auto}
+  .key{max-width:clamp(54px,4.4vw,78px);height:clamp(56px,7vh,80px);font-size:clamp(1.15rem,1.4vw,1.55rem)}
+  .key.wide{max-width:clamp(84px,6.6vw,124px);font-size:clamp(.8rem,.9vw,1rem)}
+  h1{font-size:2rem}
+  .icon-btn{height:44px;min-width:44px}
+  .len{width:38px;height:38px;font-size:1.1rem}
+  .seg button{font-size:.92rem;padding:8px 14px}
+  .sbox{padding:18px}
+  .sbox h3{font-size:.8rem}
+  .sgrid button{font-size:.95rem;padding:12px 10px}
+  .keys-help{font-size:.95rem}
+  .today button{height:58px;font-size:1.3rem}
+  .today button small{font-size:.68rem}
+  .sstats{font-size:1.7rem}
+  .clue-bar .ct{font-size:1.05rem}
+  .reto-line,.hint-line{font-size:1rem}
+}
 </style>
 
 </head>
@@ -1958,7 +1981,7 @@ function sizeBoard(){
   if (mode === 'cross') return crossSize();
   const gap = COLS >= 7 ? 5 : 6;
   const w = wrap.clientWidth, h = wrap.clientHeight - 20;
-  const size = Math.max(28, Math.floor(Math.min((w - gap*(COLS-1)) / COLS, (h - gap*(ROWS-1)) / ROWS, innerWidth >= 900 ? 80 : 66)));
+  const size = Math.max(28, Math.floor(Math.min((w - gap*(COLS-1)) / COLS, (h - gap*(ROWS-1)) / ROWS, innerWidth >= 900 ? 120 : 66)));
   board.style.setProperty('--tile', size + 'px'); board.style.setProperty('--gap', gap + 'px');
 }
 window.addEventListener('resize', sizeBoard);
@@ -2804,7 +2827,7 @@ function duoBuild(){
 }
 function duoSize(){
   const gap = 4, mid = 14, w = (wrap.clientWidth - mid) / 2, h = wrap.clientHeight - 16;
-  const size = Math.max(16, Math.floor(Math.min((w - gap*(COLS-1)) / COLS, (h - gap*(DUO_ROWS-1)) / DUO_ROWS, innerWidth >= 900 ? 62 : 48)));
+  const size = Math.max(16, Math.floor(Math.min((w - gap*(COLS-1)) / COLS, (h - gap*(DUO_ROWS-1)) / DUO_ROWS, innerWidth >= 900 ? 90 : 48)));
   board.style.setProperty('--tile', size + 'px'); board.style.setProperty('--gap', gap + 'px');
 }
 const duoRow = (k, r) => board.children[k] && board.children[k].children[r];
@@ -3119,7 +3142,7 @@ function crossBuild(){
 }
 function crossSize(){
   const L = cross.layout, w = wrap.clientWidth, h = wrap.clientHeight - 12, gap = 3;
-  const s = Math.max(20, Math.floor(Math.min((w - gap * (L.W - 1)) / L.W, (h - gap * (L.H - 1)) / L.H, innerWidth >= 900 ? 60 : 46)));
+  const s = Math.max(20, Math.floor(Math.min((w - gap * (L.W - 1)) / L.W, (h - gap * (L.H - 1)) / L.H, innerWidth >= 900 ? 84 : 46)));
   $('xgrid').style.setProperty('--cell', s + 'px');
 }
 function crossRender(){
@@ -3172,13 +3195,23 @@ function crossPress(k){
     else if (cross.sel.k > 0){ cross.sel.k--; const k2 = ks[cross.sel.k]; if (!cross.rev[k2]) delete cross.fill[k2] }
     sfx('key'); xSave(); return crossRender();
   }
+  const around = cross.cells[key].w, fullBefore = around.map(i => xKeys(cross.layout.words[i]).every(x => cross.fill[x]));
   if (!cross.rev[key]) cross.fill[key] = k;
   sfx('key');
+  const wrong = around.filter((i, j) => !fullBefore[j] && xKeys(cross.layout.words[i]).every(x => cross.fill[x]) && !xWordOk(i));
   let nk = cross.sel.k + 1; while (nk < ks.length && cross.rev[ks[nk]]) nk++;
   if (nk < ks.length) cross.sel.k = nk;
   const solved = xWordOk(cross.sel.w);
   xSave(); crossRender();
+  if (wrong.length) xWrong(wrong);
   if (solved){ sfx('point'); buzz(30); if (!xCheckDone()) setTimeout(() => { if (mode === 'cross' && !cross.done) xJump(1) }, 250) }
+}
+function xWrong(list){
+  const keys = [...new Set(list.flatMap(i => xKeys(cross.layout.words[i])))];
+  keys.forEach(k => { const d = $('xgrid').querySelector(`[data-k="${k}"]`); if (d){ d.classList.remove('err'); void d.offsetWidth; d.classList.add('err'); setTimeout(() => d.classList.remove('err'), 900) } });
+  buzz([60, 40, 60]); sfx('error');
+  const p = cross.layout.words[list[0]];
+  toast(list.length > 1 ? 'Hay palabras que no son correctas. Revisa sus letras.' : `El ${p.n} ${p.d === 'a' ? 'horizontal' : 'vertical'} no es correcto. Revisa sus letras.`);
 }
 function xCheckDone(){
   if (!Object.keys(cross.cells).every(k => cross.fill[k] === cross.cells[k].ch)) return false;
