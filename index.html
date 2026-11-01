@@ -478,6 +478,50 @@ a.toast-btn{display:inline-block;text-decoration:none}
 .ktile.shake{animation:shake .35s}
 .ktile.glow{animation:blink .5s 4}
 @media (min-width:900px){.homev{padding-right:6px}}
+
+.kcats button[aria-pressed="true"],.menu button[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--brand-amber)}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px;margin:4px 0 8px}
+.stk{display:flex;flex-direction:column;align-items:center;gap:2px;background:var(--surface);border:0;border-radius:10px;padding:6px 2px;color:var(--fg);cursor:pointer;font:inherit}
+.stk span{font-size:1.7rem;line-height:1.1}.stk small{font-size:.62rem;font-weight:800;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stk.off{cursor:default}.stk.off span{filter:grayscale(1) brightness(.25);opacity:.6}.stk.off small{color:var(--muted)}
+.kread{display:flex;flex-direction:column;align-items:center;gap:12px}
+.kread b{font:700 clamp(2rem,10vw,3.4rem) var(--display);letter-spacing:.06em}
+.ksay{width:78px;height:78px;border-radius:50%;border:0;background:var(--brand-green);color:#fff;font-size:2.2rem;cursor:pointer;box-shadow:inset 0 -4px 0 var(--green-edge)}
+.kopts{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.kopt{width:clamp(88px,26vw,140px);height:clamp(88px,26vw,140px);border:0;border-radius:20px;background:var(--surface);font-size:clamp(3rem,13vw,4.6rem);cursor:pointer;box-shadow:inset 0 -4px 0 rgba(0,0,0,.25)}
+.kopt.ok{background:var(--green);animation:bounce .5s ease}.kopt.no{opacity:.35}.kopt.shake{animation:shake .35s}
+.ktile.wide{width:auto;min-width:var(--kt);padding:0 12px;font-size:calc(var(--kt) * .4)}
+.atile.wide{width:auto;min-width:var(--at);padding:0 8px}
+.kside{display:flex;flex-wrap:wrap;gap:4px;font-size:1.5rem;margin:8px 0}
+
+@media (min-width:900px){.homev .lvl{display:none}}
+.mcal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin:4px 0 8px;text-align:center}
+.mcal i{font-style:normal;font-size:.74rem;font-weight:800;padding:5px 0;border-radius:6px;color:var(--muted)}
+.mcal i.mh{font-size:.62rem;padding:0}
+.mcal i.on{background:var(--brand-green);color:#fff}
+.mcal i.td{box-shadow:inset 0 0 0 2px var(--brand-amber);color:var(--fg)}
+.mcal i.fut{opacity:.4}
+.recs{display:flex;flex-direction:column;gap:6px;margin:4px 0 8px}
+.recs div{display:grid;grid-template-columns:24px 1fr auto;align-items:center;gap:6px;font-size:.84rem}
+.recs b{font-weight:700}.recs em{font-style:normal;font-weight:800;color:var(--brand-amber)}
+@media (hover:hover) and (pointer:fine){
+  .hcard,.hday,.qo,.mc,.ktile,.kopt,.xli,.sgrid button,.menu button,.cats button,.pick-len button,.icon-btn,.key,.stk,.reto-line button,.mini-btn{transition:transform .12s ease,filter .12s ease,background-color .12s ease}
+  .hcard:hover,.hday:hover{transform:translateY(-2px);filter:brightness(1.12)}
+  .qo:not(:disabled):hover,.menu button:hover,.cats button:hover,.pick-len button:hover,.sgrid button:hover,.xli:hover,.stk:hover{filter:brightness(1.15)}
+  .mc:not(.ok):hover,.ktile:hover,.kopt:hover{transform:translateY(-3px)}
+  .key:hover,.icon-btn:hover,.reto-line button:hover,.mini-btn:hover{filter:brightness(1.2)}
+  .xc:hover{outline:2px solid var(--brand-amber);outline-offset:-2px;cursor:pointer}
+  .sc:hover{filter:brightness(1.25);cursor:pointer}
+  button{cursor:pointer}
+}
+@media (min-width:900px){
+  .quiz{max-width:680px;gap:14px}
+  .qd{font-size:1.3rem;padding:20px}
+  .qw{font-size:3.2rem}
+  .qo{font-size:1.08rem;padding:16px;min-height:60px}
+  .qo span{width:32px;height:32px;font-size:.95rem}
+  .mc b{font-size:1.3rem}.mc span{font-size:.95rem}
+}
 </style>
 
 </head>
@@ -789,7 +833,7 @@ for (const w of new Set(POOL)){ const n = [...w].length; (BYLEN[n] = BYLEN[n] ||
 const LENGTHS = [4,5,6,7,8];
 const ROWS = 6;
 const DUO_ROWS = 7;
-const NEWS_VER = 6;
+const NEWS_VER = 7;
 const CUTOVER = '2026-11-01';
 // Número de WhatsApp para recibir reportes (con lada, sin + ni espacios). Vacío = el jugador elige el contacto.
 const REPORT_WA = '';
@@ -801,7 +845,7 @@ const store = {
 };
 function norm(s){ return s.toLowerCase().replace(/ñ/g,'\u0001').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\u0001/g,'ñ') }
 // ===== Palabras de respuesta: palabra|categoría|significado =====
-const CATS = { a:'Animales', c:'Comida', h:'Casa y objetos', n:'Naturaleza', b:'Cuerpo y salud', l:'Lugares', p:'Personas', m:'Mexicanismos', e:'Ideas y sentimientos', d:'Juegos y diversión', t:'Transporte y tecnología' };
+const CATS = { a:'Animales', c:'Comida', h:'Casa y objetos', n:'Naturaleza', b:'Cuerpo y salud', l:'Lugares', p:'Personas', m:'Mexicanismos', e:'Ideas y sentimientos', d:'Juegos y diversión', t:'Transporte y tecnología', v:'Colores, números y tiempo', u:'Música y arte', s:'Ciencia y escuela' };
 const ANS_RAW = `
 perro|a|Animal doméstico, conocido como el mejor amigo del ser humano.
 tigre|a|Felino grande de pelaje naranja con rayas negras.
@@ -2027,6 +2071,551 @@ cargador|t|Aparato para cargar baterías.
 elevador|t|Ascensor.
 programa|t|Software; también un show de televisión.
 bicitaxi|t|Bicicleta adaptada para llevar pasajeros.
+aire|n|Mezcla de gases que respiramos y que no se ve.
+alga|n|Planta sencilla que vive en el agua del mar o de los ríos.
+alma|e|Parte espiritual de una persona, distinta del cuerpo.
+arpa|u|Instrumento grande de cuerdas que se toca con los dedos, de forma triangular.
+asno|a|Burro.
+azar|e|Casualidad; lo que pasa sin que nadie lo planee.
+baba|b|Saliva que se escurre de la boca.
+beso|e|Muestra de cariño que se da con los labios.
+boda|e|Ceremonia y fiesta en la que dos personas se casan.
+bola|d|Objeto redondo, como una esfera.
+bote|t|Barca pequeña; en México, también un recipiente o la basura.
+buzo|p|Persona que trabaja o nada bajo el agua con equipo especial.
+capa|h|Prenda sin mangas que cuelga de los hombros, como la de los superhéroes.
+caso|e|Asunto o situación que se investiga o se cuenta.
+cena|c|Última comida del día, en la noche.
+cera|h|Sustancia que fabrican las abejas y con la que se hacen velas.
+cero|v|Número que indica que no hay nada.
+cita|e|Encuentro acordado con alguien a una hora y lugar.
+cola|a|Parte final del cuerpo de muchos animales; también una fila de personas.
+copa|h|Vaso con pie para beber; también el premio de un torneo.
+coro|u|Grupo de personas que cantan juntas.
+cruz|h|Figura formada por dos líneas que se cortan.
+cubo|s|Figura con seis caras cuadradas iguales, como un dado.
+edad|e|Años que tiene una persona o cosa.
+faja|h|Prenda ajustada que se pone en la cintura.
+fila|e|Hilera de personas o cosas una detrás de otra.
+gala|d|Fiesta elegante.
+gema|n|Piedra preciosa, como el rubí o la esmeralda.
+gira|d|Viaje de un artista por varias ciudades.
+gota|n|Pequeña porción redonda de un líquido.
+guía|p|Persona que acompaña y explica el camino a otros.
+hora|v|Cada una de las 24 partes en que se divide el día.
+hoyo|n|Agujero en la tierra o en otra superficie.
+kilo|s|Mil gramos.
+lado|e|Costado de algo; cada línea que forma una figura.
+lava|n|Roca derretida y ardiente que sale de un volcán.
+lazo|h|Cuerda o listón con un nudo que se deshace fácilmente.
+leña|n|Trozos de madera para hacer fuego.
+león|a|Felino grande africano; el macho tiene melena.
+lino|h|Tela fresca hecha con las fibras de una planta.
+loma|n|Elevación pequeña y suave del terreno.
+lona|h|Tela gruesa y resistente para toldos y carpas.
+lupa|s|Lente que hace ver las cosas más grandes.
+masa|c|Mezcla de harina y agua; en México, la de maíz para las tortillas.
+mina|l|Lugar bajo tierra de donde se sacan minerales.
+moda|e|Lo que se usa o se lleva en cierta época.
+moño|h|Lazo de listón; también el pelo recogido en la cabeza.
+nata|c|Capa cremosa que se forma encima de la leche.
+nido|a|Casita que hacen las aves para poner sus huevos.
+nota|s|Calificación de un examen; también un apunte breve.
+obra|u|Trabajo de un artista; también una construcción.
+ojal|h|Abertura en la ropa por donde pasa el botón.
+palo|n|Trozo de madera largo y delgado.
+peso|v|Lo que pesa algo; también la moneda de México.
+pipa|t|En México, camión que lleva agua o gas.
+plan|e|Idea organizada de lo que se va a hacer.
+rama|n|Parte del árbol que sale del tronco y tiene hojas.
+rata|a|Roedor más grande que el ratón, de cola larga.
+raya|a|Pez plano con forma de rombo; también una línea.
+reja|h|Barras de metal que protegen una ventana o puerta.
+reno|a|Venado de lugares fríos que, según la historia, jala el trineo de Santa.
+reto|e|Desafío; algo difícil que alguien se propone lograr.
+rima|u|Sonido igual al final de dos versos.
+saco|h|Prenda formal con mangas que se pone sobre la camisa.
+seda|h|Tela fina y brillante hecha por un gusano.
+soga|h|Cuerda gruesa.
+tapa|h|Pieza que cubre y cierra un recipiente.
+tela|h|Material con el que se hace la ropa.
+tema|e|Asunto del que se habla o se escribe.
+tono|u|Altura de un sonido; también la manera de decir algo.
+topo|a|Pequeño mamífero que vive bajo tierra y casi no ve.
+tubo|h|Pieza hueca y alargada por donde pasa un líquido o gas.
+tuna|c|Fruto del nopal, dulce y lleno de semillas.
+tuza|a|Roedor mexicano que hace túneles y daña los cultivos.
+urna|e|Caja donde se depositan los votos.
+vals|u|Baile elegante en el que las parejas giran.
+velo|h|Tela fina y transparente que cubre la cara o la cabeza.
+vino|c|Bebida alcohólica hecha con uvas.
+voto|e|Elección que hace una persona en una votación.
+yema|c|Parte amarilla del huevo.
+yeso|b|Material blanco que endurece; se pone en un hueso roto.
+zona|l|Parte de un territorio o de una ciudad.
+agua|n|Líquido transparente que bebemos y que forma ríos y mares.
+frío|n|Temperatura baja, lo contrario del calor.
+humo|n|Gas gris que sale de algo que se quema.
+pico|a|Boca dura de las aves; también la cima de una montaña.
+higo|c|Fruta dulce y blanda, llena de semillitas.
+yuca|c|Raíz comestible que se cocina como la papa.
+soya|c|Semilla de la que se hace leche, aceite y carne vegetal.
+bata|h|Prenda larga que se usa encima de la pijama o en el laboratorio.
+buró|h|En México, mesita de noche junto a la cama.
+ovni|t|Objeto volador del que no se sabe qué es.
+chip|t|Pieza diminuta que hace funcionar los aparatos electrónicos.
+dron|t|Pequeño aparato volador que se maneja a control remoto.
+buey|a|Toro manso que se usa para jalar el arado.
+hijo|p|Persona respecto de su madre o de su padre.
+hija|p|Mujer respecto de su madre o de su padre.
+niña|p|Persona pequeña de sexo femenino.
+nana|p|Mujer que cuida niños; también, abuela.
+ogro|p|Gigante de los cuentos que asusta a la gente.
+mimo|u|Artista que actúa sin hablar, solo con gestos.
+arte|u|Actividad de crear cosas bellas, como pintar o componer música.
+tuba|u|Instrumento de viento grande y grave, de metal.
+bajo|u|Guitarra de sonidos graves; también lo contrario de alto.
+suma|s|Operación que junta dos o más cantidades.
+raíz|n|Parte de la planta que crece bajo tierra.
+puño|b|Mano cerrada.
+oído|b|Sentido que permite escuchar.
+iris|b|Parte de color del ojo.
+peca|b|Manchita café de la piel.
+asma|b|Enfermedad que hace difícil respirar.
+cana|b|Pelo que se vuelve blanco con los años.
+caos|e|Desorden total.
+rojo|v|Color de la sangre y de las fresas.
+azul|v|Color del cielo despejado y del mar.
+gris|v|Color entre el blanco y el negro, como el de las nubes de lluvia.
+lila|v|Color morado claro.
+seis|v|Número que va después del cinco.
+ocho|v|Número que va después del siete.
+diez|v|Número de dedos de las dos manos.
+once|v|Número que va después del diez.
+doce|v|Número de meses que tiene un año.
+tres|v|Número que va después del dos.
+cien|v|Diez veces diez.
+mayo|v|Quinto mes del año.
+este|n|Punto cardinal por donde sale el sol.
+cabo|n|Punta de tierra que entra en el mar.
+polo|n|Cada uno de los extremos de la Tierra, muy fríos.
+tope|m|En México, bordo en la calle para que los coches bajen la velocidad.
+varo|m|En México, dinero; un peso.
+ruco|m|En México, viejo, dicho de forma coloquial.
+jefa|m|En México, manera cariñosa de llamar a la mamá.
+fifí|m|En México, persona presumida o muy elegante.
+vato|m|En México, chavo o muchacho.
+abril|v|Cuarto mes del año.
+enero|v|Primer mes del año.
+marzo|v|Tercer mes del año.
+junio|v|Sexto mes del año.
+julio|v|Séptimo mes del año.
+lunes|v|Primer día de la semana laboral.
+verde|v|Color del pasto y de las hojas.
+negro|v|Color de la noche sin luna; lo contrario del blanco.
+cinco|v|Número de dedos de una mano.
+siete|v|Número de días que tiene una semana.
+nueve|v|Número que va después del ocho.
+trece|v|Número que va después del doce.
+siglo|v|Periodo de cien años.
+época|v|Periodo de tiempo de la historia.
+fecha|v|Día, mes y año en que pasa algo.
+ocaso|n|Momento en que se oculta el sol.
+norte|n|Punto cardinal hacia donde apunta la brújula.
+oeste|n|Punto cardinal por donde se oculta el sol.
+golfo|n|Gran parte del mar que entra en la tierra.
+istmo|n|Franja angosta de tierra que une dos territorios.
+presa|l|Muro que detiene el agua de un río para guardarla.
+canal|l|Cauce artificial de agua; también un canal de televisión.
+villa|l|Pueblo pequeño; también una casa de campo.
+llano|n|Terreno plano y extenso.
+polen|n|Polvito de las flores que llevan las abejas.
+fruto|n|Parte de la planta que contiene las semillas.
+fruta|c|Fruto comestible y dulce, como la manzana.
+mamey|c|Fruta tropical de pulpa anaranjada y dulce, con un hueso grande.
+dátil|c|Fruto dulce y café de la palmera.
+oblea|c|Hoja delgadísima de harina, dulce, a veces con cajeta.
+bolis|m|En México, hielito de sabor en bolsita.
+rosca|c|Pan en forma de anillo; la de Reyes trae un muñequito escondido.
+sushi|c|Comida japonesa de arroz con pescado crudo.
+jaiba|a|Cangrejo de mar o de río.
+ostra|a|Molusco de concha que a veces guarda una perla.
+carpa|a|Pez de río; también una tienda de lona grande.
+mamut|a|Elefante prehistórico, peludo y de colmillos largos.
+lémur|a|Mamífero de Madagascar con cola larga y anillada.
+hurón|a|Pequeño mamífero alargado y juguetón.
+coatí|a|Mamífero de hocico largo y cola anillada; en México le dicen tejón.
+tejón|a|Mamífero de patas cortas que vive en madrigueras.
+piojo|a|Insecto diminuto que vive en el pelo.
+buque|t|Barco grande.
+coche|t|Automóvil.
+combi|t|En México, camioneta de transporte público.
+balsa|t|Embarcación plana hecha de troncos o tablas.
+timón|t|Pieza con que se dirige un barco.
+polea|s|Rueda con una cuerda para levantar cosas pesadas.
+radar|t|Aparato que detecta objetos lejanos con ondas.
+láser|t|Rayo de luz muy concentrado.
+átomo|s|Partícula pequeñísima de la que está hecha la materia.
+metal|s|Material duro y brillante, como el hierro o el oro.
+acero|s|Metal muy duro hecho con hierro.
+vapor|s|Agua convertida en gas por el calor.
+fósil|s|Resto de un ser vivo antiguo convertido en piedra.
+virus|b|Microbio diminuto que causa enfermedades como la gripe.
+resta|s|Operación que quita una cantidad a otra.
+cifra|s|Número escrito con símbolos.
+tarea|s|Trabajo que la maestra deja para hacer en casa.
+clase|s|Lección que se da en la escuela.
+curso|s|Conjunto de clases sobre un tema.
+letra|s|Cada uno de los signos del abecedario.
+frase|s|Conjunto de palabras con sentido.
+lunar|b|Manchita oscura en la piel.
+golpe|b|Choque fuerte contra algo.
+amiga|p|Mujer con la que se tiene amistad.
+nieta|p|Hija del hijo o de la hija de alguien.
+novia|p|Mujer con la que alguien tiene una relación de pareja.
+prima|p|Hija del tío o de la tía.
+yerno|p|Esposo de la hija.
+nuera|p|Esposa del hijo.
+rival|p|Persona con la que se compite.
+tribu|p|Grupo de familias con las mismas costumbres.
+gente|p|Grupo de personas.
+brujo|p|Hombre que hace hechizos.
+zombi|p|Muerto viviente de las películas de terror.
+momia|p|Cuerpo antiguo envuelto en vendas.
+compa|m|En México, amigo o compañero.
+morro|m|En México, niño o muchacho.
+chava|m|En México, muchacha.
+pelón|m|Que no tiene pelo.
+regio|m|De Monterrey; también algo muy bueno.
+hogar|e|Casa donde vive una familia.
+éxito|e|Buen resultado de algo.
+mente|e|Capacidad de pensar.
+razón|e|Capacidad de pensar; también, tener la verdad.
+tedio|e|Aburrimiento.
+hambre|e|Ganas de comer.
+prisa|e|Necesidad de hacer algo rápido.
+ruido|e|Sonido fuerte y desagradable.
+grito|e|Voz muy fuerte.
+favor|e|Ayuda que se hace a alguien.
+ayuda|e|Apoyo que se da a quien lo necesita.
+deber|e|Lo que alguien tiene obligación de hacer.
+orden|e|Acomodo correcto de las cosas.
+banda|u|Grupo de músicos.
+canto|u|Acción de cantar.
+gaita|u|Instrumento de viento con una bolsa de aire.
+himno|u|Canción solemne, como la de un país.
+ópera|u|Obra de teatro cantada.
+tango|u|Baile de pareja argentino.
+bongó|u|Par de tamborcitos que se tocan con las manos.
+güiro|u|Instrumento hecho de un guaje con rayas que se raspan.
+telón|u|Cortina grande del escenario.
+drama|u|Obra de teatro seria.
+mural|u|Pintura grande hecha sobre una pared.
+álbum|u|Libro para guardar fotos o estampas; también un disco de canciones.
+cómic|u|Historieta contada con dibujos.
+telar|u|Máquina para tejer telas.
+marco|h|Borde que rodea un cuadro o una puerta.
+jerga|m|En México, trapo para limpiar el piso.
+fibra|h|Esponja áspera para lavar trastes.
+refri|h|Refrigerador.
+banca|h|Asiento largo para varias personas.
+ático|h|Cuarto bajo el techo de una casa.
+sobre|h|Bolsa de papel para enviar cartas.
+gorro|h|Prenda que cubre la cabeza para el frío.
+traje|h|Conjunto de saco y pantalón; también un disfraz.
+manga|h|Parte de la ropa que cubre el brazo.
+fonda|l|En México, restaurante sencillo de comida casera.
+milpa|m|En México, terreno sembrado de maíz.
+jarro|h|Vasija de barro con asa.
+copal|m|Resina aromática que se quema en las ofrendas.
+mezcal|m|Bebida alcohólica mexicana hecha de maguey.
+cajeta|c|Dulce mexicano de leche de cabra.
+chamoy|c|Salsa mexicana agridulce y picosita.
+pepita|c|Semilla de calabaza tostada.
+cecina|c|Carne salada y seca.
+filete|c|Trozo de carne o pescado sin hueso.
+telera|c|Pan blanco para tortas, con dos rayas.
+ponche|c|Bebida caliente de frutas que se toma en Navidad.
+botana|m|En México, algo ligero para picar.
+antojo|m|Ganas repentinas de comer algo.
+zapote|c|Fruta tropical; hay negro, blanco y amarillo.
+pitaya|c|Fruta de un cactus, con pulpa llena de semillitas.
+nanche|c|Frutita amarilla y pequeña de olor fuerte.
+jícara|m|Vasija hecha del fruto de un árbol.
+huacal|m|En México, caja de tablitas para cargar fruta.
+huerco|m|En el norte de México, niño.
+chipil|m|En México, niño que se pone triste y llorón.
+tacaño|e|Persona a la que no le gusta gastar.
+chueco|m|Torcido.
+pachón|m|Que tiene mucho pelo y esponjado.
+balero|d|Juguete de un palo y una bola agujerada unidos por un cordón.
+actriz|p|Mujer que actúa en el cine o el teatro.
+esposo|p|Hombre casado, respecto de su esposa.
+suegro|p|Padre del esposo o de la esposa.
+cuñada|p|Hermana del esposo o esposa del hermano.
+médico|p|Persona que cura enfermedades.
+torero|p|Persona que torea.
+charro|m|Jinete mexicano con traje y sombrero de ala ancha.
+cadete|p|Estudiante de una escuela militar.
+niñera|p|Mujer que cuida niños.
+virtud|e|Buena cualidad de una persona.
+patria|e|País donde se nace.
+juicio|e|Capacidad de pensar bien; también un proceso ante el juez.
+lógica|e|Forma correcta de razonar.
+llanto|e|Lágrimas y sollozos.
+abrazo|e|Muestra de cariño en la que se rodea a alguien con los brazos.
+saludo|e|Palabras o gestos al encontrarse con alguien.
+guerra|e|Lucha armada entre países o grupos.
+examen|s|Prueba para saber cuánto has aprendido.
+número|s|Signo que expresa una cantidad.
+fábula|u|Cuento corto con animales que deja una enseñanza.
+enigma|e|Misterio difícil de resolver.
+tiempo|v|Lo que se mide con el reloj; también el clima.
+minuto|v|Sesenta segundos.
+semana|v|Siete días.
+pasado|v|Tiempo que ya pasó.
+futuro|v|Tiempo que está por venir.
+mañana|v|Primera parte del día; también el día después de hoy.
+martes|v|Segundo día de la semana.
+jueves|v|Cuarto día de la semana.
+sábado|v|Sexto día de la semana.
+agosto|v|Octavo mes del año.
+blanco|v|Color de la nieve y de la leche.
+morado|v|Color de la uva y de la berenjena.
+rosado|v|Color rosa.
+marrón|v|Color café.
+cuatro|v|Número que va después del tres.
+quince|v|Número que va después del catorce.
+veinte|v|Dos veces diez.
+cuadra|l|Tramo de calle entre dos esquinas.
+caseta|l|Casita donde se paga para usar una carretera.
+ruinas|l|Restos de construcciones antiguas.
+jungla|n|Selva espesa.
+huerto|l|Terreno donde se siembran verduras y árboles frutales.
+corral|l|Lugar cercado donde se guardan animales.
+cumbre|n|Parte más alta de una montaña.
+ladera|n|Costado de una montaña.
+cañada|n|Paso estrecho entre montañas.
+estepa|n|Llanura extensa con poca vegetación.
+tundra|n|Terreno helado y sin árboles cerca de los polos.
+sierra|n|Cadena de montañas; también una herramienta para cortar.
+trineo|t|Vehículo con patines para deslizarse en la nieve.
+claxon|t|Bocina del coche.
+tanque|t|Depósito de líquido; también un vehículo militar.
+célula|s|Unidad más pequeña de un ser vivo.
+fuerza|s|Capacidad de mover o levantar algo.
+órbita|s|Camino que sigue un planeta alrededor del sol.
+física|s|Ciencia que estudia la materia, la energía y el movimiento.
+recreo|s|Rato de descanso en la escuela.
+compás|s|Instrumento para trazar círculos.
+vidrio|s|Material duro y transparente de las ventanas.
+madera|s|Material que se saca de los árboles.
+bronce|s|Metal dorado que se usa para medallas y estatuas.
+sólido|s|Estado de la materia que tiene forma propia, como el hielo.
+melena|b|Pelo largo y abundante.
+trenza|b|Pelo entrelazado en tres partes.
+arruga|b|Pliegue en la piel.
+raspón|b|Herida leve por rozar contra algo áspero.
+siesta|b|Sueño corto después de comer.
+avispa|a|Insecto parecido a la abeja, de picadura dolorosa.
+babosa|a|Caracol sin concha.
+ostión|a|En México, ostra.
+buitre|a|Ave grande que come animales muertos.
+cóndor|a|Ave enorme de los Andes.
+pichón|a|Cría de la paloma.
+faisán|a|Ave de colores vistosos y cola larga.
+urraca|a|Ave blanca y negra que roba objetos brillantes.
+caimán|a|Reptil parecido al cocodrilo, de hocico corto.
+dragón|p|Animal fantástico que echa fuego por la boca.
+trucha|a|Pez de río muy apreciado.
+robalo|a|Pez de mar de carne blanca.
+piraña|a|Pez de río con dientes muy filosos.
+charal|a|Pececito mexicano de lagos.
+castor|a|Roedor que construye presas en los ríos.
+vicuña|a|Animal de los Andes parecido a la llama.
+lechón|a|Cerdito que todavía mama.
+ballet|u|Baile clásico con zapatillas de punta.
+lienzo|u|Tela donde se pinta un cuadro.
+pincel|u|Instrumento con pelos para pintar.
+cumbia|u|Música y baile tropical muy alegre.
+bolero|u|Canción romántica lenta.
+danzón|u|Baile elegante de pareja muy popular en Veracruz.
+jarana|u|Guitarrita del son jarocho.
+lentes|h|Anteojos.
+broche|h|Pieza para sujetar o adornar la ropa.
+listón|h|Cinta de tela.
+cierre|h|Tira con dientes para abrir y cerrar la ropa.
+calzón|h|Ropa interior.
+clóset|h|Armario empotrado en la pared.
+tuerca|h|Pieza con rosca donde entra un tornillo.
+pinzas|h|Herramienta para sujetar o apretar.
+plumón|s|Marcador de punta gruesa.
+estado|l|Cada parte en que se divide un país como México.
+tiendita|m|Tienda pequeña del barrio.
+alacena|h|Mueble o hueco para guardar comida.
+librero|h|Mueble para acomodar libros.
+escalón|h|Cada uno de los peldaños de una escalera.
+cerrojo|h|Pasador para cerrar una puerta.
+bisagra|h|Pieza que permite que una puerta gire.
+taladro|h|Herramienta que hace agujeros.
+serrucho|h|Herramienta con dientes para cortar madera.
+paquete|h|Bulto envuelto para enviar.
+tarjeta|h|Cartoncito rectangular; también la del banco.
+monedero|h|Bolsita para guardar monedas.
+anteojos|h|Lentes para ver mejor.
+peineta|h|Peine curvo que adorna el pelo.
+cachucha|m|En México, gorra con visera.
+bermuda|h|Pantalón corto hasta la rodilla.
+chancla|h|Sandalia sencilla para estar en casa.
+pantufla|h|Zapato cómodo para estar en casa.
+bolsillo|h|Bolsa pequeña cosida en la ropa.
+asiento|h|Lugar para sentarse.
+engrane|t|Rueda con dientes que mueve a otra.
+palanca|t|Barra que ayuda a mover cosas pesadas.
+tilapia|a|Pez de agua dulce muy común en los mercados.
+mojarra|a|Pez de carne sabrosa que se come frito.
+bacalao|a|Pez de mar que se come seco y salado en Navidad.
+lenguado|a|Pez plano con los dos ojos del mismo lado.
+calamar|a|Molusco marino con diez brazos.
+termita|a|Insecto que come madera.
+zancudo|a|Mosquito de patas largas.
+catarina|a|Insecto rojo con puntitos negros.
+tórtola|a|Ave parecida a la paloma, más pequeña.
+pollito|a|Cría de la gallina.
+cascabel|a|Serpiente venenosa que suena la cola.
+berrendo|a|Animal parecido al venado, muy veloz, de los desiertos del norte de México.
+perezoso|a|Animal que cuelga de los árboles y se mueve muy lento.
+cochino|a|Cerdo.
+marrano|a|Cerdo.
+hermana|p|Mujer que tiene los mismos padres que otra persona.
+maestra|p|Mujer que enseña.
+sobrina|p|Hija del hermano o de la hermana.
+señorita|p|Mujer joven.
+público|p|Personas que miran un espectáculo.
+notario|p|Persona que da fe de documentos oficiales.
+contador|p|Persona que lleva las cuentas.
+químico|p|Científico que estudia las sustancias.
+biólogo|p|Científico que estudia los seres vivos.
+cirujano|p|Médico que opera.
+pediatra|p|Médico de niños.
+herrero|p|Persona que trabaja el hierro.
+alfarero|p|Persona que hace vasijas de barro.
+tejedor|p|Persona que teje.
+taxista|p|Persona que maneja un taxi.
+azafata|p|Mujer que atiende a los pasajeros en un avión.
+tendero|p|Persona que atiende una tienda.
+escultor|p|Artista que hace estatuas.
+ranchero|p|Persona que vive o trabaja en un rancho.
+general|p|Jefe militar de alto rango.
+teniente|p|Oficial del ejército.
+bandido|p|Ladrón de los caminos.
+luchador|p|Persona que practica la lucha libre.
+familia|e|Padres, hijos y parientes.
+fracaso|e|Mal resultado.
+memoria|e|Capacidad de recordar.
+flojera|m|En México, pereza; pocas ganas de hacer algo.
+suspiro|e|Respiración larga que muestra alivio o tristeza.
+sonrisa|e|Gesto de alegría con la boca.
+caricia|e|Roce suave con la mano en señal de cariño.
+consejo|e|Opinión que se da para ayudar.
+permiso|e|Autorización para hacer algo.
+derecho|e|Lo que una persona puede exigir según la ley.
+batalla|e|Combate entre dos ejércitos.
+victoria|e|Triunfo.
+castigo|e|Pena por haber hecho algo mal.
+lección|s|Lo que se enseña en una clase.
+palabra|s|Conjunto de letras con significado.
+historia|s|Relato de lo que pasó en el pasado.
+leyenda|u|Relato tradicional con algo de fantasía.
+milagro|e|Hecho asombroso que no se puede explicar.
+segundo|v|Cada una de las 60 partes de un minuto.
+presente|v|Tiempo de ahora.
+domingo|v|Último día de la semana, de descanso.
+viernes|v|Quinto día de la semana.
+febrero|v|Segundo mes del año, el más corto.
+octubre|v|Décimo mes del año.
+amarillo|v|Color del sol y del plátano.
+celeste|v|Azul claro como el cielo.
+turquesa|v|Color entre el azul y el verde.
+plateado|v|Del color de la plata.
+catorce|v|Número que va después del trece.
+treinta|v|Tres veces diez.
+cuarenta|v|Cuatro veces diez.
+sesenta|v|Seis veces diez.
+setenta|v|Siete veces diez.
+ochenta|v|Ocho veces diez.
+noventa|v|Nueve veces diez.
+ecuador|n|Línea imaginaria que divide la Tierra en dos mitades.
+trópico|n|Zona caliente cercana al ecuador.
+llanura|n|Terreno plano y grande.
+establo|l|Lugar techado donde duermen las vacas y los caballos.
+energía|s|Capacidad para hacer un trabajo o movimiento.
+oxígeno|s|Gas del aire que necesitamos para vivir.
+ciencia|s|Conocimiento que se obtiene observando y experimentando.
+química|s|Ciencia que estudia las sustancias y sus mezclas.
+biología|s|Ciencia que estudia los seres vivos.
+lectura|s|Acción de leer.
+dictado|s|Ejercicio de escribir lo que alguien dice.
+pupitre|s|Mesa con asiento para el alumno.
+escuadra|s|Regla en forma de triángulo.
+diploma|s|Documento que se recibe al terminar un curso.
+fracción|s|Parte de un entero, como un medio.
+mineral|s|Sustancia natural que se saca de la tierra.
+cristal|s|Vidrio fino; también un mineral transparente.
+plástico|s|Material ligero hecho de petróleo.
+aluminio|s|Metal ligero de las latas.
+líquido|s|Estado de la materia que fluye, como el agua.
+molécula|s|Grupo de átomos unidos.
+bacteria|s|Microbio de una sola célula.
+microbio|s|Ser vivo tan pequeño que solo se ve con microscopio.
+cabello|b|Pelo de la cabeza.
+lágrima|b|Gota que sale de los ojos al llorar.
+ampolla|b|Bolsita de líquido en la piel por rozadura o quemadura.
+melodía|u|Sucesión de notas musicales agradables.
+marimba|u|Instrumento de teclas de madera que se golpean con baquetas.
+saxofón|u|Instrumento de viento de metal, muy usado en el jazz.
+trombón|u|Instrumento de metal con una vara que se desliza.
+armónica|u|Instrumento pequeño de viento que se toca con la boca.
+ranchera|u|Canción mexicana tradicional con mariachi.
+retrato|u|Pintura o foto de una persona.
+estatua|u|Figura de piedra o metal que representa a alguien.
+artista|u|Persona que crea arte.
+tragedia|u|Obra triste; también una desgracia.
+máscara|u|Objeto que cubre la cara.
+disfraz|u|Ropa para parecer otra persona o personaje.
+acuarela|u|Pintura que se mezcla con agua.
+alebrije|m|Figura mexicana de un animal fantástico de muchos colores.
+talavera|m|Cerámica de Puebla pintada de azul.
+ofrenda|m|Altar con flores y comida para los difuntos en Día de Muertos.
+calavera|m|Cráneo; en Día de Muertos, también un verso de broma.
+catrina|m|Calavera elegante con sombrero, símbolo del Día de Muertos.
+veladora|m|Vela en un vaso de vidrio.
+antojito|m|Comida mexicana de calle, como sopes o quesadillas.
+garnacha|m|En México, antojito frito y grasoso.
+itacate|m|Comida que se lleva para el camino.
+camellón|m|En México, franja en medio de una avenida.
+cántaro|h|Vasija grande de barro para el agua.
+muégano|c|Dulce mexicano de galletitas pegadas con miel.
+rompope|c|Bebida dulce de huevo y leche con canela.
+tejuino|c|Bebida fresca de maíz fermentado de Jalisco.
+tepache|c|Bebida fermentada de cáscara de piña.
+jamaica|c|Agua fresca roja de una flor.
+raspado|c|Hielo raspado con jarabe de sabor.
+capulín|c|Frutita roja y dulce parecida a la cereza.
+tejocote|c|Frutita amarilla que se pone en el ponche.
+coliflor|c|Verdura blanca parecida al brócoli.
+palomita|c|Grano de maíz reventado.
+molote|c|Antojito de masa relleno y frito.
+panucho|c|Tortilla rellena de frijol, típica de Yucatán.
+matatena|d|Juego de lanzar una pelotita y recoger piezas.
+chiflado|m|Loco; también consentido.
+chocante|m|Que cae mal.
+mitotero|m|Persona escandalosa o chismosa.
+chimuelo|m|Que le falta algún diente.
+chiquito|m|Pequeño.
+tapatío|m|De Guadalajara.
+jarocho|m|De Veracruz.
+disculpa|e|Palabras para pedir perdón.
 `;
 const ANS = [], ANSMAP = new Map();
 ANS_RAW.trim().split('\n').forEach(l => { const [s, c, d] = l.split('|'); const w = norm(s); if (ANSMAP.has(w)) return; const a = { w, s, c, d }; ANS.push(a); ANSMAP.set(w, a) });
@@ -2053,8 +2642,11 @@ function pick(list, prev){ let w; do { w = list[Math.floor(Math.random() * list.
 function dayKey(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') }
 function todayKey(){ return dayKey(new Date()) }
 function hash(str){ let h = 2166136261; for (const c of str){ h ^= c.codePointAt(0); h = Math.imul(h, 16777619) } return h >>> 0 }
+// Cada vez que se agreguen respuestas, añade una época nueva con la fecha desde la que cuentan.
+const DAILY_EPOCHS = [['2026-11-01', {"4": 132, "5": 264, "6": 294, "7": 289, "8": 245}], ['2026-11-04', {"4": 266, "5": 386, "6": 419, "7": 396, "8": 302}]];
 function dailyWord(len, day){
-  const list = ((day < CUTOVER && OLD_DAILY[len]) || ANS_BY[len]).slice().sort();
+  const ep = DAILY_EPOCHS.filter(e => e[0] <= day).pop();
+  const list = ((day < CUTOVER && OLD_DAILY[len]) || (ep ? ANS_BY[len].slice(0, ep[1][len]) : ANS_BY[len])).slice().sort();
   const [y,m,d] = day.split('-').map(Number);
   const n = Math.round((Date.UTC(y, m-1, d) - Date.UTC(2026, 0, 1)) / 864e5);
   const order = list.map(w => [hash(w + '#' + len), w]).sort((a,b) => a[0] - b[0]).map(x => x[1]);
@@ -2308,9 +2900,10 @@ function submit(){
       { label: 'Agregar', fn: () => {
         DICT.add(w);
         const list = store.get('ps-custom', []); if (!list.includes(w)){ list.push(w); store.set('ps-custom', list) }
-        toast(`«${w.toUpperCase()}» agregada`); if (word() === w) submit();
+        reportWord(w, 'agregada'); toast(`«${w.toUpperCase()}» agregada`); if (word() === w) submit();
       } },
-      { label: 'Reportar', href: waLink(`Hola, en Palabra Secreta no se acepta la palabra «${w.toUpperCase()}». ¿Puedes agregarla?`) }
+      REPORT_FORM ? { label: 'Reportar', fn: () => { reportWord(w, 'reportada'); toast('¡Gracias! La revisaremos para la próxima actualización') } }
+        : { label: 'Reportar', href: waLink(`Hola, en Palabra Secreta no se acepta la palabra «${w.toUpperCase()}». ¿Puedes agregarla?`) }
     ]);
   }
   if (mode === 'duo') return duoSubmit(current);
@@ -2366,10 +2959,12 @@ const ACH = [
   ['racha10','🔥','Sin freno','Llega a 10 en la racha infinita'],
   ['dias7','📅','Constante','Juega 7 días seguidos'],
   ['palabras100','📖','Diccionario andante','Descubre 100 palabras'],
+  ['crucidificil','🧠','Mente maestra','Resuelve un crucigrama Difícil sin ayudas'],
   ['quiz10','🎓','Sabelotodo de verdad','Saca 10 de 10 en ¿Qué significa?'],
   ['memo','🃏','Buena memoria','Completa un Memorama'],
   ['kids10','🧸','Pequeño genio','Junta 10 estrellas en el modo niños'],
   ['amigo','✏️','Creativo','Crea una sopa o un crucigrama para un amigo'],
+  ['album50','📒','Coleccionista','Junta 50 estampas en el álbum del modo niños'],
   ['semana','🎯','Semana perfecta','Cumple los 7 retos de una semana'],
   ['nivel5','⭐','Nivel 5','Llega al nivel 5'],
   ['nivel10','🌟','Nivel 10','Llega al nivel 10'],
@@ -2626,6 +3221,9 @@ function actionToast(msg, btns){
   });
   t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 6000);
 }
+// Formulario de Google para juntar palabras que faltan (opcional). Pega aquí el enlace que termina en /formResponse y el campo entry.XXXX.
+const REPORT_FORM = '', REPORT_FIELD = '';
+function reportWord(w, why){ if (!REPORT_FORM || !REPORT_FIELD) return false; try{ fetch(`${REPORT_FORM}?${REPORT_FIELD}=${encodeURIComponent(w + ' · ' + why)}`, { mode: 'no-cors' }).catch(() => {}) }catch(e){} return true }
 const waLink = text => `https://wa.me/${REPORT_WA}?text=${encodeURIComponent(text)}`;
 function toast(msg){ const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2200) }
 
@@ -2781,15 +3379,12 @@ function showNews(after){
   store.set('ps-news', NEWS_VER);
   showModal(`<h2>Novedades</h2>
     <div class="legend">
-      <span><i class="ico">🏠</i>Nueva pantalla de inicio con todos los juegos y tu progreso de hoy</span>
-      <span><i class="ico">❓</i>¿Qué significa?: quiz de definiciones</span>
-      <span><i class="ico">🃏</i>Memorama: une cada palabra con su significado</span>
-      <span><i class="ico">🧸</i>Modo niños con dibujos</span>
-      <span><i class="ico">⭐</i>Niveles y monedas 🪙: úsalas para pistas extra</span>
-      <span><i class="ico">🎯</i>Reto semanal: una meta distinta cada día</span>
-      <span><i class="ico">✏️</i>Crea una sopa de letras o un crucigrama para tus amigos</span>
-      <span><i class="ico">⏯️</i>Pausa, y el reloj se detiene cuando abres una ventana</span>
-      <span><i class="ico">💾</i>El respaldo ahora guarda todo tu progreso</span>
+      <span><i class="ico">🧩</i>Crucigramas nuevos: más cruces entre palabras, como los de periódico</span>
+      <span><i class="ico">🧠</i>Crucigrama Difícil de verdad: pistas ingeniosas, sin largo de palabra y ayudas con monedas</span>
+      <span><i class="ico">⌨️</i>En computadora el crucigrama usa tu teclado y se ve más grande</span>
+      <span><i class="ico">🧸</i>Modo niños: 400 dibujos, temas, sílabas, «¿Cuál es?» y un álbum de estampas</span>
+      <span><i class="ico">📖</i>545 palabras nuevas y 3 temas nuevos: colores y números, música y arte, ciencia y escuela</span>
+      <span><i class="ico">🔎</i>Sopa de letras con palabras en diagonal</span>
     </div>
     <p class="sub">Todo está en el Inicio 🏠.</p>
     <button class="primary" id="nOk">¡Genial!</button>`, () => { $('nOk').onclick = () => { closeModal(); if (after) after() } });
@@ -3252,66 +3847,89 @@ function shareImage(){
 // ---------- crucigrama ----------
 let cross = null, xTimer = null;
 function xrng(seed){ let s = (seed >>> 0) || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s / 4294967296 } }
-function xPool(catKey, lenKey){
+function xPool(catKey, lenKey, hard){
   const base = ANS.filter(a => (!catKey || a.c === catKey) && !giveaway(a)), ls = lenKey && XLEN[lenKey] && XLEN[lenKey].lens;
-  const p = ls ? base.filter(a => ls.includes([...a.w].length)) : base;
+  let p = ls ? base.filter(a => ls.includes([...a.w].length)) : base;
+  if (hard){
+    const h = p.filter(a => HARD_CLUE[a.w] && (ls || [...a.w].length >= 5)), h2 = p.filter(a => ls || [...a.w].length >= 6);
+    if (h.length >= 60) p = h; else if (h2.length >= 40) p = h2;
+  }
   return p.length >= 40 ? p : base;
 }
 function genCross(pool, rand, o = {}){
-  const MAX = o.max || 10, TARGET = o.target || 9; let best = null;
+  // Crucigrama denso: en cada paso elige, entre muchas palabras, la colocación que cruza más palabras
+  // y mantiene el recuadro compacto y las direcciones parejas.
+  const MAX = o.max || 10, TARGET = o.target || 9, TRIALS = o.trials || 10, SAMPLE = o.sample || 240;
   const K = (r, c) => r + ',' + c;
-  for (let t = 0; t < 30; t++){
+  let best = null;
+  for (let t = 0; t < TRIALS; t++){
     const words = pool.map(a => [rand(), a]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
-    const cells = new Map(), dirs = new Map(), placed = []; let b = null;
-    const fits = (w, r0, c0, d) => {
-      const L = [...w], dr = d === 'd' ? 1 : 0, dc = d === 'a' ? 1 : 0; let x = 0;
-      if (cells.has(K(r0 - dr, c0 - dc)) || cells.has(K(r0 + dr * L.length, c0 + dc * L.length))) return -1;
+    const cells = new Map(), dirs = new Map(), byCh = new Map(), placed = [], used = new Set(), nd = { a: 0, d: 0 };
+    let b = null, crossings = 0;
+    const fits = (L, r0, c0, d) => {
+      const dr = d === 'd' ? 1 : 0, dc = d === 'a' ? 1 : 0; let x = 0;
+      if (cells.has(K(r0 - dr, c0 - dc)) || cells.has(K(r0 + dr * L.length, c0 + dc * L.length))) return null;
       let minR = b[0], minC = b[1], maxR = b[2], maxC = b[3];
       for (let i = 0; i < L.length; i++){
         const r = r0 + dr * i, c = c0 + dc * i, k = K(r, c);
-        if (cells.has(k)){ if (cells.get(k) !== L[i] || dirs.get(k).includes(d)) return -1; x++ }
-        else if (d === 'a' ? (cells.has(K(r - 1, c)) || cells.has(K(r + 1, c))) : (cells.has(K(r, c - 1)) || cells.has(K(r, c + 1)))) return -1;
-        minR = Math.min(minR, r); minC = Math.min(minC, c); maxR = Math.max(maxR, r); maxC = Math.max(maxC, c);
+        if (cells.has(k)){ if (cells.get(k) !== L[i] || dirs.get(k).includes(d)) return null; x++ }
+        else if (d === 'a' ? (cells.has(K(r - 1, c)) || cells.has(K(r + 1, c))) : (cells.has(K(r, c - 1)) || cells.has(K(r, c + 1)))) return null;
+        if (r < minR) minR = r; if (c < minC) minC = c; if (r > maxR) maxR = r; if (c > maxC) maxC = c;
       }
-      if (maxR - minR + 1 > MAX || maxC - minC + 1 > MAX) return -1;
-      return x;
+      if (maxR - minR + 1 > MAX || maxC - minC + 1 > MAX || x === L.length) return null;
+      return [x, (maxR - minR + 1) * (maxC - minC + 1)];
     };
-    const put = (a, r0, c0, d) => {
+    const put = (a, r0, c0, d, x) => {
       const dr = d === 'd' ? 1 : 0, dc = d === 'a' ? 1 : 0;
       [...a.w].forEach((ch, i) => {
         const r = r0 + dr * i, c = c0 + dc * i, k = K(r, c);
-        cells.set(k, ch); dirs.set(k, (dirs.get(k) || []).concat(d));
+        if (!cells.has(k)){ cells.set(k, ch); if (!byCh.has(ch)) byCh.set(ch, []); byCh.get(ch).push([r, c]) }
+        dirs.set(k, (dirs.get(k) || []).concat(d));
         b = b ? [Math.min(b[0], r), Math.min(b[1], c), Math.max(b[2], r), Math.max(b[3], c)] : [r, c, r, c];
       });
-      placed.push({ w: a.w, r: r0, c: c0, d, clue: a.d });
+      placed.push({ w: a.w, r: r0, c: c0, d, clue: a.d }); used.add(a.w); nd[d]++; crossings += x || 0;
     };
-    const first = words.find(a => [...a.w].length >= 6) || words[0]; if (!first) break;
-    put(first, 0, 0, rand() < .5 ? 'a' : 'd');
-    for (const a of words){
-      if (placed.length >= TARGET) break;
-      if (placed.some(p => p.w === a.w)) continue;
-      const L = [...a.w], opts = [];
-      placed.forEach(p => {
-        const P = [...p.w], d = p.d === 'a' ? 'd' : 'a';
-        L.forEach((ch, i) => P.forEach((pc, j) => {
-          if (ch !== pc) return;
-          const r0 = p.d === 'a' ? p.r - i : p.r + j, c0 = p.d === 'a' ? p.c + j : p.c - i;
-          const x = fits(a.w, r0, c0, d); if (x > 0) opts.push([x, r0, c0, d]);
+    const first = words.find(a => [...a.w].length >= 7) || words.find(a => [...a.w].length >= 6) || words[0]; if (!first) break;
+    put(first, 0, 0, rand() < .5 ? 'a' : 'd', 0);
+    let off = 0;
+    while (placed.length < TARGET){
+      const area0 = (b[2] - b[0] + 1) * (b[3] - b[1] + 1);
+      let pick = null, seen = 0;
+      for (let j = 0; j < words.length && seen < SAMPLE; j++){
+        const a = words[(off + j) % words.length]; if (used.has(a.w)) continue; seen++;
+        const L = [...a.w];
+        L.forEach((ch, i) => (byCh.get(ch) || []).forEach(([r, c]) => {
+          const ds = dirs.get(K(r, c)); if (ds.length > 1) return;
+          const d = ds[0] === 'a' ? 'd' : 'a', r0 = d === 'd' ? r - i : r, c0 = d === 'a' ? c - i : c;
+          const f = fits(L, r0, c0, d); if (!f) return;
+          const sc = f[0] * 120 - (f[1] - area0) * 4 - Math.max(0, nd[d] - nd[d === 'a' ? 'd' : 'a']) * 25 + L.length * 6 + rand() * 30;
+          if (!pick || sc > pick.sc) pick = { sc, a, r0, c0, d, x: f[0] };
         }));
-      });
-      if (!opts.length) continue;
-      const top = Math.max(...opts.map(o => o[0])), cand = opts.filter(o => o[0] === top), o = cand[Math.floor(rand() * cand.length)];
-      put(a, o[1], o[2], o[3]);
+      }
+      off += SAMPLE;
+      if (!pick) break;
+      put(pick.a, pick.r0, pick.c0, pick.d, pick.x);
     }
-    const area = (b[2] - b[0] + 1) * (b[3] - b[1] + 1), sc = placed.length * 100 - area;
+    const area = (b[2] - b[0] + 1) * (b[3] - b[1] + 1);
+    const sc = Math.min(placed.length, TARGET) * 1000 + crossings * 80 - area * 2 - Math.abs(nd.a - nd.d) * 40;
     if (!best || sc > best.sc) best = { sc, placed, b };
-    if (placed.length >= TARGET && t >= 6) break;
   }
   const [r0, c0, r1, c1] = best.b, words = best.placed.map(p => Object.assign({}, p, { r: p.r - r0, c: p.c - c0 }));
   const starts = [...new Set(words.map(p => p.r * 100 + p.c))].sort((a, b) => a - b);
   words.forEach(p => p.n = starts.indexOf(p.r * 100 + p.c) + 1);
   words.sort((a, b) => a.d === b.d ? a.n - b.n : a.d === 'a' ? -1 : 1);
   return { W: c1 - c0 + 1, H: r1 - r0 + 1, words };
+}
+function xNumber(words){
+  const starts = [...new Set(words.map(p => p.r * 100 + p.c))].sort((a, b) => a - b);
+  words.forEach(p => p.n = starts.indexOf(p.r * 100 + p.c) + 1);
+  return words.sort((a, b) => a.d === b.d ? a.n - b.n : a.d === 'a' ? -1 : 1);
+}
+// gira el crucigrama para que aproveche la pantalla: ancho en computadora, alto en teléfono
+function xFitScreen(L){
+  const land = innerWidth > innerHeight;
+  if (!(land ? L.H > L.W : L.W > L.H + 1)) return L;
+  return { W: L.H, H: L.W, words: xNumber(L.words.map(p => Object.assign({}, p, { r: p.c, c: p.r, d: p.d === 'a' ? 'd' : 'a' }))) };
 }
 const xKeys = p => [...p.w].map((_, k) => (p.r + (p.d === 'd' ? k : 0)) + ',' + (p.c + (p.d === 'a' ? k : 0)));
 function xLayout(L){
@@ -3320,15 +3938,21 @@ function xLayout(L){
   return cells;
 }
 const mmss = ms => { const s = Math.floor(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0') };
-const xShort = () => cross.kind === 'friend' ? 'De tu amigo' : cross.kind === 'daily' ? (cross.giant ? 'Gigante del finde' : 'Del día') : (cross.cat ? CATS[cross.cat] : 'Libre') + (cross.size && cross.size !== 'normal' && XSIZE[cross.size] ? ' · ' + XSIZE[cross.size].label : '');
+const xShort = () => cross.kind === 'friend' ? 'De tu amigo' : cross.kind === 'daily' ? (cross.giant ? 'Gigante' : 'Del día') : (cross.cat ? CATS[cross.cat] + (cross.size === 'hard' ? ' · Difícil' : '') : cross.size && cross.size !== 'normal' && XSIZE[cross.size] ? XSIZE[cross.size].label : 'Libre');
 const xLabel = () => cross.kind === 'friend' ? 'Crucigrama de tu amigo' : cross.kind === 'daily' && cross.giant ? `Crucigrama gigante del fin de semana ${new Date().getDate()}/${new Date().getMonth() + 1}` : cross.kind === 'daily' ? `Crucigrama del día ${new Date().getDate()}/${new Date().getMonth() + 1}` : cross.cat ? `Crucigrama de ${CATS[cross.cat]}` : 'Crucigrama libre';
 const xWordOk = i => xKeys(cross.layout.words[i]).every(k => cross.fill[k] === cross.cells[k].ch);
+const xWordFull = i => xKeys(cross.layout.words[i]).every(k => cross.fill[k]);
+const xDoneW = i => cross.hard ? xWordFull(i) : xWordOk(i);           // para saltar y tachar pistas
+const xShowOk = i => cross.done || (!cross.hard && xWordOk(i));         // pintar de verde
+const xLen = p => cross && cross.hard && !cross.done ? '' : ` <small>(${[...p.w].length}${cross && cross.hard ? '' : ' letras'})</small>`;
+const xLenS = p => cross && cross.hard && !cross.done ? '' : ` <small>(${[...p.w].length})</small>`;
+const xBestKey = () => cross.kind === 'daily' ? (cross.giant ? 'ps-cross-best-giant' : 'ps-cross-best-daily') : 'ps-cross-best-' + (cross.size || 'normal');
 function xNow(){ return cross ? cross.elapsed + (cross.t0 && !cross.done ? Date.now() - cross.t0 : 0) : 0 }
 function xPause(){ if (cross && cross.t0){ cross.elapsed += Date.now() - cross.t0; cross.t0 = Date.now() } }
 function xSave(){
   if (!cross) return; xPause();
-  const { kind, cat, layout, fill, rev, elapsed, hints, done } = cross;
-  store.set(cross.key, { kind, cat, layout, fill, rev, elapsed, hints, done });
+  const { kind, cat, size, lens, giant, hard, layout, fill, rev, elapsed, hints, done } = cross;
+  store.set(cross.key, { kind, cat, size, lens, giant, hard, layout, fill, rev, elapsed, hints, done });
 }
 function xTick(){ const el = $('xTime'); if (el && cross) el.textContent = mmss(xNow()) }
 function openCross(){
@@ -3339,8 +3963,9 @@ function openCross(){
       <button id="xD">Crucigrama del día<small>${d && d.done ? `Resuelto en ${mmss(d.elapsed)} ✓` : d ? 'Continuar donde lo dejaste' : ([0, 6].includes(new Date().getDay()) ? '¡Hoy es gigante por el fin de semana!' : 'El mismo para todos; compara tu tiempo')}</small></button>
       <button id="xF">Crucigrama libre<small>Uno nuevo de todos los temas</small></button>
     </div>
-    <div class="opt-title">Tamaño (libre y por categoría)</div>
-    <div class="pick-len row4">${Object.entries(XSIZE).map(([k, v]) => `<button data-xs="${k}" aria-pressed="${(settings.xSize || 'normal') === k}">${v.label}<small>${v.target ? v.target + ' palabras' : '6 a 12'}</small></button>`).join('')}</div>
+    <div class="opt-title">Dificultad (libre y por categoría)</div>
+    <div class="pick-len row4">${Object.entries(XSIZE).map(([k, v]) => `<button data-xs="${k}" aria-pressed="${(settings.xSize || 'normal') === k}">${v.label}<small>${v.sub}</small></button>`).join('')}</div>
+    <p class="sub" style="text-align:left;margin:4px 0 0">En <b>Difícil</b>: pistas más ingeniosas, no se dice cuántas letras tiene cada palabra, no se marca en verde lo correcto y las ayudas cuestan monedas 🪙.</p>
     <div class="opt-title">Largo de las palabras</div>
     <div class="pick-len row4">${Object.entries(XLEN).map(([k, v]) => `<button data-xl="${k}" aria-pressed="${(settings.xLen || 'rand') === k}">${v.label}<small>${v.sub} letras</small></button>`).join('')}</div>
     <div class="opt-title">Por categoría</div>
@@ -3363,14 +3988,17 @@ function startCross(kind, catKey, fresh){
     const wk = new Date().getDay(), giant = kind === 'daily' && (wk === 0 || wk === 6);
     const size = kind === 'daily' ? (giant ? 'giant' : 'normal') : (settings.xSize || 'normal'), lens = kind === 'daily' ? 'rand' : (settings.xLen || 'rand');
     const rand = xrng(kind === 'daily' ? hash('cruci' + todayKey()) : Math.floor(Math.random() * 4e9));
-    saved = { kind, cat: catKey || null, size, lens, giant, layout: genCross(xPool(catKey, lens), rand, xOpts(size, rand)), fill: {}, rev: {}, elapsed: 0, hints: 0, done: false };
+    const hard = size === 'hard', layout = xFitScreen(genCross(xPool(catKey, lens, hard), rand, xOpts(size, rand)));
+    if (hard) layout.words.forEach(p => { if (HARD_CLUE[p.w]) p.clue = HARD_CLUE[p.w] });
+    saved = { kind, cat: catKey || null, size, lens, giant, hard, layout, fill: {}, rev: {}, elapsed: 0, hints: 0, done: false };
   }
   cross = Object.assign(saved, { key, t0: null, bad: null });
   cross.cells = xLayout(cross.layout);
-  const w0 = cross.layout.words.findIndex((_, i) => !xWordOk(i));
+  const w0 = cross.layout.words.findIndex((_, i) => !xDoneW(i));
   cross.sel = { w: Math.max(0, w0), k: 0 };
   game = { answer: '', guesses: [], over: cross.done, won: cross.done, hint: null };
   load(true); xSave();
+  requestAnimationFrame(() => { if (mode === 'cross') sizeBoard() });
   if (cross.done) return setTimeout(showCrossResult, 300);
   cross.t0 = Date.now(); clearInterval(xTimer); xTimer = setInterval(xTick, 1000); xTick();
 }
@@ -3393,7 +4021,7 @@ function crossSize(){
 function crossRender(){
   resetVisuals();
   const L = cross.layout, cur = L.words[cross.sel.w], selKeys = xKeys(cur), selKey = selKeys[cross.sel.k];
-  const okKeys = new Set(); L.words.forEach((p, i) => { if (xWordOk(i)) xKeys(p).forEach(k => okKeys.add(k)) });
+  const okKeys = new Set(); L.words.forEach((p, i) => { if (xShowOk(i)) xKeys(p).forEach(k => okKeys.add(k)) });
   $('xgrid').querySelectorAll('.xc').forEach(d => {
     const k = d.dataset.k;
     d.querySelector('b').textContent = cross.fill[k] || '';
@@ -3403,7 +4031,7 @@ function crossRender(){
     d.classList.toggle('rev', !!cross.rev[k]);
     d.classList.toggle('bad', !!(cross.bad && cross.bad[k]));
   });
-  $('cbText').innerHTML = `<b>${cur.n} ${cur.d === 'a' ? '→' : '↓'}</b>${cur.clue} <small>(${[...cur.w].length} letras)</small>`;
+  $('cbText').innerHTML = `<b>${cur.n} ${cur.d === 'a' ? '→' : '↓'}</b>${cur.clue}${xLen(cur)}`;
   $('hintLine').hidden = true;
 }
 function xSelectCell(k){
@@ -3415,7 +4043,7 @@ function xSelectCell(k){
 }
 function xJump(step){
   const n = cross.layout.words.length; let w = cross.sel.w;
-  for (let i = 0; i < n; i++){ w = (w + step + n) % n; if (!xWordOk(w)) break }
+  for (let i = 0; i < n; i++){ w = (w + step + n) % n; if (!xDoneW(w)) break }
   const ks = xKeys(cross.layout.words[w]), k = ks.findIndex(x => !cross.fill[x]);
   cross.sel = { w, k: k < 0 ? 0 : k }; crossRender();
 }
@@ -3443,11 +4071,16 @@ function crossPress(k){
   const around = cross.cells[key].w, fullBefore = around.map(i => xKeys(cross.layout.words[i]).every(x => cross.fill[x]));
   if (!cross.rev[key]) cross.fill[key] = k;
   sfx('key');
-  const wrong = around.filter((i, j) => !fullBefore[j] && xKeys(cross.layout.words[i]).every(x => cross.fill[x]) && !xWordOk(i));
+  const wrong = cross.hard ? [] : around.filter((i, j) => !fullBefore[j] && xKeys(cross.layout.words[i]).every(x => cross.fill[x]) && !xWordOk(i));
   let nk = cross.sel.k + 1; while (nk < ks.length && cross.rev[ks[nk]]) nk++;
   if (nk < ks.length) cross.sel.k = nk;
   const solved = xWordOk(cross.sel.w);
   xSave(); crossRender();
+  if (cross.hard){
+    if (Object.keys(cross.cells).every(x => cross.fill[x])){ if (!xCheckDone()) toast('Ya llenaste todo, pero hay errores. Usa 💡 para revisarlos.') }
+    else if (xWordFull(cross.sel.w) && nk >= ks.length) setTimeout(() => { if (mode === 'cross' && !cross.done) xJump(1) }, 150);
+    return;
+  }
   if (wrong.length) xWrong(wrong);
   if (solved){ sfx('point'); buzz(30); if (!xCheckDone()) setTimeout(() => { if (mode === 'cross' && !cross.done) xJump(1) }, 250) }
 }
@@ -3462,9 +4095,10 @@ function xCheckDone(){
   if (!Object.keys(cross.cells).every(k => cross.fill[k] === cross.cells[k].ch)) return false;
   xPause(); cross.t0 = null; cross.done = true; game.over = true; game.won = true;
   clearInterval(xTimer); xTimer = null; xSave(); xTick();
-  const best = store.get('ps-cross-best', null), t = cross.elapsed;
-  cross.record = cross.hints === 0 && (!best || t < best); if (cross.record) store.set('ps-cross-best', t);
-  unlock('cruci'); if (cross.hints === 0 && t < 180000) unlock('crucirapido');
+  const best = store.get(xBestKey(), null), t = cross.elapsed;
+  cross.record = cross.kind !== 'friend' && cross.hints === 0 && (!best || t < best); if (cross.record) store.set(xBestKey(), t);
+  if (cross.hints === 0 && (!store.get('ps-cross-best', null) || t < store.get('ps-cross-best', null))) store.set('ps-cross-best', t);
+  unlock('cruci'); if (cross.hints === 0 && t < 180000) unlock('crucirapido'); if (cross.hard && cross.hints === 0) unlock('crucidificil');
   cross.layout.words.forEach(p => learn(p.w)); markDay(); setTimeout(confetti, 500);
   sfx('win'); buzz([40, 60, 40]); crossRender();
   $('xgrid').querySelectorAll('.xc').forEach((d, i) => setTimeout(() => d.classList.add('win'), i * 25));
@@ -3472,18 +4106,22 @@ function xCheckDone(){
 }
 function crossHelp(){
   if (cross.done) return toast('El crucigrama ya está resuelto');
-  showModal(`<h2>Ayuda</h2><p>Cada ayuda queda anotada en tu resultado.</p>
+  const H = cross.hard, coins = xpState().coins, cost = { L: H ? 5 : 0, W: H ? 15 : 0, C: H ? 5 : 0 };
+  const lbl = (t, c) => c ? `${t} · ${c} 🪙` : t, dis = c => c > coins ? 'disabled' : '';
+  showModal(`<h2>Ayuda</h2><p>Cada ayuda queda anotada en tu resultado.${H ? ` En Difícil las ayudas cuestan monedas (tienes ${coins} 🪙).` : ''}</p>
     <div class="menu">
-      <button id="xhL">Revelar una letra<small>La casilla seleccionada</small></button>
-      <button id="xhW">Revelar la palabra<small>La palabra seleccionada completa</small></button>
-      <button id="xhC">Revisar errores<small>Marca en rojo las letras equivocadas</small></button>
+      <button id="xhL" ${dis(cost.L)}>${lbl('Revelar una letra', cost.L)}<small>La casilla seleccionada</small></button>
+      <button id="xhW" ${dis(cost.W)}>${lbl('Revelar la palabra', cost.W)}<small>La palabra seleccionada completa</small></button>
+      <button id="xhC" ${dis(cost.C)}>${lbl('Revisar errores', cost.C)}<small>Marca en rojo las letras equivocadas</small></button>
     </div>
     <button class="secondary" id="closeBtn">Cancelar</button>`, () => {
     const ks = () => xKeys(cross.layout.words[cross.sel.w]);
-    const reveal = list => { list.forEach(k => { cross.fill[k] = cross.cells[k].ch; cross.rev[k] = true }); cross.hints++; closeModal(); xSave(); crossRender(); if (!xCheckDone() && xWordOk(cross.sel.w)) xJump(1) };
-    $('xhL').onclick = () => reveal([ks()[cross.sel.k]]);
-    $('xhW').onclick = () => reveal(ks());
+    const pay = c => !c || spend(c);
+    const reveal = (list, c) => { if (!pay(c)) return; list.forEach(k => { cross.fill[k] = cross.cells[k].ch; cross.rev[k] = true }); cross.hints++; closeModal(); xSave(); crossRender(); if (!xCheckDone() && xDoneW(cross.sel.w)) xJump(1) };
+    $('xhL').onclick = () => reveal([ks()[cross.sel.k]], cost.L);
+    $('xhW').onclick = () => reveal(ks(), cost.W);
     $('xhC').onclick = () => {
+      if (!pay(cost.C)) return;
       cross.bad = {}; let n = 0;
       Object.keys(cross.fill).forEach(k => { if (cross.fill[k] !== cross.cells[k].ch){ cross.bad[k] = 1; n++ } });
       cross.hints++; closeModal(); xSave(); crossRender();
@@ -3492,7 +4130,7 @@ function crossHelp(){
   });
 }
 function crossList(){
-  const L = cross.layout, item = i => { const p = L.words[i]; return `<button class="xli${xWordOk(i) ? ' done' : ''}" data-i="${i}"><b>${p.n}</b>${p.clue} <small>(${[...p.w].length})</small></button>` };
+  const L = cross.layout, item = i => { const p = L.words[i]; return `<button class="xli${xDoneW(i) ? ' done' : ''}" data-i="${i}"><b>${p.n}</b>${p.clue}${xLenS(p)}</button>` };
   const idx = d => L.words.map((p, i) => p.d === d ? i : -1).filter(i => i >= 0);
   showModal(`<h2>Pistas</h2>
     <div class="opt-title">→ Horizontales</div>${idx('a').map(item).join('')}
@@ -3505,16 +4143,16 @@ function crossList(){
   });
 }
 function showCrossResult(){
-  const t = mmss(cross.elapsed), best = store.get('ps-cross-best', null), daily = cross.kind === 'daily', n = cross.layout.words.length;
+  const t = mmss(cross.elapsed), best = store.get(xBestKey(), null), daily = cross.kind === 'daily', n = cross.layout.words.length;
   const helps = cross.hints ? `${cross.hints} ${cross.hints === 1 ? 'ayuda' : 'ayudas'}` : 'sin ayudas';
   showModal(`<p class="sub">${xLabel()}</p><h2>¡Crucigrama resuelto!</h2>
     <p>Lo terminaste en</p><div class="code">${t}</div>
-    <p class="sub">${n} palabras · ${helps}${cross.record ? ' · ¡Nuevo récord!' : best ? ` · Tu récord sin ayudas: ${mmss(best)}` : ''}</p>
+    <p class="sub">${n} palabras · ${helps}${cross.record ? ' · ¡Nuevo récord!' : best ? ` · Tu récord ${cross.kind === 'daily' ? (cross.giant ? 'en gigantes' : 'del día') : 'en ' + (XSIZE[cross.size] ? XSIZE[cross.size].label : 'Normal')}: ${mmss(best)}` : ''}</p>
     <p class="sub">Toca una palabra para escucharla</p><div class="xwords">${cross.layout.words.map(p => `<span data-say="${p.w}">${showWord(p.w).toUpperCase()}</span>`).join('')}</div>
     <button class="primary" id="xShare">Compartir resultado</button>
     ${daily ? '<p class="sub">Mañana habrá un crucigrama del día nuevo</p><button class="secondary" id="xFree">Jugar uno libre</button>' : '<button class="secondary" id="xAgain">Otro crucigrama</button>'}
     <button class="secondary" id="leaveBtn">Volver al juego normal</button>`, () => {
-    $('xShare').onclick = () => shareOrCopy(`Palabra Secreta · ${xLabel()}\n🧩 Resuelto en ${t} · ${n} palabras · ${helps}\n¿Me ganas?`, 'Resultado copiado. Pégalo en WhatsApp.');
+    $('xShare').onclick = () => shareOrCopy(`Palabra Secreta · ${xLabel()}\n🧩 Resuelto en ${t} · ${n} palabras${cross.hard ? ' · Difícil' : ''} · ${helps}\n¿Me ganas?`, 'Resultado copiado. Pégalo en WhatsApp.');
     if ($('xFree')) $('xFree').onclick = () => startCross('free', null, true);
     if ($('xAgain')) $('xAgain').onclick = () => startCross(cross.kind === 'friend' ? 'free' : cross.kind, cross.cat, true);
     $('leaveBtn').onclick = () => { closeModal(); goNormal() };
@@ -3570,7 +4208,7 @@ function renderSide(){
   if (PANE[mode] && pane && PANE[mode].side){ el.innerHTML = PANE[mode].side(); return }
   if (mode === 'cross' && cross){
     const L = cross.layout, idx = d => L.words.map((p, i) => p.d === d ? i : -1).filter(i => i >= 0);
-    const item = i => { const p = L.words[i]; return `<button class="xli${xWordOk(i) ? ' done' : ''}${i === cross.sel.w && !cross.done ? ' cur' : ''}" data-si="${i}"><b>${p.n}</b>${p.clue} <small>(${[...p.w].length})</small></button>` };
+    const item = i => { const p = L.words[i]; return `<button class="xli${xDoneW(i) ? ' done' : ''}${i === cross.sel.w && !cross.done ? ' cur' : ''}" data-si="${i}"><b>${p.n}</b>${p.clue}${xLenS(p)}</button>` };
     el.innerHTML = box('→ Horizontales', idx('a').map(item).join('')) + box('↓ Verticales', idx('d').map(item).join('')) + box('Atajos de teclado', keysHelp());
     el.querySelectorAll('[data-si]').forEach(b => b.onclick = () => {
       if (cross.done) return;
@@ -3717,11 +4355,12 @@ function repaintKeys(){
 matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => { if (settings.auto) applySettings() });
 
 // =================== crucigrama: tamaño y largo ===================
-const XSIZE = { easy: { target: 6, max: 9, label: 'Fácil' }, normal: { target: 9, max: 10, label: 'Normal' }, hard: { target: 12, max: 12, label: 'Difícil' }, rand: { label: 'Aleatorio' } };
+const HARD_CLUE = {"perro": "Ladra, mueve la cola y te espera en la puerta.", "tigre": "Gato gigante con pijama de rayas.", "cebra": "Caballo que parece código de barras.", "pulpo": "Tiene tinta pero no escribe, y brazos de sobra.", "caballo": "Lo montan los charros; galopa y relincha.", "elefante": "Nunca olvida, dicen, y bebe con la nariz.", "jirafa": "Ve por encima de los árboles sin subirse a ellos.", "tortuga": "Lleva su casa a cuestas y no tiene prisa.", "ballena": "El gigante de los mares que canta.", "tiburon": "Aleta que asusta a los bañistas.", "pinguino": "Ave de esmoquin que no vuela.", "mariposa": "Antes fue oruga; ahora tiene alas de colores.", "hormiga": "Pequeña, trabajadora y siempre en fila.", "abeja": "Fábrica voladora de miel.", "gallina": "Pone lo que luego desayunas.", "conejo": "Orejón que sale del sombrero del mago.", "ardilla": "Esconde nueces para el invierno.", "camello": "Barco del desierto con jorobas.", "canguro": "Salta y carga a su hijo en una bolsa.", "tecolote": "Pájaro nocturno que, dicen, cuando canta el indio muere.", "zopilote": "Vuela en círculos esperando un banquete.", "ajolote": "Mexicano que sonríe y regenera sus patas.", "colibri": "Bate las alas tan rápido que zumba.", "quetzal": "Su pluma adornaba a los emperadores mayas.", "loro": "Repite todo lo que oye.", "camaleon": "Cambia de color según dónde esté.", "araña": "Teje sin agujas y caza sin moverse.", "caracol": "Va despacio y deja un rastro brillante.", "cangrejo": "Camina de lado y pellizca.", "delfin": "Sonríe, salta y se comunica con chasquidos.", "buho": "Gira la cabeza y vigila de noche.", "aguila": "Está en el escudo de México, sobre un nopal.", "nopal": "Planta del escudo nacional, con tunas.", "maguey": "De él sale el pulque.", "girasol": "Siempre mira hacia donde está el astro rey.", "cactus": "Vive en el desierto y abraza con espinas.", "palmera": "Árbol de playa que da cocos.", "manzana": "Fruta de Blancanieves y de Newton.", "platano": "Fruta amarilla con la que resbalan en las caricaturas.", "naranja": "Fruta y color con el mismo nombre.", "sandia": "Verde por fuera, roja por dentro y con semillas negras.", "aguacate": "Ingrediente principal del guacamole.", "fresa": "Fruta roja; en México, también alguien presumido.", "limon": "Le da su toque al taco y al agua fresca.", "cereza": "Va arriba del pastel y del helado.", "piña": "Fruta con corona.", "mango": "Fruta que se come con chile en un palito.", "cebolla": "Te hace llorar sin estar triste.", "tortilla": "Plato y cuchara a la vez en la comida mexicana.", "tamal": "Viene envuelto en hoja y se acompaña de atole.", "pozole": "Caldo de maíz cacahuazintle para las fiestas patrias.", "horchata": "Agua fresca de arroz con canela.", "churro": "Alargado, frito y con azúcar; se moja en chocolate.", "pastel": "Lleva velitas una vez al año.", "helado": "Se derrite si no te apuras.", "elote": "Mazorca tierna que se come con mayonesa y chile.", "tequila": "Bebida de agave que lleva el nombre de un pueblo de Jalisco.", "cafetera": "Prepara lo que te despierta en la mañana.", "almohada": "Confidente de tus sueños.", "espejo": "Te muestra tal como eres, pero al revés.", "escoba": "Barre el piso y, en los cuentos, vuela.", "paraguas": "Se abre cuando el cielo llora.", "reloj": "Tiene manecillas pero no manos.", "llave": "Abre puertas sin tocar el timbre.", "tijera": "Dos hojas que cortan sin ser árbol.", "vela": "Se consume para alumbrar.", "silla": "Tiene patas pero no camina.", "mesa": "Tiene patas, pero no camina; ahí se come.", "cama": "Tiene cabecera pero no cabeza.", "ventana": "Ojo de la casa que mira hacia afuera.", "puerta": "Se abre para entrar y se cierra para salir.", "escalera": "Sube y baja sin moverse.", "cuchara": "Lleva la sopa a la boca.", "tenedor": "Tiene dientes pero no muerde.", "botella": "Tiene cuello pero no cabeza.", "globo": "Se infla en las fiestas y se escapa al cielo.", "piñata": "Se rompe a palos en las posadas.", "loteria": "El gallo, la dama y el catrín están en sus cartas.", "trompo": "Gira sin cansarse, con una cuerda.", "papalote": "Vuela con el viento atado a un hilo.", "canica": "Bolita de vidrio que se tira con el dedo.", "ajedrez": "Juego de reyes, reinas, torres y caballos.", "domino": "Fichas con puntitos que se van uniendo.", "guitarra": "Seis cuerdas que acompañan las serenatas.", "mariachi": "Grupo con trajes de charro y trompetas.", "trompeta": "Instrumento que se toca soplando con los labios apretados.", "tambor": "Se toca a golpes y marca el ritmo.", "piano": "Teclas blancas y negras.", "violin": "Se toca con un arco, pero no dispara flechas.", "musica": "Arte de los sonidos.", "cancion": "Letra con melodía.", "poema": "Versos que expresan sentimientos.", "cuento": "Historia que empieza con «Había una vez».", "libro": "Tiene hojas pero no es árbol.", "lapiz": "Escribe y se borra; tiene punta y goma.", "cuaderno": "Tiene hojas con rayas y se lleva a la escuela.", "mochila": "Viaja en tu espalda con tus útiles.", "pizarron": "Donde la maestra escribe con gis.", "escuela": "Lugar de clases, recreo y tareas.", "maestro": "Enseña, califica y deja tarea.", "doctor": "Te dice «abre la boca y di aaa».", "bombero": "Apaga incendios y rescata gatos de los árboles.", "policia": "Cuida el orden y lleva placa.", "cartero": "Trae cartas hasta tu puerta.", "payaso": "Nariz roja y zapatos enormes.", "pirata": "Pata de palo, parche y tesoro.", "vaquero": "Monta a caballo y usa sombrero en el oeste.", "princesa": "Hija del rey en los cuentos.", "fantasma": "Espíritu que asusta con sábana.", "vampiro": "No se ve en el espejo y teme al ajo.", "sirena": "Mitad mujer, mitad pez.", "bruja": "Vuela en escoba y prepara pociones.", "gigante": "Tan alto que las nubes le hacen cosquillas.", "duende": "Pequeño travieso de los cuentos.", "dragon": "Echa fuego y guarda tesoros.", "abuelo": "Papá de tu papá o de tu mamá.", "hermano": "Comparte contigo a tus papás.", "madrina": "Te acompaña en el bautizo y te regala.", "compadre": "Así se llaman entre sí los padres y el padrino.", "posada": "Fiesta navideña con piñata y villancicos.", "calavera": "Verso burlón o dulce de azúcar en noviembre.", "ofrenda": "Altar con cempasúchil, pan y velas para los muertos.", "catrina": "Dama elegante que en realidad es calaca.", "alebrije": "Animal fantástico de colores, de Oaxaca.", "rebozo": "Prenda mexicana que también carga bebés.", "sombrero": "Corona del charro.", "huarache": "Calza los pies y también se come con salsa.", "zapato": "Se amarra con agujetas.", "bufanda": "Abraza tu cuello en invierno.", "chamarra": "Te abriga cuando hace frío.", "pijama": "Ropa para ir a soñar.", "corbata": "Nudo elegante en el cuello.", "anillo": "Se pone en el dedo para decir «sí, acepto».", "luna": "Cambia de cara cada noche y mueve las mareas.", "estrella": "Brilla de noche y se le piden deseos cuando cae.", "nube": "Algodón del cielo que a veces llora.", "lluvia": "Agua que cae del cielo.", "arcoiris": "Puente de colores después de la lluvia.", "trueno": "Ruido del cielo que sigue al relámpago.", "rayo": "Luz que cae del cielo en las tormentas.", "volcan": "Montaña con mal genio que echa fuego.", "montaña": "Tierra que quiso tocar el cielo.", "desierto": "Mar de arena sin agua.", "oceano": "Agua salada que cubre casi toda la Tierra.", "playa": "Arena, olas y sol.", "isla": "Tierra rodeada de agua por todos lados.", "bosque": "Muchos árboles juntos.", "selva": "Casa del jaguar y del mono, húmeda y verde.", "cascada": "Río que se tira al vacío.", "cenote": "Pozo de agua cristalina en Yucatán.", "invierno": "Estación del frío y la Navidad.", "verano": "Estación de vacaciones y calor.", "otoño": "Estación en que caen las hojas.", "corazon": "Late en tu pecho y simboliza el amor.", "cerebro": "Piensa por ti.", "estomago": "Ruge cuando tienes hambre.", "pulmon": "Se llena de aire al respirar.", "rodilla": "Se dobla para hincarte.", "ombligo": "Recuerdo de cuando estabas unido a mamá.", "nariz": "Huele, estornuda y sostiene los lentes.", "lengua": "Prueba sabores y ayuda a hablar.", "diente": "Se cae de niño y lo cambia el ratón.", "pestaña": "Si se te cae, pide un deseo.", "bigote": "Pelo sobre la boca.", "avion": "Pájaro de metal que lleva pasajeros.", "cohete": "Sube hasta el espacio echando fuego.", "barco": "Flota en el mar con muchas personas.", "tren": "Corre sobre rieles y hace «chu chu».", "semaforo": "Verde, amarillo y rojo en la esquina.", "gasolina": "Comida de los coches.", "camion": "En México, transporte público grande.", "metro": "Tren que viaja bajo la ciudad.", "telefono": "Hablas con alguien lejano a través de él.", "celular": "Teléfono que llevas en el bolsillo.", "internet": "Red que conecta a todo el mundo.", "robot": "Máquina que imita a una persona.", "camara": "Atrapa momentos en fotos.", "amistad": "Cariño entre amigos.", "alegria": "Lo que sientes cuando todo sale bien.", "tristeza": "Sentimiento que llega con las lágrimas.", "miedo": "Lo que sientes en una película de terror.", "sorpresa": "Lo que da un regalo inesperado.", "secreto": "Algo que no se debe contar.", "mentira": "Tiene patas cortas, según el dicho.", "verdad": "Lo contrario de la mentira.", "sueño": "Película que ves con los ojos cerrados.", "recuerdo": "Lo que la memoria guarda del pasado.", "silencio": "Lo que se rompe al hablar.", "suerte": "Se busca con un trébol de cuatro hojas.", "tiempo": "Oro, según el dicho, y lo marca el reloj.", "mañana": "El día que sigue a hoy.", "domingo": "Día de descanso.", "familia": "Los que comparten tu apellido y tu mesa.", "hogar": "Dulce, según el dicho.", "mercado": "Lugar de puestos con frutas y verduras.", "tianguis": "Mercado sobre ruedas que se pone un día a la semana.", "piramide": "Construcción de piedra de Teotihuacán y Egipto.", "castillo": "Tiene torres y foso; ahí viven reyes.", "hospital": "Donde curan a los enfermos.", "museo": "Guarda tesoros del arte y la historia.", "estadio": "Donde se grita «¡gol!».", "iglesia": "Tiene campanario y se va a misa.", "panteon": "Donde descansan los muertos.", "futbol": "Once contra once detrás de un balón.", "beisbol": "Se batea, se corre y se busca el jonrón.", "boxeo": "Deporte de guantes y cuadrilátero.", "natacion": "Deporte que se practica en la alberca.", "karate": "Arte marcial de cinturones de colores.", "alberca": "Piscina.", "columpio": "Va y viene en el parque.", "chicle": "Se masca y se hace bomba.", "popote": "Tubito para sorber.", "chamba": "Trabajo, dicho en México.", "apapacho": "Abrazo mexicano lleno de cariño.", "neta": "Verdad, dicho en México.", "cuate": "Amigo, dicho en México.", "chido": "Bueno o bonito, dicho en México.", "orale": "Expresión mexicana de asombro o de ánimo.", "chisme": "Se cuenta en voz baja sobre otros.", "fonda": "Restaurante de comida corrida.", "milpa": "Sembradío de maíz, frijol y calabaza.", "copal": "Humo aromático de las ofrendas.", "cajeta": "Dulce de Celaya.", "mezcal": "Bebida de Oaxaca hecha de agave.", "charro": "Jinete mexicano con traje de botonadura.", "balero": "Juguete de embocar una bola en un palo.", "tuna": "Fruto con espinas del nopal.", "tope": "Bordo que obliga a frenar.", "combi": "Transporte colectivo que va repleto.", "jaiba": "Cangrejo que se come en caldo.", "mamey": "Fruta café por fuera y anaranjada por dentro.", "rosca": "Pan del 6 de enero con muñequito.", "enero": "Mes de la cuesta y de los propósitos.", "abril": "Mes de lluvias, según el dicho.", "lunes": "Primer día de la semana, el más pesado.", "siete": "Días de la semana o colores del arcoíris.", "cinco": "Dedos de una mano.", "verde": "Color de la esperanza.", "negro": "Color del carbón.", "blanco": "Color de la paz.", "amarillo": "Color del canario y del pollito.", "atomo": "Pedacito de la materia que no se ve.", "fosil": "Huella de piedra de un ser antiguo.", "iman": "Atrae los clavos.", "brujula": "Siempre señala hacia el norte.", "planeta": "Gira alrededor del sol.", "galaxia": "Remolino de millones de estrellas.", "eclipse": "Cuando la luna tapa al sol.", "cometa": "Astro con cola brillante.", "oxigeno": "Lo respiras sin darte cuenta.", "energia": "Lo que se gasta al moverse.", "semilla": "De ella nace una planta.", "raiz": "Bebe agua bajo la tierra.", "polen": "Polvito dorado que llevan las abejas.", "virus": "Diminuto invasor que causa la gripe.", "examen": "Prueba que pone nervioso al alumno.", "recreo": "El mejor momento de la escuela.", "palabra": "Lo que buscas en este juego.", "historia": "Lo que ya pasó y se estudia.", "leyenda": "Relato de la Llorona o del Chupacabras.", "fabula": "Cuento con moraleja.", "opera": "Teatro cantado.", "telon": "Se abre al empezar la función.", "mural": "Pintura en la pared, como las de Diego Rivera.", "mascara": "La usa el luchador.", "disfraz": "Lo que te pones en Halloween.", "marimba": "Instrumento de teclas de madera de Chiapas.", "cumbia": "Música para bailar en fiestas.", "trineo": "Lo jalan los renos de Santa.", "claxon": "Suena en el tráfico.", "caseta": "Donde se paga en la autopista.", "cuadra": "Distancia entre dos esquinas.", "huerto": "Jardín de verduras.", "corral": "Casa de las gallinas y los cerdos.", "establo": "Donde duermen las vacas.", "cumbre": "Lo más alto de la montaña.", "sierra": "Cordillera o herramienta de dientes.", "tundra": "Tierra helada sin árboles.", "avispa": "Prima enojona de la abeja.", "buitre": "Ave carroñera de cuello pelón.", "condor": "Gigante alado de los Andes.", "faisan": "Ave elegante de cola larga.", "caiman": "Primo del cocodrilo.", "trucha": "Pez de los ríos fríos.", "piraña": "Pez de dientes afilados del Amazonas.", "castor": "Arquitecto de presas en los ríos.", "ballet": "Danza en puntas.", "pincel": "Herramienta del pintor.", "lienzo": "Tela donde nace un cuadro.", "abrazo": "Se da con los brazos.", "sonrisa": "Se dibuja en la cara cuando estás feliz.", "lagrima": "Gota salada que sale de los ojos.", "cabello": "Lo que corta el peluquero.", "memoria": "Guarda lo que vives.", "flojera": "Ganas de no hacer nada.", "victoria": "Triunfo.", "castigo": "Consecuencia de portarse mal.", "milagro": "Hecho que nadie puede explicar.", "treinta": "Días que tiene noviembre.", "catorce": "Día del amor en febrero.", "ecuador": "Línea que parte la Tierra en dos.", "diploma": "Papel que recibes al graduarte.", "pupitre": "Mesa del alumno.", "cristal": "Transparente y frágil.", "plastico": "Material de las botellas que hay que reciclar.", "aluminio": "Metal de las latas de refresco.", "bacteria": "Ser diminuto; algunas ayudan y otras enferman.", "saxofon": "Instrumento dorado del jazz.", "armonica": "Instrumento de bolsillo que se sopla.", "retrato": "Pintura de una cara.", "estatua": "No se mueve, aunque parezca persona.", "acuarela": "Pintura que se mezcla con agua.", "talavera": "Cerámica azul de Puebla.", "veladora": "Vela en vaso de vidrio.", "antojito": "Sope, gordita o quesadilla.", "itacate": "Comida para el camino.", "camellon": "Franja en medio de la avenida.", "muegano": "Dulce de galletitas pegadas.", "rompope": "Bebida de yema con canela.", "tepache": "Bebida de cáscara de piña.", "jamaica": "Agua fresca roja de flor.", "raspado": "Hielo con jarabe de sabor.", "capulin": "Frutita parecida a la cereza.", "tejocote": "Frutita del ponche navideño.", "coliflor": "Brócoli blanco.", "matatena": "Juego de lanzar una pelota y recoger piezas.", "chimuelo": "Al que le falta un diente.", "tapatio": "De Guadalajara.", "jarocho": "De Veracruz.", "pantufla": "Calzado de casa.", "anteojos": "Ayudan a ver mejor.", "serrucho": "Corta madera con dientes.", "taladro": "Hace agujeros girando.", "engrane": "Rueda dentada.", "cascabel": "Serpiente que suena la cola.", "perezoso": "El animal más lento de la selva.", "catarina": "Insecto rojo de puntitos negros.", "pollito": "Hijo amarillo de la gallina.", "tortola": "Ave pequeña parecida a la paloma.", "bacalao": "Pescado de la cena navideña.", "lenguado": "Pez plano de ojos juntos.", "calamar": "Pariente del pulpo con diez brazos.", "luchador": "Atleta de máscara y llaves.", "azafata": "Atiende en el avión.", "taxista": "Chofer de coche amarillo o rosa.", "alfarero": "Trabaja el barro.", "escultor": "Hace estatuas.", "cirujano": "Opera con bisturí.", "pediatra": "Doctor de niños.", "quimica": "Ciencia de las mezclas y reacciones.", "biologia": "Ciencia de la vida."};
+const XSIZE = { easy: { target: 7, max: 9, label: 'Fácil', sub: '7 palabras' }, normal: { target: 10, max: 11, label: 'Normal', sub: '10 palabras' }, hard: { target: 13, max: 12, label: 'Difícil', sub: 'Sin ayudas' }, rand: { label: 'Aleatorio', sub: '7 a 13' } };
 const XLEN = { short: { lens: [4, 5], label: 'Cortas', sub: '4–5' }, medium: { lens: [6, 7], label: 'Medianas', sub: '6–7' }, long: { lens: [7, 8], label: 'Largas', sub: '7–8' }, rand: { lens: null, label: 'Aleatorio', sub: '4–8' } };
 function xOpts(size, rand){
-  if (size === 'giant') return { target: 14, max: 12 };
-  if (size === 'rand'){ const t = 6 + Math.floor(rand() * 7); return { target: t, max: t > 9 ? 12 : 10 } }
+  if (size === 'giant') return { target: 16, max: 13 };
+  if (size === 'rand'){ const t = 7 + Math.floor(rand() * 7); return { target: t, max: t > 10 ? 12 : 10 } }
   return XSIZE[size] || XSIZE.normal;
 }
 
@@ -3734,29 +4373,39 @@ const SOUP_DIFF = {
 };
 const LETTER_FREQ = 'aaaaaaaaaaaeeeeeeeeeeeoooooooosssssssrrrrrrnnnnnniiiiiiddddllllllcccccttttuuuummmmppbbggvyqhfzjñ';
 function sopaGen(cands, rand, N, dirs, count){
-  const g = Array.from({ length: N }, () => Array(N).fill('')), placed = [];
+  for (let i = 0; i < 12; i++) rand();
+  const g = Array.from({ length: N }, () => Array(N).fill('')), placed = [], use = dirs.map(() => 0);
   for (const w of cands.slice().sort((a, b) => [...b].length - [...a].length)){
     if (placed.length >= count) break;
     const L = [...w];
-    for (let t = 0; t < 200; t++){
-      const [dr, dc] = dirs[Math.floor(rand() * dirs.length)];
-      const r0 = Math.floor(rand() * N), c0 = Math.floor(rand() * N), r1 = r0 + dr * (L.length - 1), c1 = c0 + dc * (L.length - 1);
-      if (r1 < 0 || r1 >= N || c1 < 0 || c1 >= N) continue;
-      if (L.every((ch, i) => { const v = g[r0 + dr * i][c0 + dc * i]; return !v || v === ch })){
-        L.forEach((ch, i) => g[r0 + dr * i][c0 + dc * i] = ch); placed.push({ w, r: r0, c: c0, dr, dc }); break;
+    // primero las direcciones menos usadas, para que haya horizontales, verticales y diagonales por igual
+    const order = dirs.map((d, i) => [use[i] + rand() * .9, i]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
+    for (const di of order){
+      const [dr, dc] = dirs[di], opts = [];
+      for (let r0 = 0; r0 < N; r0++) for (let c0 = 0; c0 < N; c0++){
+        const r1 = r0 + dr * (L.length - 1), c1 = c0 + dc * (L.length - 1);
+        if (r1 < 0 || r1 >= N || c1 < 0 || c1 >= N) continue;
+        let ok = true, cross = 0;
+        for (let i = 0; i < L.length; i++){ const v = g[r0 + dr * i][c0 + dc * i]; if (v && v !== L[i]){ ok = false; break } if (v) cross++ }
+        if (ok && cross < L.length) opts.push([r0, c0, cross]);
       }
+      if (!opts.length) continue;
+      const pick = (rand() < .35 && opts.some(o => o[2])) ? opts.filter(o => o[2]) : opts;
+      const [r0, c0] = pick[Math.floor(rand() * pick.length)];
+      L.forEach((ch, i) => g[r0 + dr * i][c0 + dc * i] = ch); placed.push({ w, r: r0, c: c0, dr, dc }); use[di]++;
+      break;
     }
   }
   for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if (!g[r][c]) g[r][c] = LETTER_FREQ[Math.floor(rand() * LETTER_FREQ.length)];
   placed.sort((a, b) => a.w.localeCompare(b.w));
-  return { N, g, words: placed };
+  return { N, g, words: placed, gv: 2 };
 }
 const soupLabel = () => pane.kind === 'friend' ? 'Sopa de letras de tu amigo' : pane.kind === 'daily' ? `Sopa de letras del día ${new Date().getDate()}/${new Date().getMonth() + 1}` : pane.cat ? `Sopa de letras de ${CATS[pane.cat]}` : 'Sopa de letras libre';
 const soupShort = () => pane.kind === 'friend' ? 'De tu amigo' : pane.kind === 'daily' ? 'Del día' : pane.cat ? CATS[pane.cat] : SOUP_DIFF[pane.diff].label;
 function openSoup(){
   const d = store.get('ps-sopa-' + todayKey(), null);
   showModal(`<h2>Sopa de letras</h2>
-    <p>Encuentra las palabras escondidas. Arrastra el dedo (o el mouse) desde la primera hasta la última letra, o toca la primera y luego la última.</p>
+    <p>Encuentra las palabras escondidas: pueden ir en horizontal, vertical o diagonal (en Difícil también al revés). Arrastra el dedo (o el mouse) desde la primera hasta la última letra, o toca la primera y luego la última.</p>
     <div class="menu">
       <button id="sD">Sopa del día<small>${d && d.done ? `Resuelta en ${mmss(d.elapsed)} ✓` : d ? 'Continuar donde la dejaste' : 'La misma para todos; compara tu tiempo'}</small></button>
       <button id="sF">Sopa libre<small>Una nueva de todos los temas</small></button>
@@ -3777,6 +4426,7 @@ function startSoup(kind, catKey, fresh){
   const key = kind === 'daily' ? 'ps-sopa-' + todayKey() : 'ps-sopa-free';
   let st = store.get(key, null);
   if (kind !== 'daily' && st && (fresh || st.done)) st = null;
+  if (kind === 'daily' && st && !st.done && st.data && st.data.gv !== 2) st = null;
   if (!st || !st.data){
     const diff = kind === 'daily' ? 'normal' : (settings.sDiff || 'normal'), D = SOUP_DIFF[diff];
     const rand = xrng(kind === 'daily' ? hash('sopa' + todayKey()) : Math.floor(Math.random() * 4e9));
@@ -3796,9 +4446,11 @@ function startSoup(kind, catKey, fresh){
 }
 let sSel = null, sTap = null;
 function soupLine(s){
-  const lr = Math.abs(s.r1 - s.r0), lc = Math.abs(s.c1 - s.c0);
-  if (lr && lc && lr !== lc) return null;
-  const dr = Math.sign(s.r1 - s.r0), dc = Math.sign(s.c1 - s.c0), n = Math.max(lr, lc) + 1;
+  const y = s.r1 - s.r0, x = s.c1 - s.c0, N = pane && pane.data ? pane.data.N : 99;
+  if (!x && !y) return [[s.r0, s.c0]];
+  const oct = Math.round(Math.atan2(y, x) / (Math.PI / 4)), dr = Math.round(Math.sin(oct * Math.PI / 4)), dc = Math.round(Math.cos(oct * Math.PI / 4));
+  let n = Math.max(Math.abs(y), Math.abs(x)) + 1;
+  while (n > 1 && !(s.r0 + dr * (n - 1) >= 0 && s.r0 + dr * (n - 1) < N && s.c0 + dc * (n - 1) >= 0 && s.c0 + dc * (n - 1) < N)) n--;
   return Array.from({ length: n }, (_, i) => [s.r0 + dr * i, s.c0 + dc * i]);
 }
 const soupCell = (r, c) => $('soup').querySelector(`[data-r="${r}"][data-c="${c}"]`);
@@ -4153,7 +4805,7 @@ primera primeros segunda tercera quinto sexto sobre bajo hacia desde hasta segun
   .split(/\s+/).filter(w => { const n = [...w].length; return n >= 4 && n <= 8 }).forEach(w => DICT.add(w));
 
 // =================== utilidades ===================
-function giveaway(a){ const L = [...a.w], st = L.slice(0, Math.max(4, L.length - 1)).join(''); return norm(a.d).includes(st) }
+function giveaway(a){ const L = [...a.w], d = norm(a.d); return d.includes(L.slice(0, Math.max(4, L.length - 1)).join('')) || (L.length >= 7 && d.includes(L.slice(0, Math.max(5, Math.ceil(L.length * .6))).join(''))) }
 const shuffle = arr => arr.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
 const barEl = document.querySelector('.bar');
 const srEl = document.createElement('div'); srEl.className = 'sr'; srEl.setAttribute('aria-live', 'polite'); document.body.appendChild(srEl);
@@ -4322,7 +4974,7 @@ function openStats(){
   const xb = store.get('ps-cross-best', null), sb = store.get('ps-sopa-best', null), mb = store.get('ps-memo-best', null);
   const m0 = special() ? baseMode() : mode;
   const rows = [
-    ['🧩', 'Crucigramas', `${c2.cross || 0} resueltos${xb ? ` · récord ${mmss(xb)}` : ''}`],
+    ['🧩', 'Crucigramas', `${c2.cross || 0} resueltos${xb ? ` · récord ${mmss(xb)}` : ''}<br>${[['easy', 'Fácil'], ['normal', 'Normal'], ['hard', 'Difícil'], ['daily', 'Del día'], ['giant', 'Gigante']].map(([k, n]) => `${n} ${store.get('ps-cross-best-' + k, null) ? mmss(store.get('ps-cross-best-' + k, null)) : '—'}`).join(' · ')}`],
     ['🔎', 'Sopas de letras', `${c2.soup || 0} resueltas${sb ? ` · récord ${mmss(sb)}` : ''}`],
     ['❓', '¿Qué significa?', `Mejor: ${store.get('ps-quiz-best', 0)} de 10`],
     ['🃏', 'Memorama', mb ? `Mejor: ${mb} movimientos` : 'Sin jugar'],
@@ -4411,17 +5063,34 @@ function confirmLeave(){
     ex.onclick = confirmLeave;
     if ($('mlNew')) $('mlNew').onclick = () => $('newBtn').onclick();
     if ($('mlPause')) $('mlPause').onclick = pauseGame;
-    if ($('mlZoom')) $('mlZoom').onclick = () => { cross.zoom = !cross.zoom; modeLine(); crossRender() };
+    if ($('mlZoom')) $('mlZoom').onclick = () => { cross.zoom = !cross.zoom; cross.zoomSet = true; modeLine(); crossRender() };
+    if (mode === 'cross' && xPC()){
+      ex.insertAdjacentHTML('beforebegin', `<button id="mlKb" aria-pressed="${!!settings.pcKb}" title="Mostrar u ocultar el teclado en pantalla">⌨️ Teclado</button> `);
+      $('mlKb').onclick = () => { settings.pcKb = !settings.pcKb; store.set('ps-settings', settings); modeLine(); crossRender() };
+    }
+    if (mode === 'cross' && innerWidth < 600){
+      const extra = ['mlNew', 'mlZoom', 'mlPause'].filter(id => $(id));
+      if (extra.length > 1){
+        const acts = { mlNew: ['↻ Otro crucigrama', () => $('newBtn').onclick()], mlZoom: [cross.zoom ? '🔍 Ver todo el crucigrama' : '🔍 Ampliar las casillas', () => { cross.zoom = !cross.zoom; cross.zoomSet = true; modeLine(); crossRender() }], mlPause: ['⏸ Pausar', pauseGame] };
+        extra.forEach(id => $(id).remove());
+        ex.insertAdjacentHTML('beforebegin', '<button id="mlMore" aria-label="Más opciones">⋯</button> ');
+        $('mlMore').onclick = () => showModal(`<h2>Opciones</h2><div class="menu">${extra.map(id => `<button data-mo="${id}">${acts[id][0]}</button>`).join('')}<button data-mo="help">💡 Ayudas</button></div><button class="secondary" id="closeBtn">Cerrar</button>`, () => {
+          document.querySelectorAll('[data-mo]').forEach(b => b.onclick = () => { const id = b.dataset.mo; closeModal(); if (id === 'help') return crossHelp(); if (id === 'mlPause') return pauseGame(); acts[id][1]() });
+        });
+      }
+    }
   }
+  if (mode === 'cross'){ const pc = xPC(); $('clueBar').hidden = pc; kb.hidden = pc && !settings.pcKb }
   sizeBoard();
 } }
+const xPC = () => innerWidth >= 900 && matchMedia('(pointer: fine)').matches;
 
 // =================== crucigrama gigante: ampliar en teléfono ===================
 { const cs = crossSize; crossSize = () => {
   cs();
   const L = cross.layout, w = wrap.clientWidth, h = wrap.clientHeight - 12;
   let s = parseInt(getComputedStyle($('xgrid')).getPropertyValue('--cell')) || 30;
-  if (cross.zoom === undefined) cross.zoom = s < 30 && innerWidth < 900;
+  if (!cross.zoomSet) cross.zoom = s < 30 && innerWidth < 900;
   if (cross.zoom) s = Math.max(s, 36);
   $('xgrid').style.setProperty('--cell', s + 'px');
   wrap.classList.toggle('xscroll', !!cross.zoom && (s * L.W + 3 * L.W > w || s * L.H + 3 * L.H > h));
@@ -4599,82 +5268,219 @@ PANE.memo = {
 };
 
 // =================== modo niños ===================
-const KIDS = ('gato🐱 perro🐶 vaca🐮 pato🦆 pez🐟 oso🐻 león🦁 tigre🐯 mono🐵 cerdo🐷 rana🐸 pollo🐥 abeja🐝 conejo🐰 ratón🐭 lobo🐺 zorro🦊 búho🦉 pulpo🐙 ballena🐳 tortuga🐢 caracol🐌 cebra🦓 jirafa🦒 camello🐫 delfín🐬 tiburón🦈 gallo🐓 caballo🐴 ' +
-  'sol☀️ luna🌙 estrella⭐ nube☁️ nieve❄️ flor🌸 árbol🌳 hoja🍃 fuego🔥 agua💧 casa🏠 carro🚗 tren🚆 avión✈️ barco⛵ cohete🚀 reloj⌚ libro📖 lápiz✏️ llave🔑 regalo🎁 globo🎈 pelota⚽ taza☕ ' +
-  'pan🍞 queso🧀 huevo🥚 leche🥛 manzana🍎 plátano🍌 uva🍇 fresa🍓 piña🍍 limón🍋 sandía🍉 pera🍐 cereza🍒 elote🌽 tomate🍅 pizza🍕 taco🌮 helado🍦 pastel🎂 dulce🍬 galleta🍪 ' +
-  'mano✋ pie🦶 boca👄 nariz👃 oreja👂 corazón❤️ rey🤴 reina👸 bebé👶 payaso🤡 robot🤖 dado🎲 tambor🥁 guitarra🎸 piano🎹 cama🛏️ silla🪑 puerta🚪')
-  .split(' ').map(t => { const m = /^([a-záéíóúüñ]+)(.+)$/u.exec(t); return m ? { s: m[1], w: norm(m[1]), e: m[2] } : null }).filter(Boolean);
-function openKids(){
-  showModal(`<h2>🧸 Modo niños</h2>
-    <p>Mira el dibujo y arma su nombre tocando las letras en orden. No hay tiempo ni se pierde: cada palabra completa gana una ⭐.</p>
-    <p class="sub">Estrellas: ${store.get('ps-kids-stars', 0)} ⭐</p>
-    <div class="opt-title">¿Qué tan largas?</div>
-    <div class="pick-len row3"><button data-kd="4">Cortas<small>hasta 4 letras</small></button><button data-kd="6">Medianas<small>hasta 6 letras</small></button><button data-kd="9">Todas<small>de todo</small></button></div>
-    <button class="secondary" id="closeBtn">Cancelar</button>`, () => { document.querySelectorAll('[data-kd]').forEach(b => b.onclick = () => startKids(+b.dataset.kd)) });
+const KIDS_CATS = {
+  animales: ['Animales', '🐶', 'gato🐱 perro🐶 vaca🐮 pato🦆 pez🐟 oso🐻 león🦁 tigre🐯 mono🐵 cerdo🐷 rana🐸 pollito🐥 abeja🐝 conejo🐰 ratón🐭 lobo🐺 zorro🦊 búho🦉 pulpo🐙 ballena🐳 tortuga🐢 caracol🐌 cebra🦓 jirafa🦒 camello🐫 dromedario🐪 delfín🐬 tiburón🦈 gallo🐓 gallina🐔 caballo🐴 elefante🐘 koala🐨 panda🐼 pingüino🐧 águila🦅 cisne🦢 loro🦜 pavo🦃 hormiga🐜 araña🕷️ mariposa🦋 gusano🐛 cangrejo🦀 langosta🦞 camarón🦐 calamar🦑 foca🦭 nutria🦦 cocodrilo🐊 serpiente🐍 lagartija🦎 dinosaurio🦕 hipopótamo🦛 gorila🦍 ardilla🐿️ erizo🦔 murciélago🦇 cabra🐐 oveja🐑 llama🦙 canguro🦘 mapache🦝 tejón🦡 castor🦫 bisonte🦬 mamut🦣 jabalí🐗 venado🦌 flamenco🦩 pavorreal🦚 paloma🕊️ grillo🦗 mosca🪰 mosquito🦟 catarina🐞 escarabajo🪲 cucaracha🪳 lombriz🪱 alacrán🦂 pájaro🐦 dragón🐉 unicornio🦄 hámster🐹 buey🐂 leopardo🐆 zorrillo🦨'],
+  comida: ['Comida', '🍕', 'pan🍞 queso🧀 huevo🥚 leche🥛 pizza🍕 taco🌮 helado🍦 pastel🎂 dulce🍬 galleta🍪 elote🌽 sopa🍲 arroz🍚 sándwich🥪 burrito🌯 tamal🫔 papas🍟 palomitas🍿 salchicha🌭 tocino🥓 pollo🍗 carne🥩 espagueti🍝 ensalada🥗 miel🍯 chocolate🍫 paleta🍭 dona🍩 pay🥧 flan🍮 café☕ jugo🧃 refresco🥤 hielo🧊 sal🧂 pastelito🧁 tortilla🫓 frijoles🫘 sushi🍣 bolillo🥖 cuerno🥐 empanada🥟 camote🍠 sartén🍳 biberón🍼'],
+  frutas: ['Frutas y verduras', '🍎', 'manzana🍎 plátano🍌 uva🍇 fresa🍓 piña🍍 limón🍋 sandía🍉 pera🍐 cereza🍒 durazno🍑 mango🥭 naranja🍊 melón🍈 coco🥥 kiwi🥝 aguacate🥑 zanahoria🥕 brócoli🥦 papa🥔 pepino🥒 chile🌶️ ajo🧄 cebolla🧅 lechuga🥬 berenjena🍆 cacahuate🥜 castaña🌰 pimiento🫑 arándano🫐 aceituna🫒 tomate🍅'],
+  ropa: ['Ropa', '👕', 'camisa👔 playera👕 vestido👗 pantalón👖 calcetín🧦 zapato👞 tenis👟 bota👢 sombrero👒 gorra🧢 bufanda🧣 guantes🧤 abrigo🧥 corona👑 lentes👓 bolsa👜 mochila🎒 anillo💍 chancla🩴 sandalia👡 kimono👘 paraguas☂️ labial💄 tacón👠 bata🥼 casco⛑️ chaleco🦺'],
+  transporte: ['Transporte', '🚗', 'carro🚗 tren🚆 avión✈️ barco⛵ cohete🚀 camión🚌 taxi🚕 moto🏍️ bicicleta🚲 patineta🛹 ambulancia🚑 patrulla🚓 tractor🚜 lancha🚤 ancla⚓ semáforo🚦 tranvía🚋 metro🚇 camioneta🚙 llanta🛞 gasolina⛽ paracaídas🪂 canoa🛶 ovni🛸 trineo🛷 patines🛼 bomberos🚒'],
+  casa: ['Casa', '🏠', 'casa🏠 cama🛏️ silla🪑 puerta🚪 llave🔑 reloj⌚ libro📖 taza☕ vela🕯️ foco💡 sofá🛋️ espejo🪞 ventana🪟 escoba🧹 cubeta🪣 jabón🧼 esponja🧽 regadera🚿 tina🛁 inodoro🚽 tijeras✂️ martillo🔨 caja📦 cuchara🥄 tenedor🍴 cuchillo🔪 plato🍽️ teléfono☎️ celular📱 tele📺 radio📻 cámara📷 buzón📫 carta✉️ campana🔔 cepillo🪥 imán🧲 escalera🪜 canasta🧺 regalo🎁 globo🎈 osito🧸 robot🤖 candado🔒 brújula🧭'],
+  escuela: ['Escuela', '✏️', 'lápiz✏️ regla📏 crayón🖍️ pincel🖌️ pluma🖊️ cuaderno📓 clip📎 mapa🗺️ ábaco🧮 lupa🔍 telescopio🔭 carpeta📁 calendario📅 escuela🏫 medalla🏅 trofeo🏆 tachuela📌 microscopio🔬'],
+  juegos: ['Juegos y deportes', '⚽', 'balón⚽ béisbol⚾ bolos🎳 dardo🎯 ajedrez♟️ piñata🪅 papalote🪁 yoyo🪀 dado🎲 esquí🎿 raqueta🏸 tambor🥁 rompecabezas🧩 videojuego🎮 bate🏏 red🥅'],
+  naturaleza: ['Naturaleza', '🌳', 'sol☀️ luna🌙 estrella⭐ nube☁️ nieve❄️ flor🌸 árbol🌳 hoja🍃 fuego🔥 agua💧 rayo⚡ arcoíris🌈 lluvia🌧️ viento🌬️ tornado🌪️ ola🌊 volcán🌋 montaña⛰️ isla🏝️ playa🏖️ desierto🏜️ cactus🌵 palmera🌴 pino🌲 rosa🌹 girasol🌻 tulipán🌷 hongo🍄 trébol🍀 piedra🪨 mundo🌍 cometa☄️ planeta🪐 planta🌱 espiga🌾 concha🐚 huella🐾 burbuja🫧'],
+  cuerpo: ['Cuerpo', '✋', 'mano✋ pie🦶 boca👄 nariz👃 oreja👂 corazón❤️ ojo👁️ diente🦷 hueso🦴 cerebro🧠 pierna🦵 brazo💪 lengua👅 pulmones🫁 uña💅 dedo☝️'],
+  personas: ['Personas', '👧', 'rey🤴 reina👸 bebé👶 payaso🤡 bombero🧑‍🚒 doctora👩‍⚕️ maestra👩‍🏫 cocinero🧑‍🍳 granjero🧑‍🌾 policía👮 astronauta🧑‍🚀 pintora👩‍🎨 piloto🧑‍✈️ hada🧚 sirena🧜‍♀️ mago🧙 vampiro🧛 fantasma👻 abuela👵 abuelo👴 niña👧 niño👦 ángel👼 vaquero🤠 superhéroe🦸 ninja🥷 bailarina💃 marciano👽 mecánico🧑‍🔧 científica👩‍🔬'],
+  musica: ['Música y fiesta', '🎸', 'guitarra🎸 piano🎹 violín🎻 trompeta🎺 micrófono🎤 acordeón🪗 música🎵 pintura🎨 teatro🎭 boleto🎫 fiesta🎉 bandera🚩 castillo🏰 tienda⛺ moneda🪙 dinero💵 diamante💎 escudo🛡️ confeti🎊 farol🏮 cine🎬']
+};
+const KIDS = Object.entries(KIDS_CATS).flatMap(([c, [, , str]]) => str.split(' ').map(t => {
+  const m = /^([a-záéíóúüñ]+)([^a-záéíóúüñ].*)$/u.exec(t); return m ? { s: m[1], w: norm(m[1]), e: m[2], c } : null;
+}).filter(Boolean)).filter((k, i, a) => a.findIndex(x => x.w === k.w) === i);
+// separar en sílabas (reglas del español, suficiente para palabras de niños)
+function silabas(word){
+  const s = [...word.toLowerCase()], V = 'aeiouáéíóúü', strong = 'aeoáéíóú', isV = ch => V.includes(ch);
+  const U = []; // unidades: dígrafos ch, ll, rr y qu/gu delante de e, i
+  for (let i = 0; i < s.length; i++){
+    const two = s[i] + (s[i + 1] || '');
+    if (['ch', 'll', 'rr'].includes(two)){ U.push(two); i++ }
+    else if ((two === 'qu' || two === 'gu') && 'eéií'.includes(s[i + 2] || '')){ U.push(two); i++ }
+    else U.push(s[i]);
+  }
+  const isVu = u => u.length === 1 && isV(u);
+  const out = []; let cur = '', i = 0;
+  const insep = (a, b) => /^[bcdfgkpt]$/.test(a) && /^[lr]$/.test(b) && !(a === 'd' && b === 'l');
+  while (i < U.length){
+    // consonantes iniciales + núcleo vocálico
+    while (i < U.length && !isVu(U[i])) cur += U[i++];
+    while (i < U.length && isVu(U[i])){
+      cur += U[i]; const a = U[i], b = U[i + 1];
+      if (b && isVu(b) && ((strong.includes(a) && strong.includes(b)) || 'íú'.includes(b) || 'íú'.includes(a))){ i++; break }
+      i++;
+    }
+    // consonantes hasta la siguiente vocal
+    const cons = []; let j = i; while (j < U.length && !isVu(U[j])) cons.push(U[j++]);
+    if (j >= U.length){ cur += cons.join(''); out.push(cur); break }
+    let keep = 0;
+    if (cons.length === 2) keep = insep(cons[0], cons[1]) ? 0 : 1;
+    else if (cons.length === 3) keep = insep(cons[1], cons[2]) ? 1 : 2;
+    else if (cons.length >= 4) keep = 2;
+    cur += cons.slice(0, keep).join(''); out.push(cur); cur = ''; i += keep;
+  }
+  return out.filter(Boolean);
 }
-function startKids(maxLen){
-  maxLen = maxLen || 9;
+const KIDS_MODES = { letras: ['🔤 Letras', 'Arma la palabra letra por letra'], silabas: ['🧱 Sílabas', 'Arma la palabra con pedacitos'], cual: ['🔊 ¿Cuál es?', 'Escucha o lee y elige el dibujo'] };
+function kidsBagNext(key, list, prev){
+  const bags = store.get('ps-kids-bag', {}); let bag = (bags[key] || []).filter(w => list.some(k => k.w === w));
+  if (!bag.length){ bag = shuffle(list.map(k => k.w)); if (bag.length > 1 && bag[bag.length - 1] === prev) bag.unshift(bag.pop()) }
+  const w = bag.pop(); bags[key] = bag; store.set('ps-kids-bag', bags);
+  return list.find(k => k.w === w);
+}
+function openKids(){
+  const st = Object.assign({ mode: 'letras', cat: '', len: 9 }, store.get('ps-kids-opt', {}));
+  const alb = store.get('ps-kids-album', {}), nAlb = Object.keys(alb).length;
+  showModal(`<h2>🧸 Modo niños</h2>
+    <p>Sin tiempo y sin perder: cada palabra completa gana una ⭐ y una estampa para tu álbum.</p>
+    <p class="sub">${store.get('ps-kids-stars', 0)} ⭐ · Álbum: ${nAlb} de ${KIDS.length} estampas</p>
+    <div class="opt-title">¿Cómo quieres jugar?</div>
+    <div class="menu">${Object.entries(KIDS_MODES).map(([k, [t, d]]) => `<button data-km="${k}" aria-pressed="${st.mode === k}">${t}<small>${d}</small></button>`).join('')}</div>
+    <div class="opt-title">Tema</div>
+    <div class="cats kcats"><button data-kc="" aria-pressed="${!st.cat}">✨ Todos</button>${Object.entries(KIDS_CATS).map(([k, [n, e]]) => `<button data-kc="${k}" aria-pressed="${st.cat === k}">${e} ${n}</button>`).join('')}</div>
+    <div class="opt-title">¿Qué tan largas?</div>
+    <div class="pick-len row3"><button data-kd="4" aria-pressed="${st.len === 4}">Cortas<small>hasta 4 letras</small></button><button data-kd="6" aria-pressed="${st.len === 6}">Medianas<small>hasta 6 letras</small></button><button data-kd="9" aria-pressed="${st.len === 9}">Todas<small>de todo</small></button></div>
+    <label class="opt" for="kSay"><span><b>Decir cada letra</b><small>Al tocar una letra o sílaba se escucha</small></span><input type="checkbox" id="kSay" ${settings.kidSay !== false ? 'checked' : ''}><i class="sw"></i></label>
+    <button class="primary" id="kGo">¡A jugar!</button>
+    <button class="secondary" id="kAlb">📒 Ver mi álbum</button>
+    <button class="secondary" id="closeBtn">Cancelar</button>`, () => {
+    const sel = (attr, key, val) => { st[key] = val; document.querySelectorAll(`[${attr}]`).forEach(x => x.setAttribute('aria-pressed', x.getAttribute(attr) === String(val))) };
+    document.querySelectorAll('[data-km]').forEach(b => b.onclick = () => sel('data-km', 'mode', b.dataset.km));
+    document.querySelectorAll('[data-kc]').forEach(b => b.onclick = () => sel('data-kc', 'cat', b.dataset.kc));
+    document.querySelectorAll('[data-kd]').forEach(b => b.onclick = () => { st.len = +b.dataset.kd; document.querySelectorAll('[data-kd]').forEach(x => x.setAttribute('aria-pressed', x === b)) });
+    $('kSay').onchange = e => { settings.kidSay = e.target.checked; store.set('ps-settings', settings) };
+    $('kGo').onclick = () => { store.set('ps-kids-opt', st); startKids(st.len, st.cat, st.mode) };
+    $('kAlb').onclick = openAlbum;
+  });
+}
+function openAlbum(){
+  const alb = store.get('ps-kids-album', {}), n = Object.keys(alb).length;
+  showModal(`<h2>📒 Mi álbum</h2><p class="sub">${n} de ${KIDS.length} estampas. Toca una para escucharla.</p>
+    <div class="wbar"><i style="width:${Math.round(n / KIDS.length * 100)}%"></i></div>
+    ${Object.entries(KIDS_CATS).map(([c, [name, e]]) => { const L = KIDS.filter(k => k.c === c), got = L.filter(k => alb[k.w]).length;
+      return `<div class="opt-title">${e} ${name} · ${got}/${L.length}</div><div class="album">${L.map(k => alb[k.w] ? `<button class="stk" data-ks="${k.s}" aria-label="${k.s}"><span>${k.e}</span><small>${k.s}</small></button>` : `<div class="stk off" aria-label="Estampa sin descubrir"><span>${k.e}</span><small>?</small></div>`).join('')}</div>` }).join('')}
+    <button class="primary" id="closeBtn">Cerrar</button>`, () => {
+    document.querySelectorAll('[data-ks]').forEach(b => b.onclick = () => speak(b.dataset.ks));
+  });
+}
+function startKids(maxLen, cat, kmode){
+  const st = store.get('ps-kids-opt', {});
+  maxLen = maxLen || st.len || 9; cat = cat === undefined ? (st.cat || '') : cat; kmode = kmode || st.mode || 'letras';
   leaveTo(); mode = 'kids';
-  pane = { type: 'kids', maxLen, prev: null, cur: null, got: 0, lock: false };
+  pane = { type: 'kids', maxLen, cat, kmode, prev: null, cur: null, got: 0, lock: false };
   game = { answer: '', guesses: [], over: false, won: false, hint: null };
   kidsNext(true); load(true);
+  if (kmode === 'cual') setTimeout(() => { if (mode === 'kids' && pane.cur) speak(pane.cur.k.s) }, 400);
+}
+function kidsPool(){
+  let L = KIDS.filter(k => (!pane.cat || k.c === pane.cat) && !k.s.includes(' '));
+  if (pane.kmode !== 'cual'){ const f = L.filter(k => [...k.w].length <= pane.maxLen); if (f.length >= 4) L = f }
+  if (pane.kmode === 'silabas'){ const f = L.filter(k => silabas(k.s).length >= 2); if (f.length >= 4) L = f }
+  return L;
 }
 function kidsNext(first){
-  const list = KIDS.filter(k => [...k.w].length <= pane.maxLen && k.w !== pane.prev);
-  const k = list[Math.floor(Math.random() * list.length)], L = [...k.w];
-  const extra = shuffle('aeioulmnprst'.split('').filter(c => !L.includes(c))).slice(0, 2);
-  pane.prev = k.w; pane.cur = { k, L, show: [...k.s], bank: shuffle(L.concat(extra)).map(ch => ({ ch, used: false })), filled: 0 };
-  pane.lock = false; game.answer = k.w;
-  if (!first){ PANE.kids.render(); renderSide() }
+  const list = kidsPool(), key = [pane.kmode, pane.cat || 'all', pane.kmode === 'cual' ? 0 : pane.maxLen].join('-');
+  const k = kidsBagNext(key, list, pane.prev), L = [...k.w];
+  pane.prev = k.w; pane.lock = false; game.answer = k.w;
+  if (pane.kmode === 'silabas'){
+    const parts = silabas(k.s), others = shuffle(KIDS.filter(x => x.w !== k.w).flatMap(x => silabas(x.s))).filter(p => !parts.includes(p) && [...p].length <= 4);
+    const extra = [...new Set(others)].slice(0, parts.length >= 4 ? 1 : 2);
+    pane.cur = { k, L: parts, show: parts, bank: shuffle(parts.concat(extra)).map(ch => ({ ch, used: false })), filled: 0 };
+  } else if (pane.kmode === 'cual'){
+    const pool = KIDS.filter(x => x.w !== k.w && x.e !== k.e), same = pool.filter(x => x.c === k.c);
+    const opts = shuffle([k].concat(shuffle(same.length >= 4 ? same : pool).slice(0, 2)));
+    pane.cur = { k, opts, picked: null, L: [k.w], filled: 0, bank: [] };
+  } else {
+    const extra = shuffle('aeioulmnprst'.split('').filter(c => !L.includes(c))).slice(0, 2);
+    pane.cur = { k, L, show: [...k.s.replace(/ /g, '')], bank: shuffle(L.concat(extra)).map(ch => ({ ch, used: false })), filled: 0 };
+  }
+  if (!first){ PANE.kids.render(); renderSide(); modeLine(); if (pane.kmode === 'cual') setTimeout(() => { if (mode === 'kids') speak(k.s) }, 300) }
+}
+function kidsWin(){
+  const c = pane.cur;
+  pane.lock = true; pane.got++;
+  const stars = store.get('ps-kids-stars', 0) + 1; store.set('ps-kids-stars', stars);
+  const alb = store.get('ps-kids-album', {}), nuevo = !alb[c.k.w]; alb[c.k.w] = (alb[c.k.w] || 0) + 1; store.set('ps-kids-album', alb);
+  if (stars >= 10) unlock('kids10'); if (Object.keys(alb).length >= 50) unlock('album50');
+  sfx('win'); setTimeout(() => speak(c.k.s), 250); award(3, 1, true); markDay();
+  if (pane.got % 5 === 0) confetti();
+  if ($('kWord')) $('kWord').classList.add('done');
+  toast((nuevo ? '¡Estampa nueva! 📒 ' : '') + ['¡Muy bien!', '¡Excelente!', '¡Genial!', '¡Bravo!', '¡Lo lograste!'][Math.floor(Math.random() * 5)] + ' ⭐');
+  modeLine();
+  setTimeout(() => { if (mode === 'kids') kidsNext() }, 2000);
 }
 function kidsTap(i){
   const c = pane.cur, t = c.bank[i]; if (pane.lock || !t || t.used) return;
   if (t.ch === c.L[c.filled]){
-    t.used = true; c.filled++; sfx('key'); PANE.kids.render();
-    if (c.filled === c.L.length){
-      pane.lock = true; pane.got++;
-      const stars = store.get('ps-kids-stars', 0) + 1; store.set('ps-kids-stars', stars);
-      if (stars >= 10) unlock('kids10');
-      learn(c.k.w); sfx('win'); speak(c.k.w); award(3, 1, true); markDay();
-      if (pane.got % 5 === 0) confetti();
-      $('kWord').classList.add('done');
-      toast(['¡Muy bien!', '¡Excelente!', '¡Genial!', '¡Bravo!', '¡Lo lograste!'][Math.floor(Math.random() * 5)] + ' ⭐');
-      modeLine();
-      setTimeout(() => { if (mode === 'kids') kidsNext() }, 1800);
-    }
+    t.used = true; c.filled++; sfx('key');
+    if (settings.kidSay !== false && c.filled < c.L.length) speak(t.ch.length > 1 ? t.ch : t.ch);
+    PANE.kids.render();
+    if (c.filled === c.L.length) kidsWin();
   } else {
     const b = $('kBank').querySelector(`[data-ki="${i}"]`); if (b){ b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake') }
     buzz(30);
   }
 }
+function kidsPick(i){
+  const c = pane.cur; if (pane.lock || c.picked != null) return;
+  const o = c.opts[i];
+  if (o.w === c.k.w){ c.picked = i; PANE.kids.render(); kidsWin() }
+  else {
+    const b = $('kOpts').querySelector(`[data-ko="${i}"]`); if (b){ b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake', 'no') }
+    buzz(40); speak(o.s);
+  }
+}
 PANE.kids = {
-  build(){ $('pane').innerHTML = `<div class="kids"><div class="kemoji" id="kEmoji"></div><div class="arow" id="kWord"></div><div class="kbank" id="kBank"></div></div>` },
+  build(){ $('pane').innerHTML = `<div class="kids"><div class="kemoji" id="kEmoji"></div><div class="kread" id="kRead"></div><div class="arow" id="kWord"></div><div class="kbank" id="kBank"></div><div class="kopts" id="kOpts"></div></div>` },
   size(){
-    const n = pane.cur ? pane.cur.bank.length : 6, w = wrap.clientWidth;
-    const s = Math.max(40, Math.min(Math.floor((w - 8 * (Math.ceil(n / 2) - 1)) / Math.ceil(n / 2)), innerWidth >= 900 ? 86 : 64));
-    $('pane').style.setProperty('--at', Math.min(s, Math.floor((w - 6 * (pane.cur.L.length - 1)) / pane.cur.L.length)) + 'px');
+    if (!pane.cur) return;
+    const n = Math.max(pane.cur.bank.length, 3), w = wrap.clientWidth, sil = pane.kmode === 'silabas';
+    const per = sil ? Math.ceil(n / 2) : Math.ceil(n / 2);
+    const s = Math.max(40, Math.min(Math.floor((w - 8 * (per - 1)) / per), innerWidth >= 900 ? 86 : 64));
+    const slots = pane.cur.L.length;
+    $('pane').style.setProperty('--at', Math.min(s, Math.floor((w - 6 * (slots - 1)) / slots)) + 'px');
     $('pane').style.setProperty('--kt', s + 'px');
   },
   render(){
     resetVisuals();
-    const c = pane.cur;
-    $('kEmoji').textContent = c.k.e;
-    $('kWord').innerHTML = c.show.map((ch, i) => `<div class="atile slot${i < c.filled ? ' full ok' : ''}${i === c.filled ? ' next' : ''}">${i < c.filled ? ch.toUpperCase() : ''}</div>`).join('');
-    $('kBank').innerHTML = c.bank.map((t, i) => `<button class="ktile${t.used ? ' used' : ''}" data-ki="${i}" aria-label="Letra ${t.ch.toUpperCase()}">${t.ch.toUpperCase()}</button>`).join('');
-    $('kBank').querySelectorAll('[data-ki]').forEach(b => b.onclick = () => kidsTap(+b.dataset.ki));
+    const c = pane.cur, cual = pane.kmode === 'cual', sil = pane.kmode === 'silabas';
+    $('kEmoji').hidden = cual; $('kWord').hidden = cual; $('kBank').hidden = cual; $('kRead').hidden = !cual; $('kOpts').hidden = !cual;
+    $('pane').classList.toggle('ksil', sil);
+    if (cual){
+      $('kRead').innerHTML = `<button class="ksay" id="kSayW" aria-label="Escuchar la palabra">🔊</button><b>${c.k.s.toUpperCase()}</b>`;
+      $('kOpts').innerHTML = c.opts.map((o, i) => `<button class="kopt${c.picked === i ? ' ok' : ''}" data-ko="${i}" aria-label="Opción ${i + 1}">${o.e}</button>`).join('');
+      $('kSayW').onclick = () => speak(c.k.s);
+      $('kOpts').querySelectorAll('[data-ko]').forEach(b => b.onclick = () => kidsPick(+b.dataset.ko));
+    } else {
+      $('kEmoji').textContent = c.k.e;
+      $('kWord').innerHTML = c.show.map((ch, i) => `<div class="atile slot${sil ? ' wide' : ''}${i < c.filled ? ' full ok' : ''}${i === c.filled ? ' next' : ''}">${i < c.filled ? ch.toUpperCase() : ''}</div>`).join('');
+      $('kBank').innerHTML = c.bank.map((t, i) => `<button class="ktile${sil ? ' wide' : ''}${t.used ? ' used' : ''}" data-ki="${i}" aria-label="${sil ? 'Sílaba' : 'Letra'} ${t.ch.toUpperCase()}">${t.ch.toUpperCase()}</button>`).join('');
+      $('kBank').querySelectorAll('[data-ki]').forEach(b => b.onclick = () => kidsTap(+b.dataset.ki));
+    }
     $('hintLine').hidden = true; this.size();
   },
-  press(k){ if (k.length !== 1 || pane.lock) return; const c = pane.cur, i = c.bank.findIndex(t => !t.used && t.ch === k && k === c.L[c.filled]); if (i >= 0) kidsTap(i); else buzz(20) },
-  help(){
-    const c = pane.cur, i = c.bank.findIndex(t => !t.used && t.ch === c.L[c.filled]); if (i < 0) return;
-    const b = $('kBank').querySelector(`[data-ki="${i}"]`); if (b){ b.classList.remove('glow'); void b.offsetWidth; b.classList.add('glow') }
-    speak(c.k.w);
+  press(k){
+    if (pane.lock) return;
+    const c = pane.cur;
+    if (pane.kmode === 'cual'){ const n = '123'.indexOf(k); if (n >= 0) kidsPick(n); return }
+    if (pane.kmode === 'silabas' || k.length !== 1) return;
+    const i = c.bank.findIndex(t => !t.used && t.ch === k && k === c.L[c.filled]); if (i >= 0) kidsTap(i); else buzz(20);
   },
-  line(){ return `🧸 Modo niños · ⭐ ${store.get('ps-kids-stars', 0)} <button id="mlExit">Salir</button>` },
+  help(){
+    const c = pane.cur;
+    if (pane.kmode === 'cual') return speak(c.k.s);
+    const i = c.bank.findIndex(t => !t.used && t.ch === c.L[c.filled]); if (i < 0) return;
+    const b = $('kBank').querySelector(`[data-ki="${i}"]`); if (b){ b.classList.remove('glow'); void b.offsetWidth; b.classList.add('glow') }
+    speak(c.k.s);
+  },
+  line(){ return `🧸 ${KIDS_MODES[pane.kmode][0].split(' ').slice(1).join(' ')}${pane.cat ? ' · ' + KIDS_CATS[pane.cat][1] : ''} · ⭐ ${store.get('ps-kids-stars', 0)} <button id="mlAlb" aria-label="Mi álbum">📒</button> <button id="mlExit">Salir</button>` },
   canNew(){ return true },
   next(){ kidsNext() },
-  side(){ return `<section class="sbox"><h3>Cómo jugar</h3><p class="sidep">Toca las letras en orden para escribir el nombre del dibujo. 💡 ilumina la siguiente letra y dice la palabra en voz alta.</p></section>` }
+  side(){
+    const alb = store.get('ps-kids-album', {}), n = Object.keys(alb).length;
+    const last = Object.keys(alb).slice(-12).map(w => KIDS.find(k => k.w === w)).filter(Boolean);
+    return `<section class="sbox"><h3>Cómo jugar</h3><p class="sidep">${pane.kmode === 'cual' ? 'Escucha o lee la palabra y elige su dibujo. Con el teclado: 1, 2 o 3.' : pane.kmode === 'silabas' ? 'Toca los pedacitos (sílabas) en orden para armar el nombre del dibujo.' : 'Toca las letras en orden para escribir el nombre del dibujo, o escríbelas con el teclado.'} 💡 te ayuda y dice la palabra.</p></section>
+      <section class="sbox"><h3>Mi álbum · ${n}/${KIDS.length}</h3><div class="wbar"><i style="width:${Math.round(n / KIDS.length * 100)}%"></i></div><div class="kside">${last.map(k => `<span title="${k.s}">${k.e}</span>`).join('')}</div><button class="secondary mini-btn" id="sAlb">Ver álbum</button></section>`;
+  }
 };
+{ const mb = modeLine; modeLine = () => { mb(); if ($('mlAlb')) $('mlAlb').onclick = openAlbum } }
+{ const rs = renderSide; renderSide = () => { rs(); if ($('sAlb')) $('sAlb').onclick = openAlbum } }
 
 // =================== crear sopa o crucigrama para un amigo ===================
 function encodeCustom(kind, words){ const seed = CODE[Math.floor(Math.random() * 27)] + CODE[Math.floor(Math.random() * 27)]; return (kind === 'sopa' ? 's' : 'c') + seed + '.' + words.map(encodeReto).join('.') }
@@ -4706,7 +5512,7 @@ function startCustomCross(words, seed){
   const pool = words.map(w => ANSMAP.get(w)).filter(Boolean);
   let best = null;
   for (let t = 0; t < 60 && !(best && best.words.length === pool.length); t++){ const L = genCross(pool, xrng(hash('c' + seed + words.join() + t)), { target: pool.length, max: 12 }); if (L && (!best || L.words.length > best.words.length)) best = L }
-  cross = { kind: 'friend', cat: null, size: 'custom', lens: 'rand', giant: false, layout: best, fill: {}, rev: {}, elapsed: 0, hints: 0, done: false, key: 'ps-cross-custom', t0: null, bad: null };
+  cross = { kind: 'friend', cat: null, size: 'custom', lens: 'rand', giant: false, layout: xFitScreen(best), fill: {}, rev: {}, elapsed: 0, hints: 0, done: false, key: 'ps-cross-custom', t0: null, bad: null };
   cross.cells = xLayout(cross.layout); cross.sel = { w: 0, k: 0 };
   game = { answer: '', guesses: [], over: false, won: false, hint: null };
   load(true); xSave();
@@ -4814,6 +5620,22 @@ function homeHTML(){
     </div></section>
   </div>`;
 }
+function miniCal(){
+  const d = new Date(), y = d.getFullYear(), m = d.getMonth(), first = (new Date(y, m, 1).getDay() + 6) % 7, days = new Date(y, m + 1, 0).getDate(), played = playedDays(), tk = todayKey();
+  const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  let cells = 'LMMJVSD'.split('').map(x => `<i class="mh">${x}</i>`).join('') + '<i></i>'.repeat(first);
+  for (let i = 1; i <= days; i++){ const k = dayKey(new Date(y, m, i)); cells += `<i class="${played[k] ? 'on' : ''}${k === tk ? ' td' : ''}${k > tk ? ' fut' : ''}">${i}</i>` }
+  const n = Object.keys(played).filter(k => k.startsWith(tk.slice(0, 7))).length;
+  return `<section class="sbox"><h3>${months[m]} · ${n} ${n === 1 ? 'día jugado' : 'días jugados'}</h3><div class="mcal">${cells}</div><button class="secondary mini-btn" id="sCal">Ver calendario</button></section>`;
+}
+function homeSideExtra(){
+  const st = Object.assign({ played: 0, wins: 0, streak: 0, best: 0, last: null }, store.get('ps-st2-daily', {}));
+  if (st.last){ const y = new Date(); y.setDate(y.getDate() - 1); if (st.last < dayKey(y)) st.streak = 0 }
+  const t = k => { const v = store.get(k, null); return v ? mmss(v) : '—' };
+  const rec = [['🔥', 'Racha del Diario', `${st.streak} días · mejor ${st.best}`], ['🧩', 'Crucigrama Difícil', t('ps-cross-best-hard')], ['🔎', 'Sopa de letras', t('ps-sopa-best')], ['🔀', 'Anagramas', store.get('ps-anag-best', 0)], ['❓', '¿Qué significa?', `${store.get('ps-quiz-best', 0)}/10`], ['🃏', 'Memorama', store.get('ps-memo-best', null) ? store.get('ps-memo-best') + ' mov.' : '—']];
+  return miniCal() + `<section class="sbox"><h3>Tus récords</h3><div class="recs">${rec.map(r => `<div><span>${r[0]}</span><b>${r[1]}</b><em>${r[2]}</em></div>`).join('')}</div><button class="secondary mini-btn" id="sSt">Todas las estadísticas</button></section>`;
+}
+{ const rs = renderSide; renderSide = () => { rs(); if ($('sCal')) $('sCal').onclick = () => openCalendar(0); if ($('sSt')) $('sSt').onclick = openStats } }
 const HOME_GO = {
   daily: () => { const dp = dailyProgress(), i = dp.findIndex(x => x !== 'w' && x !== 'l'); store.set('ps-mode', 'daily'); store.set('ps-len', LENGTHS[i < 0 ? 1 : i]); goNormal('daily') },
   free: () => { store.set('ps-mode', 'free'); goNormal('free') },
@@ -4842,7 +5664,7 @@ PANE.home = {
   side(){
     const xp = xpState(), lv = levelOf(xp.xp);
     return `<section class="sbox"><h3>Tu nivel</h3><div class="lvlbox"><div><b>Nivel ${lv.level}</b><span>🪙 ${xp.coins}</span></div><div class="wbar"><i style="width:${lv.pct}%"></i></div><small>${lv.into} de ${lv.need} XP para el nivel ${lv.level + 1}</small></div></section>
-      <section class="sbox"><h3>Tus números · Diario</h3>${statsFor('daily')}</section>
+      ${homeSideExtra()}
       <section class="sbox"><h3>Atajos de teclado</h3><div class="keys-help"><kbd>Enter</kbd><span>Jugar la palabra del día</span><kbd>Esc</kbd><span>Cerrar ventanas</span></div></section>`;
   }
 };
