@@ -522,6 +522,8 @@ a.toast-btn{display:inline-block;text-decoration:none}
   .qo span{width:32px;height:32px;font-size:.95rem}
   .mc b{font-size:1.3rem}.mc span{font-size:.95rem}
 }
+.slist.clues .schip{font-size:.72rem}
+.pick-len.row4 small{font-size:.62rem}
 </style>
 
 </head>
@@ -833,7 +835,7 @@ for (const w of new Set(POOL)){ const n = [...w].length; (BYLEN[n] = BYLEN[n] ||
 const LENGTHS = [4,5,6,7,8];
 const ROWS = 6;
 const DUO_ROWS = 7;
-const NEWS_VER = 7;
+const NEWS_VER = 8;
 const CUTOVER = '2026-11-01';
 // Número de WhatsApp para recibir reportes (con lada, sin + ni espacios). Vacío = el jugador elige el contacto.
 const REPORT_WA = '';
@@ -2959,6 +2961,7 @@ const ACH = [
   ['racha10','🔥','Sin freno','Llega a 10 en la racha infinita'],
   ['dias7','📅','Constante','Juega 7 días seguidos'],
   ['palabras100','📖','Diccionario andante','Descubre 100 palabras'],
+  ['sopadificil','🦅','Ojo de águila','Resuelve una sopa Difícil o Experto sin ayudas'],
   ['crucidificil','🧠','Mente maestra','Resuelve un crucigrama Difícil sin ayudas'],
   ['quiz10','🎓','Sabelotodo de verdad','Saca 10 de 10 en ¿Qué significa?'],
   ['memo','🃏','Buena memoria','Completa un Memorama'],
@@ -3384,7 +3387,7 @@ function showNews(after){
       <span><i class="ico">⌨️</i>En computadora el crucigrama usa tu teclado y se ve más grande</span>
       <span><i class="ico">🧸</i>Modo niños: 400 dibujos, temas, sílabas, «¿Cuál es?» y un álbum de estampas</span>
       <span><i class="ico">📖</i>545 palabras nuevas y 3 temas nuevos: colores y números, música y arte, ciencia y escuela</span>
-      <span><i class="ico">🔎</i>Sopa de letras con palabras en diagonal</span>
+      <span><i class="ico">🔎</i>Sopa de letras más retadora: palabras al revés, trampas y nivel Experto con solo pistas</span>
     </div>
     <p class="sub">Todo está en el Inicio 🏠.</p>
     <button class="primary" id="nOk">¡Genial!</button>`, () => { $('nOk').onclick = () => { closeModal(); if (after) after() } });
@@ -4367,12 +4370,13 @@ function xOpts(size, rand){
 // =================== sopa de letras ===================
 const SOUP_COL = ['#2f8a5c','#c97a10','#3b7dd8','#b8466e','#7b5cc4','#1f9aa0','#c0582f','#5f8f2a','#a0662a','#8a3fb0','#2c6e8f','#b3313d'];
 const SOUP_DIFF = {
-  easy: { n: 9, count: 6, dirs: [[0,1],[1,0]], label: 'Fácil' },
-  normal: { n: 10, count: 8, dirs: [[0,1],[1,0],[1,1],[-1,1]], label: 'Normal' },
-  hard: { n: 11, count: 10, dirs: [[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]], label: 'Difícil' }
+  easy: { n: 9, count: 6, dirs: [[0,1],[1,0]], label: 'Fácil', sub: '6 palabras · → ↓' },
+  normal: { n: 11, count: 9, dirs: [[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]], label: 'Normal', sub: '9 · también al revés' },
+  hard: { n: 12, count: 12, dirs: [[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]], label: 'Difícil', sub: '12 · con trampas', traps: .7, minLen: 5 },
+  expert: { n: 12, count: 12, dirs: [[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]], label: 'Experto', sub: 'Solo pistas', traps: 1, minLen: 5, clues: true }
 };
 const LETTER_FREQ = 'aaaaaaaaaaaeeeeeeeeeeeoooooooosssssssrrrrrrnnnnnniiiiiiddddllllllcccccttttuuuummmmppbbggvyqhfzjñ';
-function sopaGen(cands, rand, N, dirs, count){
+function sopaGen(cands, rand, N, dirs, count, opt = {}){
   for (let i = 0; i < 12; i++) rand();
   const g = Array.from({ length: N }, () => Array(N).fill('')), placed = [], use = dirs.map(() => 0);
   for (const w of cands.slice().sort((a, b) => [...b].length - [...a].length)){
@@ -4396,22 +4400,55 @@ function sopaGen(cands, rand, N, dirs, count){
       break;
     }
   }
-  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if (!g[r][c]) g[r][c] = LETTER_FREQ[Math.floor(rand() * LETTER_FREQ.length)];
+  const lock = new Set(); placed.forEach(p => [...p.w].forEach((_, i) => lock.add((p.r + p.dr * i) + ',' + (p.c + p.dc * i))));
+  // trampas: pedazos de las palabras (sin la última letra) puestos en otros lugares para confundir
+  if (opt.traps){
+    const want = Math.round(placed.length * opt.traps);
+    for (let t = 0, made = 0; t < want * 30 && made < want; t++){
+      const p = placed[Math.floor(rand() * placed.length)], L = [...p.w], frag = L.slice(0, Math.max(3, L.length - 1 - Math.floor(rand() * 2)));
+      const [dr, dc] = dirs[Math.floor(rand() * dirs.length)], r0 = Math.floor(rand() * N), c0 = Math.floor(rand() * N);
+      const cells = frag.map((_, i) => [r0 + dr * i, c0 + dc * i]);
+      if (cells.some(([r, c]) => r < 0 || c < 0 || r >= N || c >= N || g[r][c])) continue;
+      cells.forEach(([r, c], i) => g[r][c] = frag[i]); made++;
+    }
+  }
+  const pool = opt.traps ? placed.map(p => p.w).join('') + LETTER_FREQ : LETTER_FREQ;
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if (!g[r][c]) g[r][c] = pool[Math.floor(rand() * pool.length)];
+  // ninguna palabra debe aparecer dos veces (por trampa o por casualidad)
+  const D8 = [[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]];
+  for (let pass = 0; pass < 40; pass++){
+    let fixed = false;
+    placed.forEach(p => {
+      const L = [...p.w];
+      for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) for (const [dr, dc] of D8){
+        if (r === p.r && c === p.c && dr === p.dr && dc === p.dc) continue;
+        const r1 = r + dr * (L.length - 1), c1 = c + dc * (L.length - 1); if (r1 < 0 || c1 < 0 || r1 >= N || c1 >= N) continue;
+        if (!L.every((ch, i) => g[r + dr * i][c + dc * i] === ch)) continue;
+        const free = L.map((_, i) => [r + dr * i, c + dc * i]).filter(([a, b]) => !lock.has(a + ',' + b));
+        if (!free.length) continue;
+        const [a, b] = free[free.length - 1]; let ch; do { ch = LETTER_FREQ[Math.floor(rand() * LETTER_FREQ.length)] } while (ch === g[a][b]);
+        g[a][b] = ch; fixed = true;
+      }
+    });
+    if (!fixed) break;
+  }
   placed.sort((a, b) => a.w.localeCompare(b.w));
-  return { N, g, words: placed, gv: 2 };
+  return { N, g, words: placed, gv: 2, clues: !!opt.clues };
 }
 const soupLabel = () => pane.kind === 'friend' ? 'Sopa de letras de tu amigo' : pane.kind === 'daily' ? `Sopa de letras del día ${new Date().getDate()}/${new Date().getMonth() + 1}` : pane.cat ? `Sopa de letras de ${CATS[pane.cat]}` : 'Sopa de letras libre';
-const soupShort = () => pane.kind === 'friend' ? 'De tu amigo' : pane.kind === 'daily' ? 'Del día' : pane.cat ? CATS[pane.cat] : SOUP_DIFF[pane.diff].label;
+const soupShort = () => pane.kind === 'friend' ? 'De tu amigo' : pane.kind === 'daily' ? 'Del día' : pane.cat ? CATS[pane.cat] + (pane.diff !== 'normal' && SOUP_DIFF[pane.diff] ? ' · ' + SOUP_DIFF[pane.diff].label : '') : (SOUP_DIFF[pane.diff] || SOUP_DIFF.normal).label;
+const sBestKey = () => 'ps-sopa-best-' + (pane.kind === 'daily' ? 'daily' : pane.kind === 'friend' ? 'friend' : pane.diff || 'normal');
 function openSoup(){
   const d = store.get('ps-sopa-' + todayKey(), null);
   showModal(`<h2>Sopa de letras</h2>
-    <p>Encuentra las palabras escondidas: pueden ir en horizontal, vertical o diagonal (en Difícil también al revés). Arrastra el dedo (o el mouse) desde la primera hasta la última letra, o toca la primera y luego la última.</p>
+    <p>Encuentra las palabras escondidas: van en horizontal, vertical, diagonal y, desde Normal, también al revés. Arrastra el dedo (o el mouse) desde la primera hasta la última letra, o toca la primera y luego la última.</p>
     <div class="menu">
       <button id="sD">Sopa del día<small>${d && d.done ? `Resuelta en ${mmss(d.elapsed)} ✓` : d ? 'Continuar donde la dejaste' : 'La misma para todos; compara tu tiempo'}</small></button>
       <button id="sF">Sopa libre<small>Una nueva de todos los temas</small></button>
     </div>
     <div class="opt-title">Dificultad (libre y por categoría)</div>
-    <div class="pick-len row3">${Object.entries(SOUP_DIFF).map(([k, v]) => `<button data-sd="${k}" aria-pressed="${(settings.sDiff || 'normal') === k}">${v.label}<small>${v.count} palabras</small></button>`).join('')}</div>
+    <div class="pick-len row4">${Object.entries(SOUP_DIFF).map(([k, v]) => `<button data-sd="${k}" aria-pressed="${(settings.sDiff || 'normal') === k}">${v.label}<small>${v.sub}</small></button>`).join('')}</div>
+    <p class="sub" style="text-align:left;margin:4px 0 0"><b>Difícil</b>: palabras en las 8 direcciones y pedazos de palabras como trampa. <b>Experto</b>: además, no ves las palabras, solo sus pistas.</p>
     <div class="opt-title">Por categoría</div>
     <div class="cats">${Object.entries(CATS).map(([k, n]) => `<button data-sc="${k}">${n}</button>`).join('')}<button data-sc="">Todas</button></div>
     <button class="secondary" id="closeBtn">Cancelar</button>`, () => {
@@ -4430,13 +4467,14 @@ function startSoup(kind, catKey, fresh){
   if (!st || !st.data){
     const diff = kind === 'daily' ? 'normal' : (settings.sDiff || 'normal'), D = SOUP_DIFF[diff];
     const rand = xrng(kind === 'daily' ? hash('sopa' + todayKey()) : Math.floor(Math.random() * 4e9));
-    const pool = ANS.filter(a => (!catKey || a.c === catKey) && [...a.w].length <= Math.min(8, D.n)).map(a => a.w);
+    let pool = ANS.filter(a => (!catKey || a.c === catKey) && [...a.w].length <= Math.min(8, D.n) && (!D.clues || !giveaway(a))).map(a => a.w);
+    if (D.minLen){ const p2 = pool.filter(w => [...w].length >= D.minLen); if (p2.length >= D.count + 8) pool = p2 }
     const cands = [];
     for (const w of pool.map(w => [rand(), w]).sort((x, y) => x[0] - y[0]).map(x => x[1])){
       if (cands.length >= D.count + 8) break;
       if (!cands.some(x => x.includes(w) || w.includes(x))) cands.push(w);
     }
-    st = { type: 'soup', kind, cat: catKey || null, diff, data: sopaGen(cands, rand, D.n, D.dirs, D.count), found: [], hints: 0, elapsed: 0, done: false };
+    st = { type: 'soup', kind, cat: catKey || null, diff, data: sopaGen(cands, rand, D.n, D.dirs, D.count, { traps: D.traps, clues: D.clues }), found: [], hints: 0, elapsed: 0, done: false };
   }
   mode = 'soup'; pane = Object.assign(st, { key, t0: null });
   game = { answer: '', guesses: [], over: st.done, won: st.done, hint: null };
@@ -4496,22 +4534,24 @@ function soupCommit(){
 function soupDone(){
   if (pane.t0){ pane.elapsed += Date.now() - pane.t0; pane.t0 = null }
   pane.done = true; game.over = true; clearInterval(pTimer); pTimer = null;
-  const best = store.get('ps-sopa-best', null); pane.record = !pane.hints && (!best || pane.elapsed < best); if (pane.record) store.set('ps-sopa-best', pane.elapsed);
+  const best = store.get(sBestKey(), null); pane.record = pane.kind !== 'friend' && !pane.hints && (!best || pane.elapsed < best); if (pane.record) store.set(sBestKey(), pane.elapsed);
+  if (!pane.hints && (!store.get('ps-sopa-best', null) || pane.elapsed < store.get('ps-sopa-best', null))) store.set('ps-sopa-best', pane.elapsed);
+  if (!pane.hints && (pane.diff === 'expert' || pane.diff === 'hard') && pane.kind !== 'daily') unlock('sopadificil');
   paneSave(); markDay(); unlock('sopa'); sfx('win'); setTimeout(confetti, 250);
   setTimeout(soupResult, 1000);
 }
 function soupResult(){
-  const t = mmss(pane.elapsed), best = store.get('ps-sopa-best', null), n = pane.data.words.length;
+  const t = mmss(pane.elapsed), best = store.get(sBestKey(), null), n = pane.data.words.length;
   const helps = pane.hints ? `${pane.hints} ${pane.hints === 1 ? 'ayuda' : 'ayudas'}` : 'sin ayudas';
   showModal(`<p class="sub">${soupLabel()}</p><h2>¡Encontraste todas!</h2>
     <p>Tu tiempo</p><div class="code">${t}</div>
-    <p class="sub">${n} palabras · ${helps}${pane.record ? ' · ¡Nuevo récord!' : best ? ` · Tu récord sin ayudas: ${mmss(best)}` : ''}</p>
+    <p class="sub">${n} palabras · ${helps}${pane.record ? ' · ¡Nuevo récord!' : best ? ` · Tu récord ${pane.kind === 'daily' ? 'del día' : 'en ' + (SOUP_DIFF[pane.diff] || SOUP_DIFF.normal).label}: ${mmss(best)}` : ''}</p>
     <p class="sub">Toca una palabra para escucharla</p>
     <div class="xwords">${pane.data.words.map(p => `<span data-say="${p.w}">${showWord(p.w).toUpperCase()}</span>`).join('')}</div>
     <button class="primary" id="pShare">Compartir resultado</button>
     <button class="secondary" id="pAgain">${pane.kind === 'daily' ? 'Jugar una sopa libre' : 'Otra sopa de letras'}</button>
     <button class="secondary" id="leaveBtn">Volver al juego normal</button>`, () => {
-    $('pShare').onclick = () => shareOrCopy(`Palabra Secreta · ${soupLabel()}\n🔎 Encontré ${n} palabras en ${t} · ${helps}\n¿Me ganas?`, 'Resultado copiado. Pégalo en WhatsApp.');
+    $('pShare').onclick = () => shareOrCopy(`Palabra Secreta · ${soupLabel()}\n🔎 Encontré ${n} palabras en ${t}${pane.kind !== 'daily' && pane.diff !== 'normal' && SOUP_DIFF[pane.diff] ? ' · ' + SOUP_DIFF[pane.diff].label : ''} · ${helps}\n¿Me ganas?`, 'Resultado copiado. Pégalo en WhatsApp.');
     $('pAgain').onclick = () => startSoup(pane.kind === 'daily' || pane.kind === 'friend' ? 'free' : pane.kind, pane.cat, true);
     $('leaveBtn').onclick = () => { closeModal(); goNormal() };
   });
@@ -4532,8 +4572,10 @@ PANE.soup = {
     const D = pane.data, color = {};
     pane.found.forEach(i => { const p = D.words[i]; [...p.w].forEach((_, k) => color[(p.r + p.dr * k) + ',' + (p.c + p.dc * k)] = SOUP_COL[i % SOUP_COL.length]) });
     $('soup').querySelectorAll('.sc').forEach(d => { const k = d.dataset.r + ',' + d.dataset.c; d.style.background = color[k] || ''; d.classList.toggle('found', !!color[k]) });
-    $('slist').innerHTML = D.words.map((p, i) => { const f = pane.found.includes(i); return `<button class="schip${f ? ' done' : ''}" data-si="${i}"${f ? ` style="background:${SOUP_COL[i % SOUP_COL.length]}"` : ''}>${showWord(p.w).toUpperCase()}</button>` }).join('');
-    $('slist').querySelectorAll('.schip').forEach(b => b.onclick = () => { const p = D.words[+b.dataset.si], a = ANSMAP.get(p.w); toast(`${showWord(p.w).toUpperCase()}: ${a ? a.d : ''}`) });
+    const label = (p, i, f) => f || !D.clues ? showWord(p.w).toUpperCase() : `${i + 1} · ${[...p.w].length} letras`;
+    $('slist').classList.toggle('clues', !!D.clues);
+    $('slist').innerHTML = D.words.map((p, i) => { const f = pane.found.includes(i); return `<button class="schip${f ? ' done' : ''}" data-si="${i}"${f ? ` style="background:${SOUP_COL[i % SOUP_COL.length]}"` : ''}>${label(p, i, f)}</button>` }).join('');
+    $('slist').querySelectorAll('.schip').forEach(b => b.onclick = () => { const i = +b.dataset.si, p = D.words[i], a = ANSMAP.get(p.w); toast(D.clues && !pane.found.includes(i) ? `${i + 1} (${[...p.w].length} letras): ${a ? a.d : ''}` : `${showWord(p.w).toUpperCase()}: ${a ? a.d : ''}`) });
     $('hintLine').hidden = true; this.size();
   },
   press(){},
@@ -4542,16 +4584,23 @@ PANE.soup = {
     const left = pane.data.words.map((_, i) => i).filter(i => !pane.found.includes(i)), p = pane.data.words[left[Math.floor(Math.random() * left.length)]];
     pane.hints++; paneSave();
     const d = soupCell(p.r, p.c); if (d){ d.classList.remove('hint'); void d.offsetWidth; d.classList.add('hint') }
-    toast(`Busca «${showWord(p.w).toUpperCase()}»: empieza en la casilla que parpadea`);
+    toast(pane.data.clues ? `Una palabra empieza en la casilla que parpadea` : `Busca «${showWord(p.w).toUpperCase()}»: empieza en la casilla que parpadea`);
   },
-  line(){ return `🔎 Sopa · ${soupShort()} · ⏱ <span id="pTime">${mmss(pNow())}</span> <button id="mlExit">Salir</button>` },
+  line(){ return `🔎 ${soupShort()} · ⏱ <span id="pTime">${mmss(pNow())}</span> ${pane.data.clues ? '<button id="mlClues">Pistas</button> ' : ''}<button id="mlExit">Salir</button>` },
   canNew(){ return pane.kind !== 'daily' && pane.kind !== 'friend' },
   next(){ startSoup(pane.kind, pane.cat, true) },
   side(){
-    return `<section class="sbox"><h3>Palabras (${pane.found.length}/${pane.data.words.length})</h3>${pane.data.words.map((p, i) => `<div class="swd${pane.found.includes(i) ? ' done' : ''}"><b>${showWord(p.w).toUpperCase()}</b><small>${(ANSMAP.get(p.w) || {}).d || ''}</small></div>`).join('')}</section>
+    const C = pane.data.clues;
+    return `<section class="sbox"><h3>${C ? 'Pistas' : 'Palabras'} (${pane.found.length}/${pane.data.words.length})</h3>${pane.data.words.map((p, i) => { const f = pane.found.includes(i); return `<div class="swd${f ? ' done' : ''}"><b>${C && !f ? `${i + 1} · ${[...p.w].length} letras` : showWord(p.w).toUpperCase()}</b><small>${(ANSMAP.get(p.w) || {}).d || ''}</small></div>` }).join('')}</section>
       <section class="sbox"><h3>Cómo jugar</h3><p class="sidep">Arrastra desde la primera hasta la última letra de una palabra, o haz clic en la primera y luego en la última. 💡 te señala dónde empieza una.</p></section>`;
   }
 };
+
+function soupClues(){
+  const D = pane.data;
+  showModal(`<h2>Pistas</h2>${D.words.map((p, i) => { const f = pane.found.includes(i); return `<div class="swd${f ? ' done' : ''}" style="text-align:left;margin:6px 0"><b>${f ? showWord(p.w).toUpperCase() : `${i + 1} · ${[...p.w].length} letras`}</b><br><small>${(ANSMAP.get(p.w) || {}).d || ''}</small></div>` }).join('')}<button class="primary" id="closeBtn">Cerrar</button>`);
+}
+{ const mb = modeLine; modeLine = () => { mb(); if ($('mlClues')) $('mlClues').onclick = soupClues } }
 
 // =================== anagramas ===================
 function openAnag(){
@@ -4975,7 +5024,7 @@ function openStats(){
   const m0 = special() ? baseMode() : mode;
   const rows = [
     ['🧩', 'Crucigramas', `${c2.cross || 0} resueltos${xb ? ` · récord ${mmss(xb)}` : ''}<br>${[['easy', 'Fácil'], ['normal', 'Normal'], ['hard', 'Difícil'], ['daily', 'Del día'], ['giant', 'Gigante']].map(([k, n]) => `${n} ${store.get('ps-cross-best-' + k, null) ? mmss(store.get('ps-cross-best-' + k, null)) : '—'}`).join(' · ')}`],
-    ['🔎', 'Sopas de letras', `${c2.soup || 0} resueltas${sb ? ` · récord ${mmss(sb)}` : ''}`],
+    ['🔎', 'Sopas de letras', `${c2.soup || 0} resueltas${sb ? ` · récord ${mmss(sb)}` : ''}<br>${Object.entries(SOUP_DIFF).map(([k, v]) => `${v.label} ${store.get('ps-sopa-best-' + k, null) ? mmss(store.get('ps-sopa-best-' + k, null)) : '—'}`).join(' · ')}`],
     ['❓', '¿Qué significa?', `Mejor: ${store.get('ps-quiz-best', 0)} de 10`],
     ['🃏', 'Memorama', mb ? `Mejor: ${mb} movimientos` : 'Sin jugar'],
     ['🔀', 'Anagramas', `Récord: ${store.get('ps-anag-best', 0)}`],
@@ -5068,14 +5117,14 @@ function confirmLeave(){
       ex.insertAdjacentHTML('beforebegin', `<button id="mlKb" aria-pressed="${!!settings.pcKb}" title="Mostrar u ocultar el teclado en pantalla">⌨️ Teclado</button> `);
       $('mlKb').onclick = () => { settings.pcKb = !settings.pcKb; store.set('ps-settings', settings); modeLine(); crossRender() };
     }
-    if (mode === 'cross' && innerWidth < 600){
+    if ((mode === 'cross' || (mode === 'soup' && pane && pane.data && pane.data.clues)) && innerWidth < 600){
       const extra = ['mlNew', 'mlZoom', 'mlPause'].filter(id => $(id));
       if (extra.length > 1){
-        const acts = { mlNew: ['↻ Otro crucigrama', () => $('newBtn').onclick()], mlZoom: [cross.zoom ? '🔍 Ver todo el crucigrama' : '🔍 Ampliar las casillas', () => { cross.zoom = !cross.zoom; cross.zoomSet = true; modeLine(); crossRender() }], mlPause: ['⏸ Pausar', pauseGame] };
+        const acts = { mlNew: [mode === 'cross' ? '↻ Otro crucigrama' : '↻ Otra sopa', () => $('newBtn').onclick()], mlZoom: [cross && cross.zoom ? '🔍 Ver todo el crucigrama' : '🔍 Ampliar las casillas', () => { cross.zoom = !cross.zoom; cross.zoomSet = true; modeLine(); crossRender() }], mlPause: ['⏸ Pausar', pauseGame] };
         extra.forEach(id => $(id).remove());
         ex.insertAdjacentHTML('beforebegin', '<button id="mlMore" aria-label="Más opciones">⋯</button> ');
         $('mlMore').onclick = () => showModal(`<h2>Opciones</h2><div class="menu">${extra.map(id => `<button data-mo="${id}">${acts[id][0]}</button>`).join('')}<button data-mo="help">💡 Ayudas</button></div><button class="secondary" id="closeBtn">Cerrar</button>`, () => {
-          document.querySelectorAll('[data-mo]').forEach(b => b.onclick = () => { const id = b.dataset.mo; closeModal(); if (id === 'help') return crossHelp(); if (id === 'mlPause') return pauseGame(); acts[id][1]() });
+          document.querySelectorAll('[data-mo]').forEach(b => b.onclick = () => { const id = b.dataset.mo; closeModal(); if (id === 'help') return mode === 'cross' ? crossHelp() : PANE[mode].help(); if (id === 'mlPause') return pauseGame(); acts[id][1]() });
         });
       }
     }
@@ -5632,7 +5681,7 @@ function homeSideExtra(){
   const st = Object.assign({ played: 0, wins: 0, streak: 0, best: 0, last: null }, store.get('ps-st2-daily', {}));
   if (st.last){ const y = new Date(); y.setDate(y.getDate() - 1); if (st.last < dayKey(y)) st.streak = 0 }
   const t = k => { const v = store.get(k, null); return v ? mmss(v) : '—' };
-  const rec = [['🔥', 'Racha del Diario', `${st.streak} días · mejor ${st.best}`], ['🧩', 'Crucigrama Difícil', t('ps-cross-best-hard')], ['🔎', 'Sopa de letras', t('ps-sopa-best')], ['🔀', 'Anagramas', store.get('ps-anag-best', 0)], ['❓', '¿Qué significa?', `${store.get('ps-quiz-best', 0)}/10`], ['🃏', 'Memorama', store.get('ps-memo-best', null) ? store.get('ps-memo-best') + ' mov.' : '—']];
+  const rec = [['🔥', 'Racha del Diario', `${st.streak} días · mejor ${st.best}`], ['🧩', 'Crucigrama Difícil', t('ps-cross-best-hard')], ['🔎', 'Sopa Difícil', t('ps-sopa-best-hard')], ['🔀', 'Anagramas', store.get('ps-anag-best', 0)], ['❓', '¿Qué significa?', `${store.get('ps-quiz-best', 0)}/10`], ['🃏', 'Memorama', store.get('ps-memo-best', null) ? store.get('ps-memo-best') + ' mov.' : '—']];
   return miniCal() + `<section class="sbox"><h3>Tus récords</h3><div class="recs">${rec.map(r => `<div><span>${r[0]}</span><b>${r[1]}</b><em>${r[2]}</em></div>`).join('')}</div><button class="secondary mini-btn" id="sSt">Todas las estadísticas</button></section>`;
 }
 { const rs = renderSide; renderSide = () => { rs(); if ($('sCal')) $('sCal').onclick = () => openCalendar(0); if ($('sSt')) $('sSt').onclick = openStats } }
